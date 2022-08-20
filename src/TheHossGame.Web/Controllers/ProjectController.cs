@@ -1,4 +1,4 @@
-﻿using TheHossGame.Core.ProjectAggregate;
+using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
 using TheHossGame.SharedKernel.Interfaces;
 using TheHossGame.Web.ViewModels;
@@ -21,7 +21,7 @@ public class ProjectController : Controller
   public async Task<IActionResult> Index(int projectId = 1)
   {
     var spec = new ProjectByIdWithItemsSpec(projectId);
-    var project = await _projectRepository.FirstOrDefaultAsync(spec);
+    var project = await _projectRepository.GetBySpecAsync(spec);
     if (project == null)
     {
       return NotFound();

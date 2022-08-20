@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;

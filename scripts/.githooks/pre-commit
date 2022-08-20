@@ -1,0 +1,4 @@
+#!/bin/sh
+
+pwsh -File 'scripts\Check-Spell.ps1'
+pwsh -File 'scripts\Check-Branch.ps1'

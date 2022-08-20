@@ -1,4 +1,4 @@
-﻿using TheHossGame.Core.ProjectAggregate;
+using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
 using TheHossGame.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +23,7 @@ public class IncompleteModel : PageModel
   public async Task OnGetAsync()
   {
     var projectSpec = new ProjectByIdWithItemsSpec(ProjectId);
-    var project = await _repository.FirstOrDefaultAsync(projectSpec);
+    var project = await _repository.GetBySpecAsync(projectSpec);
     if (project == null)
     {
       return;

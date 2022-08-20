@@ -1,4 +1,4 @@
-using TheHossGame.Core.ProjectAggregate;
+﻿using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,9 +26,9 @@ public static class SeedData
   public static void Initialize(IServiceProvider serviceProvider)
   {
     using (var dbContext = new AppDbContext(
-        serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>(), null))
+        serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>(), default!))
     {
-      // Look for any TODO items.
+      // Look for any TO DO items.
       if (dbContext.ToDoItems.Any())
       {
         return;   // DB has been seeded

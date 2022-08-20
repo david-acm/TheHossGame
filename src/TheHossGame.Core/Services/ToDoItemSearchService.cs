@@ -1,4 +1,4 @@
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
@@ -28,9 +28,9 @@ public class ToDoItemSearchService : IToDoItemSearchService
     }
 
     var projectSpec = new ProjectByIdWithItemsSpec(projectId);
-    var project = await _repository.GetBySpecAsync(projectSpec);
+    var project = await _repository.FirstOrDefaultAsync(projectSpec);
 
-    // TODO: Optionally use Ardalis.GuardClauses Guard.Against.NotFound and catch
+    // TO DO: Optionally use Ardalis.GuardClauses Guard.Against.NotFound and catch
     if (project == null)
     {
       return Result<List<ToDoItem>>.NotFound();
@@ -45,7 +45,7 @@ public class ToDoItemSearchService : IToDoItemSearchService
     }
     catch (Exception ex)
     {
-      // TODO: Log details here
+      // TO DO: Log details here
       return Result<List<ToDoItem>>.Error(new[] { ex.Message });
     }
   }
@@ -53,7 +53,7 @@ public class ToDoItemSearchService : IToDoItemSearchService
   public async Task<Result<ToDoItem>> GetNextIncompleteItemAsync(int projectId)
   {
     var projectSpec = new ProjectByIdWithItemsSpec(projectId);
-    var project = await _repository.GetBySpecAsync(projectSpec);
+    var project = await _repository.FirstOrDefaultAsync(projectSpec);
     if (project == null)
     {
       return Result<ToDoItem>.NotFound();

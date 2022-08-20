@@ -1,4 +1,4 @@
-using Ardalis.ApiEndpoints;
+﻿using Ardalis.ApiEndpoints;
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
 using TheHossGame.SharedKernel.Interfaces;
@@ -30,7 +30,7 @@ public class GetById : EndpointBaseAsync
     CancellationToken cancellationToken = new())
   {
     var spec = new ProjectByIdWithItemsSpec(request.ProjectId);
-    var entity = await _repository.GetBySpecAsync(spec, cancellationToken);
+    var entity = await _repository.FirstOrDefaultAsync(spec, cancellationToken);
     if (entity == null)
     {
       return NotFound();

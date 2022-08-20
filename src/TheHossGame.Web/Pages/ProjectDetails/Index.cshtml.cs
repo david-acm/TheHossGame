@@ -1,4 +1,4 @@
-using TheHossGame.Core.ProjectAggregate;
+﻿using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
 using TheHossGame.SharedKernel.Interfaces;
 using TheHossGame.Web.ApiModels;
@@ -26,7 +26,7 @@ public class IndexModel : PageModel
   public async Task OnGetAsync()
   {
     var projectSpec = new ProjectByIdWithItemsSpec(ProjectId);
-    var project = await _repository.GetBySpecAsync(projectSpec);
+    var project = await _repository.FirstOrDefaultAsync(projectSpec);
     if (project == null)
     {
       Message = "No project found.";

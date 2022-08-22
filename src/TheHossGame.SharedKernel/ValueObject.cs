@@ -13,7 +13,7 @@ using System.Reflection;
 // source: https://github.com/jhewlett/ValueObject
 
 /// <summary>
-/// A base class to implement memberwise equality in value objects.
+/// A base class to implement member wise equality in value objects.
 /// </summary>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S4035:Classes implementing \"IEquatable<T>\" should be sealed", Justification = "This is the value base class. It is expected tha the equality comparison would be the same for all implementing classes.")]
 public abstract class ValueObject : IEquatable<ValueObject>
@@ -22,7 +22,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     private List<FieldInfo>? fields;
 
     /// <summary>
-    /// Value and memberwise equality comparison.
+    /// Value and member wise equality comparison.
     /// </summary>
     /// <param name="obj1">The first object to compare.</param>
     /// <param name="obj2">The second object to compare.</param>
@@ -43,7 +43,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     }
 
     /// <summary>
-    /// Value and memberwise unequality comparison.
+    /// Value and member wise inequality comparison.
     /// </summary>
     /// <param name="obj1">The first object to compare.</param>
     /// <param name="obj2">The second object to compare.</param>
@@ -64,7 +64,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     }
 
     /// <summary>
-    /// Memberwise equality check.
+    /// Member wise equality check.
     /// </summary>
     /// <param name="obj">The object to compare to.</param>
     /// <returns>Whether the other object is equal to this.</returns>
@@ -82,7 +82,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     /// <summary>
     /// Memberwise hash calculation.
     /// </summary>
-    /// <returns>The hashcode.</returns>
+    /// <returns>The hash code.</returns>
     public override int GetHashCode()
     {
         unchecked

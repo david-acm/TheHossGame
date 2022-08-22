@@ -1,7 +1,7 @@
 ﻿Write-Information -Message "ℹ Running pre-commit cspell check ..."
 
-$errors = (cspell "/tests/**/*" --no-progress --unique) -Split '\n'
-$errors += ((cspell "/src/**/*" --no-progress --unique) -Split '\n')
+$errors = (cspell "/tests/**/*" --no-progress --unique --config "./.Sln Items/code analysis/cspell.json") -Split '\n'
+$errors += ((cspell "/src/**/*" --no-progress --unique --config "./.Sln Items/code analysis/cspell.json") -Split '\n')
 
 if ($errors.length -gt 0) {
     Write-Error -Message "⛔ Ups! Spell errors found.

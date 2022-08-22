@@ -20,7 +20,7 @@ public class EmailSender : IEmailSender
         this.logger = logger;
     }
 
-    public async Task SendEmailAsync(string destinatary, string from, string subject, string body)
+    public async Task SendEmailAsync(string addressee, string from, string subject, string body)
     {
         using var emailClient = new SmtpClient("localhost");
         using var message = new MailMessage
@@ -30,7 +30,7 @@ public class EmailSender : IEmailSender
             Body = body,
         };
 
-        message.To.Add(new MailAddress(destinatary));
+        message.To.Add(new MailAddress(addressee));
         this.logger.LogWarning(string.Empty);
         await emailClient.SendMailAsync(message);
     }

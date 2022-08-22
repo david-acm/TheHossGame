@@ -4,7 +4,7 @@
   "dictionaryDefinitions": [
     {
       "name": "project-words",
-      "path": "./project-words.txt",
+      "path": "./.Sln Items/project-words.txt",
       "addWords": true
     }
   ],
@@ -13,15 +13,17 @@
   ],
   "ignorePaths": [
     "node_modules",
-    "/project-words.txt",
-    "bin",
-    "log*",
-    "obj",
+    ".Sln Items/project-words.txt",
+    "**/bin/**",
+    "**/log*",
+    "**/obj/**",
     "*.csproj",
     "local.settings.json",
-    "appsettings.json",
-    "dist",
-    "lib",
-    "*.sqlite"
+    "**/appsettings.json",
+    "**/dist/**",
+    "**/lib/**",
+    "**/*.sqlite",
+    "**/*.csproj",
+    ""
   ]
 }

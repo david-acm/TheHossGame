@@ -33,7 +33,7 @@ public class Delete : EndpointBaseAsync
     ]
     public override async Task<ActionResult> HandleAsync(
         [FromRoute] DeleteProjectRequest request,
-        CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = new ())
     {
         Guard.Against.Null(request);
         var aggregateToDelete = await this.repository.GetByIdAsync(request.ProjectId, cancellationToken);

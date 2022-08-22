@@ -16,7 +16,7 @@ using MediatR;
 public abstract class DomainEventBase : INotification
 {
     /// <summary>
-    /// Gets or sets the date the event ocurrend on in UTC.
+    /// Gets or sets the date the event ocurred on in UTC.
     /// </summary>
     public DateTime DateOccurred { get; protected set; } = DateTime.UtcNow;
 }

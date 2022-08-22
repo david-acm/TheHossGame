@@ -26,7 +26,7 @@ public abstract class BaseEfRepoTestFixture : IDisposable
     this.dbContext = new AppDbContext(options, mockEventDispatcher.Object);
   }
 
-  protected EfRepository<Project> Repository => new(this.DbContext);
+  protected EfRepository<Project> Repository => new (this.DbContext);
 
   protected AppDbContext DbContext => this.dbContext;
 

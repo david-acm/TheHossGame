@@ -9,7 +9,7 @@
 namespace TheHossGame.SharedKernel.Interfaces;
 
 /// <summary>
-/// Dispathces domain events.
+/// Dispatches domain events.
 /// </summary>
 public interface IDomainEventDispatcher
 {

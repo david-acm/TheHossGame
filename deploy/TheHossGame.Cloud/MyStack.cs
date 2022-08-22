@@ -1,55 +1,64 @@
-using Pulumi;
-using Pulumi.AzureNative.Resources;
-using Pulumi.AzureNative.Web;
-using Pulumi.AzureNative.Web.Inputs;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="MyStack.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
-class MyStack : Stack
+namespace TheHossGame.Cloud
 {
-  private const string WebAppName = "todo-list";
+  using Pulumi;
+  using Pulumi.AzureNative.Resources;
+  using Pulumi.AzureNative.Web;
+  using Pulumi.AzureNative.Web.Inputs;
 
-  public MyStack()
+  internal class MyStack : Stack
   {
-    // Create an Azure Resource Group
-    var resourceGroup = new ResourceGroup("resourceGroup");
+    private const string WebAppName = "todo-list";
 
-    var appServicePlan = new AppServicePlan("asp", new AppServicePlanArgs
+    public MyStack()
     {
-      ResourceGroupName = resourceGroup.Name,
-      Kind = "App",
-      Sku = new SkuDescriptionArgs
+      // Create an Azure Resource Group
+      var resourceGroup = new ResourceGroup("resourceGroup");
+
+      var appServicePlan = new AppServicePlan("asp", new AppServicePlanArgs
       {
-        Capacity = 1,
-        Family = "P",
-        Name = "P1",
-        Size = "P1",
-        Tier = "Premium"
-      }
-    });
+        ResourceGroupName = resourceGroup.Name,
+        Kind = "App",
+        Sku = new SkuDescriptionArgs
+        {
+          Capacity = 1,
+          Family = "P",
+          Name = "P1",
+          Size = "P1",
+          Tier = "Premium",
+        },
+      });
 
-    var webApp = new WebApp(WebAppName, new WebAppArgs
+      var webApp = new WebApp(WebAppName, new WebAppArgs
+      {
+        ResourceGroupName = resourceGroup.Name,
+        Location = appServicePlan.Location,
+        ServerFarmId = appServicePlan.Id,
+        HttpsOnly = true,
+      });
+
+      this.PublishingUserName = GetWebAppPublishingKeys(resourceGroup, webApp);
+      this.ResourceGroupName = resourceGroup.Name.Apply(resource => resource);
+    }
+
+    [Output]
+    public Output<string> PublishingUserName { get; set; }
+
+    [Output]
+    public Output<string> ResourceGroupName { get; set; }
+
+    private static Output<string> GetWebAppPublishingKeys(ResourceGroup resourceGroup, WebApp webApp)
     {
-      ResourceGroupName = resourceGroup.Name,
-      Location = appServicePlan.Location,
-      ServerFarmId = appServicePlan.Id,
-      HttpsOnly = true
-    });
-
-    this.PublishingUserName = GetWebAppPublishingKeys(resourceGroup, webApp);
-    this.ResourceGroupName = resourceGroup.Name.Apply(resource => resource);
-  }
-
-  [Output]
-  public Output<string> PublishingUserName { get; set; }
-
-  [Output]
-  public Output<string> ResourceGroupName { get; set; }
-
-  private static Output<string> GetWebAppPublishingKeys(ResourceGroup resourceGroup, WebApp webApp)
-  {
-    return ListWebAppPublishingCredentials.Invoke(new ListWebAppPublishingCredentialsInvokeArgs
-    {
-      ResourceGroupName = resourceGroup.Name,
-      Name = webApp.Name
-    }).Apply(webApp => webApp.PublishingUserName);
+      return ListWebAppPublishingCredentials.Invoke(new ListWebAppPublishingCredentialsInvokeArgs
+      {
+        ResourceGroupName = resourceGroup.Name,
+        Name = webApp.Name,
+      }).Apply(webApp => webApp.PublishingUserName);
+    }
   }
 }

@@ -31,7 +31,7 @@ public class List : EndpointBaseAsync
         Tags = new[] { "ProjectEndpoints" })
     ]
     public override async Task<ActionResult<ProjectListResponse>> HandleAsync(
-      CancellationToken cancellationToken = new())
+      CancellationToken cancellationToken = new ())
     {
         var projects = await this.repository.ListAsync(cancellationToken);
         var response = new ProjectListResponse(projects

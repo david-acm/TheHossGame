@@ -33,7 +33,7 @@ public class UpdateEndpoint : EndpointBaseAsync
     ]
     public override async Task<ActionResult<UpdateProjectResponse>> HandleAsync(
         UpdateProjectRequest request,
-        CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = new ())
     {
         Guard.Against.Null(request);
         if (request.Name == null)

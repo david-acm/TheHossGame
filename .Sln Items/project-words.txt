@@ -20,3 +20,6 @@ Pluralsight
 stylesheet
 toggleable
 jquery
+inheritdoc
+cref
+typeparam

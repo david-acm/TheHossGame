@@ -17,7 +17,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 /// </summary>
 public abstract class EntityBase
 {
-    private readonly List<DomainEventBase> domainEvents = new();
+    private readonly List<DomainEventBase> domainEvents = new ();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EntityBase"/> class.

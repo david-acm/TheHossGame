@@ -1,1 +1,1 @@
-git config core.hooksPath scripts\.githooks
+git config core.hooksPath '.Sln Items/scripts/.githooks'

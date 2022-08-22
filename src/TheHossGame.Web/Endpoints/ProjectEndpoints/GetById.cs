@@ -34,7 +34,7 @@ public class GetById : EndpointBaseAsync
     ]
     public override async Task<ActionResult<GetProjectByIdResponse>> HandleAsync(
       [FromRoute] GetProjectByIdRequest request,
-      CancellationToken cancellationToken = new())
+      CancellationToken cancellationToken = new ())
     {
         Guard.Against.Null(request);
         var spec = new ProjectByIdWithItemsSpec(request.ProjectId);

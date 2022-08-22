@@ -1,7 +1,13 @@
-using TheHossGame.Core.ProjectAggregate.Events;
-using Xunit;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ToDoItemMarkComplete.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.UnitTests.Core.ProjectAggregate;
+
+using TheHossGame.Core.ProjectAggregate.Events;
+using Xunit;
 
 public class ToDoItemMarkComplete
 {
@@ -10,7 +16,7 @@ public class ToDoItemMarkComplete
   {
     var item = new ToDoItemBuilder()
         .WithDefaultValues()
-        .Description("")
+        .Description(string.Empty)
         .Build();
 
     item.MarkComplete();

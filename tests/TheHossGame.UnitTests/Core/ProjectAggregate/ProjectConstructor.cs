@@ -1,48 +1,54 @@
-using TheHossGame.Core.ProjectAggregate;
-using Xunit;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ProjectConstructor.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.UnitTests.Core.ProjectAggregate;
 
+using TheHossGame.Core.ProjectAggregate;
+using Xunit;
+
 public class ProjectConstructor
 {
-  private string _testName = "test name";
-  private PriorityStatus _testPriority = PriorityStatus.Backlog;
-  private Project? _testProject;
+    private readonly string testName = "test name";
+    private readonly PriorityStatus testPriority = PriorityStatus.Backlog;
+    private Project? testProject;
 
-  private Project CreateProject()
-  {
-    return new Project(_testName, _testPriority);
-  }
+    [Fact]
+    public void InitializesName()
+    {
+        this.testProject = this.CreateProject();
 
-  [Fact]
-  public void InitializesName()
-  {
-    _testProject = CreateProject();
+        Assert.Equal(this.testName, this.testProject.Name);
+    }
 
-    Assert.Equal(_testName, _testProject.Name);
-  }
+    [Fact]
+    public void InitializesPriority()
+    {
+        this.testProject = this.CreateProject();
 
-  [Fact]
-  public void InitializesPriority()
-  {
-    _testProject = CreateProject();
+        Assert.Equal(this.testPriority, this.testProject.Priority);
+    }
 
-    Assert.Equal(_testPriority, _testProject.Priority);
-  }
+    [Fact]
+    public void InitializesTaskListToEmptyList()
+    {
+        this.testProject = this.CreateProject();
 
-  [Fact]
-  public void InitializesTaskListToEmptyList()
-  {
-    _testProject = CreateProject();
+        Assert.NotNull(this.testProject.Items);
+    }
 
-    Assert.NotNull(_testProject.Items);
-  }
+    [Fact]
+    public void InitializesStatusToInProgress()
+    {
+        this.testProject = this.CreateProject();
 
-  [Fact]
-  public void InitializesStatusToInProgress()
-  {
-    _testProject = CreateProject();
+        Assert.Equal(ProjectStatus.Complete, this.testProject.Status);
+    }
 
-    Assert.Equal(ProjectStatus.Complete, _testProject.Status);
-  }
+    private Project CreateProject()
+    {
+        return new Project(this.testName, this.testPriority);
+    }
 }

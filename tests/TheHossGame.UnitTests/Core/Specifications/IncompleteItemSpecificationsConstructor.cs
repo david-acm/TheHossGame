@@ -1,8 +1,14 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="IncompleteItemSpecificationsConstructor.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.UnitTests.Core.Specifications;
+
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
 using Xunit;
-
-namespace TheHossGame.UnitTests.Core.Specifications;
 
 public class IncompleteItemsSpecificationConstructor
 {

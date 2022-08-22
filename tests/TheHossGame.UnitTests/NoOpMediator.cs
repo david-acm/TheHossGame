@@ -1,7 +1,13 @@
-﻿using System.Runtime.CompilerServices;
-using MediatR;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="NoOpMediator.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.UnitTests;
+
+using System.Runtime.CompilerServices;
+using MediatR;
 
 public class NoOpMediator : IMediator
 {
@@ -10,7 +16,8 @@ public class NoOpMediator : IMediator
     return Task.CompletedTask;
   }
 
-  public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
+  public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
+    where TNotification : INotification
   {
     return Task.CompletedTask;
   }
@@ -25,15 +32,17 @@ public class NoOpMediator : IMediator
     return Task.FromResult<object?>(default);
   }
 
-  public async IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequest<TResponse> request,
-    [EnumeratorCancellation] CancellationToken cancellationToken = default)
+  public async IAsyncEnumerable<TResponse> CreateStream<TResponse>(
+      IStreamRequest<TResponse> request,
+      [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {
     await Task.CompletedTask;
     yield break;
   }
 
-  public async IAsyncEnumerable<object?> CreateStream(object request,
-    [EnumeratorCancellation] CancellationToken cancellationToken = default)
+  public async IAsyncEnumerable<object?> CreateStream(
+      object request,
+      [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {
     await Task.CompletedTask;
     yield break;

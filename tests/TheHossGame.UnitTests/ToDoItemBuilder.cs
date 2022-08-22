@@ -1,37 +1,43 @@
-﻿using TheHossGame.Core.ProjectAggregate;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ToDoItemBuilder.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.UnitTests;
+
+using TheHossGame.Core.ProjectAggregate;
 
 // Learn more about test builders:
 // https://ardalis.com/improve-tests-with-the-builder-pattern-for-test-data
 public class ToDoItemBuilder
 {
-  private ToDoItem _todo = new ToDoItem();
+  private ToDoItem todo = new ToDoItem();
 
   public ToDoItemBuilder Id(int id)
   {
-    _todo = new ToDoItem(id);
+    this.todo = new ToDoItem(id);
     return this;
   }
 
   public ToDoItemBuilder Title(string title)
   {
-    _todo.Title = title;
+    this.todo.Title = title;
     return this;
   }
 
   public ToDoItemBuilder Description(string description)
   {
-    _todo.Description = description;
+    this.todo.Description = description;
     return this;
   }
 
   public ToDoItemBuilder WithDefaultValues()
   {
-    _todo = new ToDoItem(1) { Title = "Test Item", Description = "Test Description" };
+    this.todo = new ToDoItem(1) { Title = "Test Item", Description = "Test Description" };
 
     return this;
   }
 
-  public ToDoItem Build() => _todo;
+  public ToDoItem Build() => this.todo;
 }

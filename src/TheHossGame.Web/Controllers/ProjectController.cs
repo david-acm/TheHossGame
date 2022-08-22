@@ -1,40 +1,45 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ProjectController.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.Web.Controllers;
+
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
 using TheHossGame.SharedKernel.Interfaces;
 using TheHossGame.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace TheHossGame.Web.Controllers;
-
 [Route("[controller]")]
 public class ProjectController : Controller
 {
-  private readonly IRepository<Project> _projectRepository;
+    private readonly IRepository<Project> projectRepository;
 
-  public ProjectController(IRepository<Project> projectRepository)
-  {
-    _projectRepository = projectRepository;
-  }
-
-  // GET project/{projectId?}
-  [HttpGet("{projectId:int}")]
-  public async Task<IActionResult> Index(int projectId = 1)
-  {
-    var spec = new ProjectByIdWithItemsSpec(projectId);
-    var project = await _projectRepository.GetBySpecAsync(spec);
-    if (project == null)
+    public ProjectController(IRepository<Project> projectRepository)
     {
-      return NotFound();
+        this.projectRepository = projectRepository;
     }
 
-    var dto = new ProjectViewModel
+    // GET project/{projectId?}
+    [HttpGet("{projectId:int}")]
+    public async Task<IActionResult> Index(int projectId = 1)
     {
-      Id = project.Id,
-      Name = project.Name,
-      Items = project.Items
-                    .Select(item => ToDoItemViewModel.FromToDoItem(item))
-                    .ToList()
-    };
-    return View(dto);
-  }
+        var spec = new ProjectByIdWithItemsSpec(projectId);
+        var project = await this.projectRepository.FirstOrDefaultAsync(spec);
+        if (project == null)
+        {
+            return this.NotFound();
+        }
+
+        var dto = new ProjectViewModel(project.Items
+                        .Select(item => ToDoItemViewModel.FromToDoItem(item))
+                        .ToList())
+        {
+            Id = project.Id,
+            Name = project.Name,
+        };
+        return this.View(dto);
+    }
 }

@@ -1,13 +1,19 @@
-using TheHossGame.SharedKernel;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ToDoItemCompletedEvent.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.Core.ProjectAggregate.Events;
 
+using TheHossGame.SharedKernel;
+
 public class ToDoItemCompletedEvent : DomainEventBase
 {
-  public ToDoItem CompletedItem { get; set; }
-
   public ToDoItemCompletedEvent(ToDoItem completedItem)
   {
-    CompletedItem = completedItem;
+    this.CompletedItem = completedItem;
   }
+
+  public ToDoItem CompletedItem { get; set; }
 }

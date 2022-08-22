@@ -1,25 +1,36 @@
-using System.ComponentModel.DataAnnotations;
-using TheHossGame.Core.ProjectAggregate;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ToDoItemDTO.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.Web.ApiModels;
 
-// ApiModel DTOs are used by ApiController classes and are typically kept in a side-by-side folder
-public class ToDoItemDTO
-{
-  public int Id { get; set; }
-  [Required]
-  public string? Title { get; set; }
-  public string? Description { get; set; }
-  public bool IsDone { get; private set; }
+using Ardalis.GuardClauses;
+using System.ComponentModel.DataAnnotations;
+using TheHossGame.Core.ProjectAggregate;
 
-  public static ToDoItemDTO FromToDoItem(ToDoItem item)
-  {
-    return new ToDoItemDTO()
+// ApiModel DTOs are used by ApiController classes and are typically kept in a side-by-side folder
+public class ToDoItemDto
+{
+    public int Id { get; set; }
+
+    [Required]
+    public string? Title { get; set; }
+
+    public string? Description { get; set; }
+
+    public bool IsDone { get; private set; }
+
+    public static ToDoItemDto FromToDoItem(ToDoItem item)
     {
-      Id = item.Id,
-      Title = item.Title,
-      Description = item.Description,
-      IsDone = item.IsDone
-    };
-  }
+        Guard.Against.Null(item);
+        return new ToDoItemDto()
+        {
+            Id = item.Id,
+            Title = item.Title,
+            Description = item.Description,
+            IsDone = item.IsDone,
+        };
+    }
 }

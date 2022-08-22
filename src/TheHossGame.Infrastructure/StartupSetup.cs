@@ -1,8 +1,14 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="StartupSetup.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.Infrastructure;
+
 using TheHossGame.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-
-namespace TheHossGame.Infrastructure;
 
 public static class StartupSetup
 {

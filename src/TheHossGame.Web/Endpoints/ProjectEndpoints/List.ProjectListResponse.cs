@@ -1,7 +1,21 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="List.ProjectListResponse.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.Web.Endpoints.ProjectEndpoints;
 
+using System.Collections;
+
 public class ProjectListResponse
 {
-  public List<ProjectRecord> Projects { get; set; } = new();
+    private readonly List<ProjectRecord> projects;
+
+    public ProjectListResponse(IList<ProjectRecord> projects)
+    {
+        this.projects = projects.ToList();
+    }
+
+    public IReadOnlyList<ProjectRecord> Projects => this.projects.AsReadOnly();
 }

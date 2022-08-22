@@ -1,16 +1,25 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="GetById.GetProjectByIdResponse.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.Web.Endpoints.ProjectEndpoints;
 
 public class GetProjectByIdResponse
 {
-  public GetProjectByIdResponse(int id, string name, List<ToDoItemRecord> items)
-  {
-    Id = id;
-    Name = name;
-    Items = items;
-  }
+    private readonly List<ToDoItemRecord> items;
 
-  public int Id { get; set; }
-  public string Name { get; set; }
-  public List<ToDoItemRecord> Items { get; set; } = new();
+    public GetProjectByIdResponse(int id, string name, IList<ToDoItemRecord> items)
+    {
+        this.Id = id;
+        this.Name = name;
+        this.items = items.ToList();
+    }
+
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+
+    public IReadOnlyList<ToDoItemRecord> Items => this.items.AsReadOnly();
 }

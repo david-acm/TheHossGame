@@ -1,3 +1,11 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="DefaultInfrastructureModule.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.Infrastructure;
+
 using System.Reflection;
 using Autofac;
 using TheHossGame.Core.Interfaces;
@@ -9,100 +17,98 @@ using MediatR;
 using MediatR.Pipeline;
 using Module = Autofac.Module;
 
-namespace TheHossGame.Infrastructure;
-
 public class DefaultInfrastructureModule : Module
 {
-  private readonly bool _isDevelopment = false;
-  private readonly List<Assembly> _assemblies = new List<Assembly>();
+    private readonly bool isDevelopment;
+    private readonly List<Assembly> assemblies = new List<Assembly>();
 
-  public DefaultInfrastructureModule(bool isDevelopment, Assembly? callingAssembly = null)
-  {
-    _isDevelopment = isDevelopment;
-    var coreAssembly =
-      Assembly.GetAssembly(typeof(Project)); // TODO: Replace "Project" with any type from your Core project
-    var infrastructureAssembly = Assembly.GetAssembly(typeof(StartupSetup));
-    if (coreAssembly != null)
+    public DefaultInfrastructureModule(bool isDevelopment, Assembly? callingAssembly = null)
     {
-      _assemblies.Add(coreAssembly);
+        this.isDevelopment = isDevelopment;
+        var coreAssembly =
+          Assembly.GetAssembly(typeof(Project)); // TO DO: Replace "Project" with any type from your Core project
+        var infrastructureAssembly = Assembly.GetAssembly(typeof(StartupSetup));
+        if (coreAssembly != null)
+        {
+            this.assemblies.Add(coreAssembly);
+        }
+
+        if (infrastructureAssembly != null)
+        {
+            this.assemblies.Add(infrastructureAssembly);
+        }
+
+        if (callingAssembly != null)
+        {
+            this.assemblies.Add(callingAssembly);
+        }
     }
 
-    if (infrastructureAssembly != null)
+    protected override void Load(ContainerBuilder builder)
     {
-      _assemblies.Add(infrastructureAssembly);
+        if (this.isDevelopment)
+        {
+            RegisterDevelopmentOnlyDependencies(builder);
+        }
+        else
+        {
+            RegisterProductionOnlyDependencies(builder);
+        }
+
+        this.RegisterCommonDependencies(builder);
     }
 
-    if (callingAssembly != null)
+    private static void RegisterDevelopmentOnlyDependencies(ContainerBuilder builder)
     {
-      _assemblies.Add(callingAssembly);
-    }
-  }
-
-  protected override void Load(ContainerBuilder builder)
-  {
-    if (_isDevelopment)
-    {
-      RegisterDevelopmentOnlyDependencies(builder);
-    }
-    else
-    {
-      RegisterProductionOnlyDependencies(builder);
+        // NOTE: Add any development only services here
     }
 
-    RegisterCommonDependencies(builder);
-  }
-
-  private void RegisterCommonDependencies(ContainerBuilder builder)
-  {
-    builder.RegisterGeneric(typeof(EfRepository<>))
-      .As(typeof(IRepository<>))
-      .As(typeof(IReadRepository<>))
-      .InstancePerLifetimeScope();
-
-    builder
-      .RegisterType<Mediator>()
-      .As<IMediator>()
-      .InstancePerLifetimeScope();
-
-    builder
-      .RegisterType<DomainEventDispatcher>()
-      .As<IDomainEventDispatcher>()
-      .InstancePerLifetimeScope();
-
-    builder.Register<ServiceFactory>(context =>
+    private static void RegisterProductionOnlyDependencies(ContainerBuilder builder)
     {
-      var c = context.Resolve<IComponentContext>();
-
-      return t => c.Resolve(t);
-    });
-
-    var mediatrOpenTypes = new[]
-    {
-      typeof(IRequestHandler<,>), 
-      typeof(IRequestExceptionHandler<,,>), 
-      typeof(IRequestExceptionAction<,>),
-      typeof(INotificationHandler<>),
-    };
-
-    foreach (var mediatrOpenType in mediatrOpenTypes)
-    {
-      builder
-        .RegisterAssemblyTypes(_assemblies.ToArray())
-        .AsClosedTypesOf(mediatrOpenType)
-        .AsImplementedInterfaces();
+        // NOTE: Add any production only services here
     }
 
-    builder.RegisterType<EmailSender>().As<IEmailSender>()
-      .InstancePerLifetimeScope();
-  }
+    private void RegisterCommonDependencies(ContainerBuilder builder)
+    {
+        builder.RegisterGeneric(typeof(EfRepository<>))
+          .As(typeof(IRepository<>))
+          .As(typeof(IReadRepository<>))
+          .InstancePerLifetimeScope();
 
-  private void RegisterDevelopmentOnlyDependencies(ContainerBuilder builder)
-  {
-    // NOTE: Add any development only services here
-  }
+        builder
+          .RegisterType<Mediator>()
+          .As<IMediator>()
+          .InstancePerLifetimeScope();
 
-  private void RegisterProductionOnlyDependencies(ContainerBuilder builder)
-  {
-    // NOTE: Add any production only services here
-  }
+        builder
+          .RegisterType<DomainEventDispatcher>()
+          .As<IDomainEventDispatcher>()
+          .InstancePerLifetimeScope();
+
+        builder.Register<ServiceFactory>(context =>
+        {
+            var c = context.Resolve<IComponentContext>();
+
+            return t => c.Resolve(t);
+        });
+
+        var mediatrOpenTypes = new[]
+        {
+          typeof(IRequestHandler<,>),
+          typeof(IRequestExceptionHandler<,,>),
+          typeof(IRequestExceptionAction<,>),
+          typeof(INotificationHandler<>),
+        };
+
+        foreach (var mediatrOpenType in mediatrOpenTypes)
+        {
+            builder
+              .RegisterAssemblyTypes(this.assemblies.ToArray())
+              .AsClosedTypesOf(mediatrOpenType)
+              .AsImplementedInterfaces();
+        }
+
+        builder.RegisterType<EmailSender>().As<IEmailSender>()
+          .InstancePerLifetimeScope();
+    }
 }

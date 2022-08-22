@@ -1,8 +1,14 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="DefaultCoreModule.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.Core;
+
 using Autofac;
 using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.Services;
-
-namespace TheHossGame.Core;
 
 public class DefaultCoreModule : Module
 {

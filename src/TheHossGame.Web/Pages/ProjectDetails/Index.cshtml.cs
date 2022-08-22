@@ -1,46 +1,50 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="Index.cshtml.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.Web.Pages.ProjectDetails;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
 using TheHossGame.SharedKernel.Interfaces;
 using TheHossGame.Web.ApiModels;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-
-namespace TheHossGame.Web.Pages.ProjectDetails;
 
 public class IndexModel : PageModel
 {
-  private readonly IRepository<Project> _repository;
+    private readonly IRepository<Project> repository;
 
-  [BindProperty(SupportsGet = true)]
-  public int ProjectId { get; set; }
-
-  public string Message { get; set; } = "";
-
-  public ProjectDTO? Project { get; set; }
-
-  public IndexModel(IRepository<Project> repository)
-  {
-    _repository = repository;
-  }
-
-  public async Task OnGetAsync()
-  {
-    var projectSpec = new ProjectByIdWithItemsSpec(ProjectId);
-    var project = await _repository.GetBySpecAsync(projectSpec);
-    if (project == null)
+    public IndexModel(IRepository<Project> repository)
     {
-      Message = "No project found.";
-
-      return;
+        this.repository = repository;
     }
 
-    Project = new ProjectDTO
-    (
-        id: project.Id,
-        name: project.Name,
-        items: project.Items
-        .Select(item => ToDoItemDTO.FromToDoItem(item))
-        .ToList()
-    );
-  }
+    [BindProperty(SupportsGet = true)]
+    public int ProjectId { get; set; }
+
+    public string Message { get; set; } = string.Empty;
+
+    public ProjectDto? Project { get; set; }
+
+    public async Task OnGetAsync()
+    {
+        var projectSpec = new ProjectByIdWithItemsSpec(this.ProjectId);
+        var project = await this.repository.FirstOrDefaultAsync(projectSpec);
+        if (project == null)
+        {
+            this.Message = "No project found.";
+
+            return;
+        }
+
+        this.Project = new ProjectDto(
+            id: project.Id,
+            name: project.Name,
+            items: project.Items
+            .Select(item => ToDoItemDto.FromToDoItem(item))
+            .ToList());
+    }
 }

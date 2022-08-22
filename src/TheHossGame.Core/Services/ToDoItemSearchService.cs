@@ -1,18 +1,24 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ToDoItemSearchService.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.Core.Services;
+
 using Ardalis.Result;
 using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
 using TheHossGame.SharedKernel.Interfaces;
 
-namespace TheHossGame.Core.Services;
-
 public class ToDoItemSearchService : IToDoItemSearchService
 {
-  private readonly IRepository<Project> _repository;
+  private readonly IRepository<Project> repository;
 
   public ToDoItemSearchService(IRepository<Project> repository)
   {
-    _repository = repository;
+    this.repository = repository;
   }
 
   public async Task<Result<List<ToDoItem>>> GetAllIncompleteItemsAsync(int projectId, string searchString)
@@ -21,16 +27,16 @@ public class ToDoItemSearchService : IToDoItemSearchService
     {
       var errors = new List<ValidationError>
       {
-        new() { Identifier = nameof(searchString), ErrorMessage = $"{nameof(searchString)} is required." }
+        new () { Identifier = nameof(searchString), ErrorMessage = $"{nameof(searchString)} is required." },
       };
 
       return Result<List<ToDoItem>>.Invalid(errors);
     }
 
     var projectSpec = new ProjectByIdWithItemsSpec(projectId);
-    var project = await _repository.GetBySpecAsync(projectSpec);
+    var project = await this.repository.FirstOrDefaultAsync(projectSpec);
 
-    // TODO: Optionally use Ardalis.GuardClauses Guard.Against.NotFound and catch
+    // TO DO: Optionally use Ardalis.GuardClauses Guard.Against.NotFound and catch
     if (project == null)
     {
       return Result<List<ToDoItem>>.NotFound();
@@ -43,9 +49,9 @@ public class ToDoItemSearchService : IToDoItemSearchService
 
       return new Result<List<ToDoItem>>(items);
     }
-    catch (Exception ex)
+    catch (InvalidOperationException ex)
     {
-      // TODO: Log details here
+      // TO DO: Log details here
       return Result<List<ToDoItem>>.Error(new[] { ex.Message });
     }
   }
@@ -53,7 +59,7 @@ public class ToDoItemSearchService : IToDoItemSearchService
   public async Task<Result<ToDoItem>> GetNextIncompleteItemAsync(int projectId)
   {
     var projectSpec = new ProjectByIdWithItemsSpec(projectId);
-    var project = await _repository.GetBySpecAsync(projectSpec);
+    var project = await this.repository.FirstOrDefaultAsync(projectSpec);
     if (project == null)
     {
       return Result<ToDoItem>.NotFound();

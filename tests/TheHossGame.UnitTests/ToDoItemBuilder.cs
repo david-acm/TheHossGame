@@ -1,4 +1,4 @@
-using TheHossGame.Core.ProjectAggregate;
+﻿using TheHossGame.Core.ProjectAggregate;
 
 namespace TheHossGame.UnitTests;
 
@@ -10,7 +10,7 @@ public class ToDoItemBuilder
 
   public ToDoItemBuilder Id(int id)
   {
-    _todo.Id = id;
+    _todo = new ToDoItem(id);
     return this;
   }
 
@@ -28,7 +28,7 @@ public class ToDoItemBuilder
 
   public ToDoItemBuilder WithDefaultValues()
   {
-    _todo = new ToDoItem() { Id = 1, Title = "Test Item", Description = "Test Description" };
+    _todo = new ToDoItem(1) { Title = "Test Item", Description = "Test Description" };
 
     return this;
   }

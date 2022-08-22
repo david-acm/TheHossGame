@@ -1,8 +1,14 @@
-﻿using System.Diagnostics;
-using TheHossGame.Web.ViewModels;
-using Microsoft.AspNetCore.Mvc;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="HomeController.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.Web.Controllers;
+
+using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using TheHossGame.Web.ViewModels;
 
 /// <summary>
 /// A sample MVC controller that uses views.
@@ -12,11 +18,11 @@ namespace TheHossGame.Web.Controllers;
 /// </summary>
 public class HomeController : Controller
 {
-  public IActionResult Index()
-  {
-    return View();
-  }
+    public IActionResult Index()
+    {
+        return this.View();
+    }
 
-  [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-  public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error() => this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
 }

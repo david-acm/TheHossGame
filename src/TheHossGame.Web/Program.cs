@@ -1,12 +1,20 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="Program.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
 using Ardalis.ListStartupServices;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
+using Serilog;
 using TheHossGame.Core;
 using TheHossGame.Infrastructure;
 using TheHossGame.Infrastructure.Data;
+using TheHossGame.Infrastructure.Logging;
 using TheHossGame.Web;
-using Microsoft.OpenApi.Models;
-using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +24,11 @@ builder.Host.UseSerilog((_, config) => config.ReadFrom.Configuration(builder.Con
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
-  options.CheckConsentNeeded = context => true;
-  options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
-string connectionString = builder.Configuration.GetConnectionString("SqliteConnection");  //Configuration.GetConnectionString("DefaultConnection");
+string connectionString = builder.Configuration.GetConnectionString("SqliteConnection");
 
 builder.Services.AddDbContext(connectionString);
 
@@ -29,40 +37,38 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddSwaggerGen(c =>
 {
-  c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-  c.EnableAnnotations();
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    c.EnableAnnotations();
 });
 
 // add list services for diagnostic purposes - see https://github.com/ardalis/AspNetCoreStartupServices
 builder.Services.Configure<ServiceConfig>(config =>
 {
-  config.Services = new List<ServiceDescriptor>(builder.Services);
+    config.Services = new List<ServiceDescriptor>(builder.Services);
 
-  // optional - default path to view services is /listallservices - recommended to choose your own path
-  config.Path = "/listservices";
+    // optional - default path to view services is /listallservices - recommended to choose your own path
+    config.Path = "/listservices";
 });
-
 
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
-  containerBuilder.RegisterModule(new DefaultCoreModule());
-  containerBuilder.RegisterModule(new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development"));
+    containerBuilder.RegisterModule(new DefaultCoreModule());
+    containerBuilder.RegisterModule(new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development"));
 });
-
-//builder.Logging.AddAzureWebAppDiagnostics(); add this if deploying to Azure
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-  app.UseDeveloperExceptionPage();
-  app.UseShowAllServicesMiddleware();
+    app.UseDeveloperExceptionPage();
+    app.UseShowAllServicesMiddleware();
 }
 else
 {
-  app.UseExceptionHandler("/Home/Error");
-  app.UseHsts();
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
+
 app.UseRouting();
 
 app.UseHttpsRedirection();
@@ -77,27 +83,32 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1")
 
 app.UseEndpoints(endpoints =>
 {
-  endpoints.MapDefaultControllerRoute();
-  endpoints.MapRazorPages();
+    endpoints.MapDefaultControllerRoute();
+    endpoints.MapRazorPages();
 });
 
 // Seed Database
 using (var scope = app.Services.CreateScope())
 {
-  var services = scope.ServiceProvider;
+    var services = scope.ServiceProvider;
 
-  try
-  {
-    var context = services.GetRequiredService<AppDbContext>();
-    //                    context.Database.Migrate();
-    context.Database.EnsureCreated();
-    SeedData.Initialize(services);
-  }
-  catch (Exception ex)
-  {
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred seeding the DB. {exceptionMessage}", ex.Message);
-  }
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.EnsureCreated();
+        SeedData.Initialize(services);
+    }
+    catch (InvalidOperationException ex)
+    {
+        var logger = services.GetRequiredService<ILogger>();
+        logger.LogError($"An error occurred seeding the DB. {ex.Message}");
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger>();
+        logger.LogError($"An error occurred seeding the DB. {ex.Message}");
+        throw;
+    }
 }
 
 app.Run();

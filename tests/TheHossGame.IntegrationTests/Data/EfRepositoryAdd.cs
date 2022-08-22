@@ -1,7 +1,13 @@
-using TheHossGame.Core.ProjectAggregate;
-using Xunit;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="EfRepositoryAdd.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.IntegrationTests.Data;
+
+using TheHossGame.Core.ProjectAggregate;
+using Xunit;
 
 public class EfRepositoryAdd : BaseEfRepoTestFixture
 {
@@ -10,7 +16,7 @@ public class EfRepositoryAdd : BaseEfRepoTestFixture
   {
     var testProjectName = "testProject";
     var testProjectStatus = PriorityStatus.Backlog;
-    var repository = GetRepository();
+    var repository = this.Repository;
     var project = new Project(testProjectName, testProjectStatus);
 
     await repository.AddAsync(project);

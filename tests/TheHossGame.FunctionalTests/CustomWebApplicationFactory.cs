@@ -1,27 +1,30 @@
-using TheHossGame.Infrastructure.Data;
-using TheHossGame.UnitTests;
-using TheHossGame.Web;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="CustomWebApplicationFactory.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.FunctionalTests;
+
+using Ardalis.GuardClauses;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TheHossGame.Infrastructure.Data;
+using TheHossGame.Infrastructure.Logging;
+using TheHossGame.UnitTests;
+using TheHossGame.Web;
 
-namespace TheHossGame.FunctionalTests;
-
-public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
+public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>
+  where TStartup : class
 {
-  /// <summary>
-  /// Overriding CreateHost to avoid creating a separate ServiceProvider per this thread:
-  /// https://github.com/dotnet-architecture/eShopOnWeb/issues/465
-  /// </summary>
-  /// <param name="builder"></param>
-  /// <returns></returns>
   protected override IHost CreateHost(IHostBuilder builder)
   {
+    Guard.Against.Null(builder);
     var host = builder.Build();
     host.Start();
 
@@ -43,17 +46,12 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
 
       try
       {
-        // Can also skip creating the items
-        //if (!db.ToDoItems.Any())
-        //{
-        // Seed the database with test data.
-          SeedData.PopulateTestData(db);
-        //}
+        SeedData.PopulateTestData(db);
       }
       catch (Exception ex)
       {
-        logger.LogError(ex, "An error occurred seeding the " +
-                            "database with test messages. Error: {exceptionMessage}", ex.Message);
+        logger.LogError($"An error occurred seeding the database with test messages. Error: {ex.Message}");
+        throw;
       }
     }
 
@@ -62,27 +60,28 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
 
   protected override void ConfigureWebHost(IWebHostBuilder builder)
   {
+    Guard.Against.Null(builder);
     builder
         .ConfigureServices(services =>
         {
-              // Remove the app's ApplicationDbContext registration.
-              var descriptor = services.SingleOrDefault(
-              d => d.ServiceType ==
-                  typeof(DbContextOptions<AppDbContext>));
+          // Remove the app's ApplicationDbContext registration.
+          var descriptor = services.SingleOrDefault(
+          d => d.ServiceType ==
+              typeof(DbContextOptions<AppDbContext>));
 
           if (descriptor != null)
           {
             services.Remove(descriptor);
           }
 
-              // This should be set for each individual test run
-              string inMemoryCollectionName = Guid.NewGuid().ToString();
+          // This should be set for each individual test run
+          string inMemoryCollectionName = Guid.NewGuid().ToString();
 
-              // Add ApplicationDbContext using an in-memory database for testing.
-              services.AddDbContext<AppDbContext>(options =>
-          {
-          options.UseInMemoryDatabase(inMemoryCollectionName);
-        });
+          // Add ApplicationDbContext using an in-memory database for testing.
+          services.AddDbContext<AppDbContext>(options =>
+      {
+        options.UseInMemoryDatabase(inMemoryCollectionName);
+      });
 
           services.AddScoped<IMediator, NoOpMediator>();
         });

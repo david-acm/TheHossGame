@@ -5,9 +5,6 @@
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.Web.Endpoints.ProjectEndpoints;
-
-using System.Collections;
-
 public class ProjectListResponse
 {
     private readonly List<ProjectRecord> projects;

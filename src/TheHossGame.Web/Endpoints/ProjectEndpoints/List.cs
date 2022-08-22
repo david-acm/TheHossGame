@@ -7,10 +7,10 @@
 namespace TheHossGame.Web.Endpoints.ProjectEndpoints;
 
 using Ardalis.ApiEndpoints;
-using TheHossGame.Core.ProjectAggregate;
-using TheHossGame.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using TheHossGame.Core.ProjectAggregate;
+using TheHossGame.SharedKernel.Interfaces;
 
 public class List : EndpointBaseAsync
     .WithoutRequest
@@ -31,7 +31,7 @@ public class List : EndpointBaseAsync
         Tags = new[] { "ProjectEndpoints" })
     ]
     public override async Task<ActionResult<ProjectListResponse>> HandleAsync(
-      CancellationToken cancellationToken = new ())
+      CancellationToken cancellationToken = new())
     {
         var projects = await this.repository.ListAsync(cancellationToken);
         var response = new ProjectListResponse(projects

@@ -10,11 +10,11 @@ using Ardalis.Specification;
 
 public class IncompleteItemsSearchSpec : Specification<ToDoItem>
 {
-  public IncompleteItemsSearchSpec(string searchString)
-  {
-    this.Query
-        .Where(item => !item.IsDone &&
-        (item.Title.Contains(searchString) ||
-        item.Description.Contains(searchString)));
-  }
+    public IncompleteItemsSearchSpec(string searchString)
+    {
+        this.Query
+            .Where(item => !item.IsDone &&
+            (item.Title.Contains(searchString) ||
+            item.Description.Contains(searchString)));
+    }
 }

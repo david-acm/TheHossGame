@@ -13,33 +13,33 @@ using TheHossGame.SharedKernel.Interfaces;
 
 public class Project : EntityBase, IAggregateRoot
 {
-  private readonly List<ToDoItem> items = new List<ToDoItem>();
+   private readonly List<ToDoItem> items = new List<ToDoItem>();
 
-  public Project(string name, PriorityStatus priority)
-  {
-    this.Name = Guard.Against.NullOrEmpty(name, nameof(name));
-    this.Priority = priority;
-  }
+   public Project(string name, PriorityStatus priority)
+   {
+      this.Name = Guard.Against.NullOrEmpty(name, nameof(name));
+      this.Priority = priority;
+   }
 
-  public string Name { get; private set; }
+   public string Name { get; private set; }
 
-  public IEnumerable<ToDoItem> Items => this.items.AsReadOnly();
+   public IEnumerable<ToDoItem> Items => this.items.AsReadOnly();
 
-  public ProjectStatus Status => this.items.All(i => i.IsDone) ? ProjectStatus.Complete : ProjectStatus.InProgress;
+   public ProjectStatus Status => this.items.All(i => i.IsDone) ? ProjectStatus.Complete : ProjectStatus.InProgress;
 
-  public PriorityStatus Priority { get; }
+   public PriorityStatus Priority { get; }
 
-  public void AddItem(ToDoItem newItem)
-  {
-    Guard.Against.Null(newItem, nameof(newItem));
-    this.items.Add(newItem);
+   public void AddItem(ToDoItem newItem)
+   {
+      Guard.Against.Null(newItem, nameof(newItem));
+      this.items.Add(newItem);
 
-    var newItemAddedEvent = new NewItemAddedEvent(this, newItem);
-    this.RegisterDomainEvent(newItemAddedEvent);
-  }
+      var newItemAddedEvent = new NewItemAddedEvent(this, newItem);
+      this.RegisterDomainEvent(newItemAddedEvent);
+   }
 
-  public void UpdateName(string newName)
-  {
-    this.Name = Guard.Against.NullOrEmpty(newName, nameof(newName));
-  }
+   public void UpdateName(string newName)
+   {
+      this.Name = Guard.Against.NullOrEmpty(newName, nameof(newName));
+   }
 }

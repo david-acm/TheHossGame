@@ -6,12 +6,12 @@
 
 namespace TheHossGame.IntegrationTests.Data;
 
-using TheHossGame.Core.ProjectAggregate;
-using TheHossGame.Infrastructure.Data;
-using TheHossGame.SharedKernel.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using TheHossGame.Core.ProjectAggregate;
+using TheHossGame.Infrastructure.Data;
+using TheHossGame.SharedKernel.Interfaces;
 
 public abstract class BaseEfRepoTestFixture : IDisposable
 {
@@ -26,7 +26,7 @@ public abstract class BaseEfRepoTestFixture : IDisposable
     this.dbContext = new AppDbContext(options, mockEventDispatcher.Object);
   }
 
-  protected EfRepository<Project> Repository => new (this.DbContext);
+  protected EfRepository<Project> Repository => new(this.DbContext);
 
   protected AppDbContext DbContext => this.dbContext;
 

@@ -8,13 +8,13 @@ namespace TheHossGame.Infrastructure;
 
 using System.Reflection;
 using Autofac;
+using MediatR;
+using MediatR.Pipeline;
 using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Infrastructure.Data;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
-using MediatR;
-using MediatR.Pipeline;
 using Module = Autofac.Module;
 
 public class DefaultInfrastructureModule : Module

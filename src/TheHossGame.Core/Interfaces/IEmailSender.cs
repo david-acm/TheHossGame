@@ -10,5 +10,5 @@ using System.Threading.Tasks;
 
 public interface IEmailSender
 {
-  Task SendEmailAsync(string destinatary, string from, string subject, string body);
+    Task SendEmailAsync(string destinatary, string from, string subject, string body);
 }

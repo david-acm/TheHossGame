@@ -33,7 +33,7 @@ public class Create : EndpointBaseAsync
     ]
     public override async Task<ActionResult<CreateProjectResponse>> HandleAsync(
       CreateProjectRequest request,
-      CancellationToken cancellationToken = new ())
+      CancellationToken cancellationToken = new())
     {
         Guard.Against.Null(request);
         if (request.Name == null)

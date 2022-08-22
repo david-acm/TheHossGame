@@ -6,11 +6,11 @@
 
 namespace TheHossGame.Web.Controllers;
 
+using Microsoft.AspNetCore.Mvc;
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Specifications;
 using TheHossGame.SharedKernel.Interfaces;
 using TheHossGame.Web.ViewModels;
-using Microsoft.AspNetCore.Mvc;
 
 [Route("[controller]")]
 public class ProjectController : Controller

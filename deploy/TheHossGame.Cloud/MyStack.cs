@@ -1,9 +1,6 @@
-using System.Threading.Tasks;
 using Pulumi;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Web;
-using Pulumi.AzureNative.Storage;
-using Pulumi.AzureNative.Storage.Inputs;
 using Pulumi.AzureNative.Web.Inputs;
 
 class MyStack : Stack

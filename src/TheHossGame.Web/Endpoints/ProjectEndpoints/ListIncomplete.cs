@@ -32,7 +32,7 @@ public class ListIncomplete : EndpointBaseAsync
     ]
     public override async Task<ActionResult<ListIncompleteResponse>> HandleAsync(
       [FromQuery] ListIncompleteRequest request,
-      CancellationToken cancellationToken = new ())
+      CancellationToken cancellationToken = new())
     {
         Guard.Against.Null(request);
         if (request.SearchString == null)

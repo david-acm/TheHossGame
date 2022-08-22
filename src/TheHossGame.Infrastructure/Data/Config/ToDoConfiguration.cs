@@ -6,10 +6,10 @@
 
 namespace TheHossGame.Infrastructure.Data.Config;
 
-using TheHossGame.Core.ProjectAggregate;
+using Ardalis.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Ardalis.GuardClauses;
+using TheHossGame.Core.ProjectAggregate;
 
 public class ToDoConfiguration : IEntityTypeConfiguration<ToDoItem>
 {

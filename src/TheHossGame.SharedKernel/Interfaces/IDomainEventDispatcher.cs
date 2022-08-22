@@ -13,10 +13,10 @@ namespace TheHossGame.SharedKernel.Interfaces;
 /// </summary>
 public interface IDomainEventDispatcher
 {
-  /// <summary>
-  /// Dispatches all domain events in the entities.
-  /// </summary>
-  /// <param name="entitiesWithEvents">The entities with the events to dispatch.</param>
-  /// <returns>The task.</returns>
-  Task DispatchAndClearEvents(IEnumerable<EntityBase> entitiesWithEvents);
+    /// <summary>
+    /// Dispatches all domain events in the entities.
+    /// </summary>
+    /// <param name="entitiesWithEvents">The entities with the events to dispatch.</param>
+    /// <returns>The task.</returns>
+    Task DispatchAndClearEvents(IEnumerable<EntityBase> entitiesWithEvents);
 }

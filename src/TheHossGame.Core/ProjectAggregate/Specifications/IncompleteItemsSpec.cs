@@ -10,8 +10,8 @@ using Ardalis.Specification;
 
 public class IncompleteItemsSpec : Specification<ToDoItem>
 {
-  public IncompleteItemsSpec()
-  {
-    this.Query.Where(item => !item.IsDone);
-  }
+    public IncompleteItemsSpec()
+    {
+        this.Query.Where(item => !item.IsDone);
+    }
 }

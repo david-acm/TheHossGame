@@ -7,11 +7,11 @@
 namespace TheHossGame.Web.Endpoints.ProjectEndpoints;
 
 using Ardalis.ApiEndpoints;
-using TheHossGame.Core.ProjectAggregate;
-using TheHossGame.SharedKernel.Interfaces;
+using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Ardalis.GuardClauses;
+using TheHossGame.Core.ProjectAggregate;
+using TheHossGame.SharedKernel.Interfaces;
 
 public class UpdateEndpoint : EndpointBaseAsync
     .WithRequest<UpdateProjectRequest>
@@ -33,7 +33,7 @@ public class UpdateEndpoint : EndpointBaseAsync
     ]
     public override async Task<ActionResult<UpdateProjectResponse>> HandleAsync(
         UpdateProjectRequest request,
-        CancellationToken cancellationToken = new ())
+        CancellationToken cancellationToken = new())
     {
         Guard.Against.Null(request);
         if (request.Name == null)

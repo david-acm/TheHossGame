@@ -10,10 +10,10 @@ using TheHossGame.SharedKernel;
 
 public class ToDoItemCompletedEvent : DomainEventBase
 {
-  public ToDoItemCompletedEvent(ToDoItem completedItem)
-  {
-    this.CompletedItem = completedItem;
-  }
+    public ToDoItemCompletedEvent(ToDoItem completedItem)
+    {
+        this.CompletedItem = completedItem;
+    }
 
-  public ToDoItem CompletedItem { get; set; }
+    public ToDoItem CompletedItem { get; set; }
 }

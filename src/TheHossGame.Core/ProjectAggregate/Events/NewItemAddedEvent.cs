@@ -10,15 +10,15 @@ using TheHossGame.SharedKernel;
 
 public class NewItemAddedEvent : DomainEventBase
 {
-  public NewItemAddedEvent(
-      Project project,
-      ToDoItem newItem)
-  {
-    this.Project = project;
-    this.NewItem = newItem;
-  }
+    public NewItemAddedEvent(
+        Project project,
+        ToDoItem newItem)
+    {
+        this.Project = project;
+        this.NewItem = newItem;
+    }
 
-  public ToDoItem NewItem { get; set; }
+    public ToDoItem NewItem { get; set; }
 
-  public Project Project { get; set; }
+    public Project Project { get; set; }
 }

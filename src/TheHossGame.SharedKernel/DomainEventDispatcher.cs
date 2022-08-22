@@ -14,38 +14,38 @@ using TheHossGame.SharedKernel.Interfaces;
 /// <inheritdoc/>
 public class DomainEventDispatcher : IDomainEventDispatcher
 {
-  private readonly IMediator mediator;
+    private readonly IMediator mediator;
 
-  /// <summary>
-  /// Initializes a new instance of the <see cref="DomainEventDispatcher"/> class.
-  /// </summary>
-  /// <param name="mediator">The mediatR implementation.</param>
-  public DomainEventDispatcher(IMediator mediator)
-  {
-    this.mediator = mediator;
-  }
-
-  /// <inheritdoc/>
-  public async Task DispatchAndClearEvents(IEnumerable<EntityBase> entitiesWithEvents)
-  {
-    if (entitiesWithEvents is null)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DomainEventDispatcher"/> class.
+    /// </summary>
+    /// <param name="mediator">The mediatR implementation.</param>
+    public DomainEventDispatcher(IMediator mediator)
     {
-      return;
+        this.mediator = mediator;
     }
 
-    foreach (var entity in entitiesWithEvents)
+    /// <inheritdoc/>
+    public async Task DispatchAndClearEvents(IEnumerable<EntityBase> entitiesWithEvents)
     {
-      var events = entity.DomainEvents.ToArray();
-      entity.ClearDomainEvents();
-      await this.PublishEventsAsync(events).ConfigureAwait(false);
-    }
-  }
+        if (entitiesWithEvents is null)
+        {
+            return;
+        }
 
-  private async Task PublishEventsAsync(DomainEventBase[] events)
-  {
-    foreach (var domainEvent in events)
-    {
-      await this.mediator.Publish(domainEvent).ConfigureAwait(false);
+        foreach (var entity in entitiesWithEvents)
+        {
+            var events = entity.DomainEvents.ToArray();
+            entity.ClearDomainEvents();
+            await this.PublishEventsAsync(events).ConfigureAwait(false);
+        }
     }
-  }
+
+    private async Task PublishEventsAsync(DomainEventBase[] events)
+    {
+        foreach (var domainEvent in events)
+        {
+            await this.mediator.Publish(domainEvent).ConfigureAwait(false);
+        }
+    }
 }

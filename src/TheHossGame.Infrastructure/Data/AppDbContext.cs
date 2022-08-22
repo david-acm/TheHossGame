@@ -7,11 +7,11 @@
 namespace TheHossGame.Infrastructure.Data;
 
 using System.Reflection;
+using Ardalis.GuardClauses;
+using Microsoft.EntityFrameworkCore;
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Ardalis.GuardClauses;
 
 public class AppDbContext : DbContext
 {

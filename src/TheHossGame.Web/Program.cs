@@ -14,7 +14,6 @@ using Serilog;
 using TheHossGame.Core;
 using TheHossGame.Infrastructure;
 using TheHossGame.Infrastructure.Data;
-using TheHossGame.Infrastructure.Logging;
 using ILogger = ILogger;
 
 internal static class Program

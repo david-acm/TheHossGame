@@ -9,7 +9,6 @@ namespace TheHossGame.Infrastructure;
 using System.Net.Mail;
 using Microsoft.Extensions.Logging;
 using TheHossGame.Core.Interfaces;
-using TheHossGame.Infrastructure.Logging;
 
 public class EmailSender : IEmailSender
 {

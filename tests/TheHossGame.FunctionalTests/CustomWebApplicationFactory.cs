@@ -14,8 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TheHossGame.Infrastructure;
 using TheHossGame.Infrastructure.Data;
-using TheHossGame.Infrastructure.Logging;
 using TheHossGame.UnitTests;
 using TheHossGame.Web;
 

@@ -80,7 +80,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     }
 
     /// <summary>
-    /// Memberwise hash calculation.
+    /// Member wise hash calculation.
     /// </summary>
     /// <returns>The hash code.</returns>
     public override int GetHashCode()

@@ -24,7 +24,7 @@ public class MetaControllerInfo : IClassFixture<CustomWebApplicationFactory<WebM
   [Fact]
   public async Task ReturnsVersionAndLastUpdateDate()
   {
-    var response = await this.client.GetAsync(new Uri("/info"));
+    var response = await this.client.GetAsync(new Uri(this.client.BaseAddress!, "/info"));
     response.EnsureSuccessStatusCode();
     var stringResponse = await response.Content.ReadAsStringAsync();
 

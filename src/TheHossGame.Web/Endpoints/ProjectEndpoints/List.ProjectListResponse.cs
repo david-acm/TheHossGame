@@ -9,7 +9,7 @@ public class ProjectListResponse
 {
     private readonly List<ProjectRecord> projects;
 
-    public ProjectListResponse(IList<ProjectRecord> projects)
+    public ProjectListResponse(IReadOnlyList<ProjectRecord> projects)
     {
         this.projects = projects.ToList();
     }

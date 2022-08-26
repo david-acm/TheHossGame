@@ -21,5 +21,5 @@ public class GetProjectByIdResponse
 
     public string Name { get; set; }
 
-    public IReadOnlyList<ToDoItemRecord> Items => this.items.AsReadOnly();
+    public IList<ToDoItemRecord> Items => this.items.AsReadOnly();
 }

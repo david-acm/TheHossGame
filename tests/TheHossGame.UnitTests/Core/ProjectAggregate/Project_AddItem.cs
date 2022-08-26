@@ -30,11 +30,9 @@ public class ProjectAddItem
   [Fact]
   public void ThrowsExceptionGivenNullItem()
   {
-#nullable disable
-    Action action = () => this.testProject.AddItem(null);
-#nullable enable
+    void Action() => this.testProject.AddItem(null!);
 
-    var ex = Assert.Throws<ArgumentNullException>(action);
+    var ex = Assert.Throws<ArgumentNullException>(Action);
     Assert.Equal("newItem", ex.ParamName);
   }
 }

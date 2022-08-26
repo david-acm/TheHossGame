@@ -17,9 +17,8 @@ public class ProjectDto : CreateProjectDto
         IList<ToDoItemDto>? items = null)
         : base(name)
     {
-        Guard.Against.Null(items);
         this.Id = id;
-        this.Items = items.ToList() ?? new List<ToDoItemDto>();
+        this.Items = items?.ToList() ?? new List<ToDoItemDto>();
     }
 
     public int Id { get; set; }

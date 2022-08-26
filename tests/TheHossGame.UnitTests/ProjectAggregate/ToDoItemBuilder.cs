@@ -4,7 +4,7 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.UnitTests;
+namespace TheHossGame.UnitTests.ProjectAggregate;
 
 using TheHossGame.Core.ProjectAggregate;
 
@@ -12,7 +12,7 @@ using TheHossGame.Core.ProjectAggregate;
 // https://ardalis.com/improve-tests-with-the-builder-pattern-for-test-data
 public class ToDoItemBuilder
 {
-  private ToDoItem todo = new ToDoItem();
+  private ToDoItem todo = new ();
 
   public ToDoItemBuilder Id(int id)
   {

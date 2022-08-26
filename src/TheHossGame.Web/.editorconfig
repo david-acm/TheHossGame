@@ -141,6 +141,12 @@ dotnet_diagnostic.SA1600.severity = none
 # IDE0090: Use 'new(...)'
 dotnet_diagnostic.IDE0090.severity = none
 
+# CS0169: The field 'GetProjectByIdResponseTest.items' is never used
+dotnet_diagnostic.CS0169.severity = none
+
+# Default severity for all analyzer diagnostics
+dotnet_analyzer_diagnostic.severity = none
+
 [*.vb]
 # Modifier preferences
 visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public,Friend,NotOverridable,Overridable,MustOverride,Overloads,Overrides,MustInherit,NotInheritable,Static,Shared,Shadows,ReadOnly,WriteOnly,Dim,Const,WithEvents,Widening,Narrowing,Custom,Async:suggestion

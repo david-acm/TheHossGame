@@ -24,7 +24,7 @@ public class HomeControllerIndex : IClassFixture<CustomWebApplicationFactory<Web
   [Fact]
   public async Task ReturnsViewWithCorrectMessage()
   {
-    HttpResponseMessage response = await this.client.GetAsync(new Uri("/"));
+    HttpResponseMessage response = await this.client.GetAsync(new Uri(this.client.BaseAddress!, "/"));
     response.EnsureSuccessStatusCode();
     string stringResponse = await response.Content.ReadAsStringAsync();
 

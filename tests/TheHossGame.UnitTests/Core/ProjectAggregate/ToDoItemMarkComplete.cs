@@ -7,6 +7,7 @@
 namespace TheHossGame.UnitTests.Core.ProjectAggregate;
 
 using TheHossGame.Core.ProjectAggregate.Events;
+using TheHossGame.UnitTests.ProjectAggregate;
 using Xunit;
 
 public class ToDoItemMarkComplete

@@ -72,6 +72,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\publish.yml = .github\workflows\publish.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{A069414C-4E85-4397-B134-38F8A1E7072B}"
+	ProjectSection(SolutionItems) = preProject
+		.github\CONTRIBUTING.md = .github\CONTRIBUTING.md
+		.github\dependabot.yml = .github\dependabot.yml
+		.github\FUNDING.yml = .github\FUNDING.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{265F5685-0C07-44C6-B385-67BCAD51DB45}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
+		.github\workflows\deploy.yml = .github\workflows\deploy.yml
+		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -128,6 +143,8 @@ Global
 		{B576FA38-F907-4154-92E1-336735CBFF44} = {04ACE766-6466-4922-9512-1DE4602DA6F0}
 		{6380BA80-8D71-4375-94CF-F625F334A26D} = {EDF7E067-8550-43DC-AC4A-356449A23B41}
 		{D517B046-78FF-411B-864F-A4135791620E} = {6380BA80-8D71-4375-94CF-F625F334A26D}
+		{A069414C-4E85-4397-B134-38F8A1E7072B} = {642512D5-8F59-4AC1-B4CE-9A03C06F211A}
+		{265F5685-0C07-44C6-B385-67BCAD51DB45} = {A069414C-4E85-4397-B134-38F8A1E7072B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {07ABE6B9-E1AF-4025-95A7-0033D0690A41}

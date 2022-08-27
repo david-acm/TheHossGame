@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <None Include="..\..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Core\Services\ToDoItemSearchService_GetAllIncompleteItems.cs" />
     <Compile Remove="Core\Services\ToDoItemSearchService_GetNextIncompleteItem.cs" />
   </ItemGroup>
@@ -41,7 +45,6 @@
 
   <ItemGroup>
     <Folder Include="Core\Services\" />
-    <EditorConfigFiles Remove="$(ProjectDir)\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>

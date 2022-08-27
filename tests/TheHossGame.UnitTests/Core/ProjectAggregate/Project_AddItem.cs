@@ -11,28 +11,28 @@ using Xunit;
 
 public class ProjectAddItem
 {
-  private readonly Project testProject = new Project("some name", PriorityStatus.Backlog);
+   private readonly Project testProject = new ("some name", PriorityStatus.Backlog);
 
-  [Fact]
-  public void AddsItemToItems()
-  {
-    var testItem = new ToDoItem
-    {
-      Title = "title",
-      Description = "description",
-    };
+   [Fact]
+   public void AddsItemToItems()
+   {
+      var testItem = new ToDoItem
+      {
+         Title = "title",
+         Description = "description",
+      };
 
-    this.testProject.AddItem(testItem);
+      this.testProject.AddItem(testItem);
 
-    Assert.Contains(testItem, this.testProject.Items);
-  }
+      Assert.Contains(testItem, this.testProject.Items);
+   }
 
-  [Fact]
-  public void ThrowsExceptionGivenNullItem()
-  {
-    void Action() => this.testProject.AddItem(null!);
+   [Fact]
+   public void ThrowsExceptionGivenNullItem()
+   {
+      void Action() => this.testProject.AddItem(null!);
 
-    var ex = Assert.Throws<ArgumentNullException>(Action);
-    Assert.Equal("newItem", ex.ParamName);
-  }
+      var ex = Assert.Throws<ArgumentNullException>(Action);
+      Assert.Equal("newItem", ex.ParamName);
+   }
 }

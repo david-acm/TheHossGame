@@ -6,8 +6,8 @@
 
 namespace TheHossGame.Web.ApiModels;
 
-using System.ComponentModel.DataAnnotations;
 using Ardalis.GuardClauses;
+using System.ComponentModel.DataAnnotations;
 using TheHossGame.Core.ProjectAggregate;
 
 // ApiModel DTOs are used by ApiController classes and are typically kept in a side-by-side folder

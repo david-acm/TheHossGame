@@ -6,10 +6,10 @@
 
 namespace TheHossGame.Core.ProjectAggregate.Handlers;
 
-using System.Threading;
-using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
 using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.ProjectAggregate.Events;
 

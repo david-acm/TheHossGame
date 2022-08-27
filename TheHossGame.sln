@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3DD32B53-8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Sln Items", ".Sln Items", "{642512D5-8F59-4AC1-B4CE-9A03C06F211A}"
 	ProjectSection(SolutionItems) = preProject
-		.Sln Items\.editorconfig = .Sln Items\.editorconfig
 		.Sln Items\.gitignore = .Sln Items\.gitignore
 		Directory.Packages.props = Directory.Packages.props
 		.Sln Items\global.json = .Sln Items\global.json

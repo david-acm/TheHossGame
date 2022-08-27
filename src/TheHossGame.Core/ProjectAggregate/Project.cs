@@ -13,7 +13,7 @@ using TheHossGame.SharedKernel.Interfaces;
 
 public class Project : EntityBase, IAggregateRoot
 {
-   private readonly List<ToDoItem> items = new List<ToDoItem>();
+   private readonly List<ToDoItem> items = new ();
 
    public Project(string name, PriorityStatus priority)
    {

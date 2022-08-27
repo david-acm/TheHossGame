@@ -13,27 +13,27 @@ using Xunit;
 [Collection("Sequential")]
 public class MetaControllerInfo : IClassFixture<CustomWebApplicationFactory<WebMarker>>
 {
-  private readonly HttpClient client;
+    private readonly HttpClient client;
 
-  public MetaControllerInfo(CustomWebApplicationFactory<WebMarker> factory)
-  {
-    Guard.Against.Null(factory);
-    this.client = factory.CreateClient();
-  }
+    public MetaControllerInfo(CustomWebApplicationFactory<WebMarker> factory)
+    {
+        Guard.Against.Null(factory);
+        this.client = factory.CreateClient();
+    }
 
-  [Fact]
-  public async Task ReturnsVersionAndLastUpdateDate()
-  {
-    var response = await this.client.GetAsync(new Uri(this.client.BaseAddress!, "/info"));
-    response.EnsureSuccessStatusCode();
-    var stringResponse = await response.Content.ReadAsStringAsync();
+    [Fact]
+    public async Task ReturnsVersionAndLastUpdateDate()
+    {
+        var response = await this.client.GetAsync(new Uri(this.client.BaseAddress!, "/info"));
+        response.EnsureSuccessStatusCode();
+        var stringResponse = await response.Content.ReadAsStringAsync();
 
-    AssertContainsInvariantCulture("Version", stringResponse);
-    AssertContainsInvariantCulture("Last Updated", stringResponse);
-  }
+        AssertContainsInvariantCulture("Version", stringResponse);
+        AssertContainsInvariantCulture("Last Updated", stringResponse);
+    }
 
-  internal static void AssertContainsInvariantCulture(string expected, string actual)
-  {
-    Assert.Contains(expected, actual, StringComparison.InvariantCulture);
-  }
+    internal static void AssertContainsInvariantCulture(string expected, string actual)
+    {
+        Assert.Contains(expected, actual, StringComparison.InvariantCulture);
+    }
 }

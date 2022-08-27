@@ -15,5 +15,5 @@ public class ToDoItemCompletedEvent : DomainEventBase
         this.CompletedItem = completedItem;
     }
 
-    public ToDoItem CompletedItem { get; set; }
+    public ToDoItem CompletedItem { get; }
 }

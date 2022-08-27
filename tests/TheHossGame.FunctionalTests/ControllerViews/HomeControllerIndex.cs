@@ -13,21 +13,21 @@ using Xunit;
 [Collection("Sequential")]
 public class HomeControllerIndex : IClassFixture<CustomWebApplicationFactory<WebMarker>>
 {
-  private readonly HttpClient client;
+   private readonly HttpClient client;
 
-  public HomeControllerIndex(CustomWebApplicationFactory<WebMarker> factory)
-  {
-    Guard.Against.Null(factory);
-    this.client = factory.CreateClient();
-  }
+   public HomeControllerIndex(CustomWebApplicationFactory<WebMarker> factory)
+   {
+      Guard.Against.Null(factory);
+      this.client = factory.CreateClient();
+   }
 
-  [Fact]
-  public async Task ReturnsViewWithCorrectMessage()
-  {
-    HttpResponseMessage response = await this.client.GetAsync(new Uri(this.client.BaseAddress!, "/"));
-    response.EnsureSuccessStatusCode();
-    string stringResponse = await response.Content.ReadAsStringAsync();
+   [Fact]
+   public async Task ReturnsViewWithCorrectMessage()
+   {
+      HttpResponseMessage response = await this.client.GetAsync(new Uri(this.client.BaseAddress!, "/"));
+      response.EnsureSuccessStatusCode();
+      string stringResponse = await response.Content.ReadAsStringAsync();
 
-    Assert.Contains("TheHossGame.Web", stringResponse, StringComparison.InvariantCulture);
-  }
+      Assert.Contains("TheHossGame.Web", stringResponse, StringComparison.InvariantCulture);
+   }
 }

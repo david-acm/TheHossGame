@@ -15,55 +15,55 @@ using TheHossGame.SharedKernel.Interfaces;
 
 public abstract class BaseEfRepoTestFixture : IDisposable
 {
-  private readonly AppDbContext dbContext;
-  private bool disposedValue;
+    private readonly AppDbContext dbContext;
+    private bool disposedValue;
 
-  protected BaseEfRepoTestFixture()
-  {
-    var options = CreateNewContextOptions();
-    var mockEventDispatcher = new Mock<IDomainEventDispatcher>();
-
-    this.dbContext = new AppDbContext(options, mockEventDispatcher.Object);
-  }
-
-  protected EfRepository<Project> Repository => new (this.DbContext);
-
-  protected AppDbContext DbContext => this.dbContext;
-
-  public void Dispose()
-  {
-    // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-    this.Dispose(disposing: true);
-    GC.SuppressFinalize(this);
-  }
-
-  protected static DbContextOptions<AppDbContext> CreateNewContextOptions()
-  {
-    // Create a fresh service provider, and therefore a fresh
-    // InMemory database instance.
-    var serviceProvider = new ServiceCollection()
-        .AddEntityFrameworkInMemoryDatabase()
-        .BuildServiceProvider();
-
-    // Create a new options instance telling the context to use an
-    // InMemory database and the new service provider.
-    var builder = new DbContextOptionsBuilder<AppDbContext>();
-    builder.UseInMemoryDatabase("cleanarchitecture")
-           .UseInternalServiceProvider(serviceProvider);
-
-    return builder.Options;
-  }
-
-  protected virtual void Dispose(bool disposing)
-  {
-    if (!this.disposedValue)
+    protected BaseEfRepoTestFixture()
     {
-      if (disposing)
-      {
-        this.dbContext.Dispose();
-      }
+        var options = CreateNewContextOptions();
+        var mockEventDispatcher = new Mock<IDomainEventDispatcher>();
 
-      this.disposedValue = true;
+        this.dbContext = new AppDbContext(options, mockEventDispatcher.Object);
     }
-  }
+
+    protected EfRepository<Project> Repository => new (this.DbContext);
+
+    protected AppDbContext DbContext => this.dbContext;
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        this.Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected static DbContextOptions<AppDbContext> CreateNewContextOptions()
+    {
+        // Create a fresh service provider, and therefore a fresh
+        // InMemory database instance.
+        var serviceProvider = new ServiceCollection()
+            .AddEntityFrameworkInMemoryDatabase()
+            .BuildServiceProvider();
+
+        // Create a new options instance telling the context to use an
+        // InMemory database and the new service provider.
+        var builder = new DbContextOptionsBuilder<AppDbContext>();
+        builder.UseInMemoryDatabase("cleanarchitecture")
+               .UseInternalServiceProvider(serviceProvider);
+
+        return builder.Options;
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!this.disposedValue)
+        {
+            if (disposing)
+            {
+                this.dbContext.Dispose();
+            }
+
+            this.disposedValue = true;
+        }
+    }
 }

@@ -15,26 +15,26 @@ using Xunit;
 
 public class ItemCompletedEmailNotificationHandlerHandle
 {
-  private readonly ItemCompletedEmailNotificationHandler handler;
-  private readonly Mock<IEmailSender> emailSenderMock;
+    private readonly ItemCompletedEmailNotificationHandler handler;
+    private readonly Mock<IEmailSender> emailSenderMock;
 
-  public ItemCompletedEmailNotificationHandlerHandle()
-  {
-    this.emailSenderMock = new Mock<IEmailSender>();
-    this.handler = new ItemCompletedEmailNotificationHandler(this.emailSenderMock.Object);
-  }
+    public ItemCompletedEmailNotificationHandlerHandle()
+    {
+        this.emailSenderMock = new Mock<IEmailSender>();
+        this.handler = new ItemCompletedEmailNotificationHandler(this.emailSenderMock.Object);
+    }
 
-  [Fact]
-  public async Task ThrowsExceptionGivenNullEventArgument()
-  {
-    await Assert.ThrowsAsync<ArgumentNullException>(() => this.handler.Handle(null!, CancellationToken.None));
-  }
+    [Fact]
+    public async Task ThrowsExceptionGivenNullEventArgument()
+    {
+        await Assert.ThrowsAsync<ArgumentNullException>(() => this.handler.Handle(null!, CancellationToken.None));
+    }
 
-  [Fact]
-  public async Task SendsEmailGivenEventInstance()
-  {
-    await this.handler.Handle(new ToDoItemCompletedEvent(new ToDoItem()), CancellationToken.None);
+    [Fact]
+    public async Task SendsEmailGivenEventInstance()
+    {
+        await this.handler.Handle(new ToDoItemCompletedEvent(new ToDoItem()), CancellationToken.None);
 
-    this.emailSenderMock.Verify(sender => sender.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-  }
+        this.emailSenderMock.Verify(sender => sender.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+    }
 }

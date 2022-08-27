@@ -4,13 +4,18 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Cloud
-{
-  using System.Threading.Tasks;
-  using Pulumi;
+namespace TheHossGame.Cloud;
 
-  internal static class Program
-  {
-    public static Task<int> Main() => Deployment.RunAsync<MyStack>();
-  }
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+using Deployment = Pulumi.Deployment;
+
+internal static class Program
+{
+   public static Task<int> Main()
+   {
+      var builder = new HostBuilder();
+      using var services = builder.BuildScope();
+      return Deployment.RunAsync<MyStack>(services.ServiceProvider);
+   }
 }

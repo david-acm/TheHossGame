@@ -6,8 +6,8 @@
 
 namespace TheHossGame.Infrastructure;
 
-using System.Net.Mail;
 using Microsoft.Extensions.Logging;
+using System.Net.Mail;
 using TheHossGame.Core.Interfaces;
 
 public class EmailSender : IEmailSender

@@ -4,8 +4,6 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-using Ardalis.GuardClauses;
-
 namespace TheHossGame.Web.ApiModels;
 
 // ApiModel DTOs are used by ApiController classes and are typically kept in a side-by-side folder

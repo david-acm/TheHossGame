@@ -18,7 +18,7 @@ public class NewItemAddedEvent : DomainEventBase
         this.NewItem = newItem;
     }
 
-    public ToDoItem NewItem { get; set; }
+    public ToDoItem NewItem { get; }
 
-    public Project Project { get; set; }
+    public Project Project { get; }
 }

@@ -88,15 +88,19 @@ public abstract class ValueObject : IEquatable<ValueObject>
       unchecked
       {
          int hash = 17;
-         foreach (var prop in this.GetProperties())
+         var propertyValues = this.GetProperties()
+            .Select(p => p.GetValue(this, null));
+
+         foreach (var value in propertyValues)
          {
-            var value = prop.GetValue(this, null);
             hash = HashValue(hash, value);
          }
 
-         foreach (var field in this.GetFields())
+         var fieldValues = this.GetFields()
+            .Select(f => f.GetValue(this));
+
+         foreach (var value in fieldValues)
          {
-            var value = field.GetValue(this);
             hash = HashValue(hash, value);
          }
 

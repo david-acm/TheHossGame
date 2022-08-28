@@ -1,15 +1,18 @@
-name: Deploy Pulumi
+name: Preview Pulumi
 on:
-  push:
+  pull_request:
+    types: [opened, reopened]
     branches: [main]
 
 jobs:
   deployment:
-    name: Deploy
+    name: Preview
     runs-on: ubuntu-latest
+
     permissions:
       id-token: write
       contents: read
+
     steps:
       - uses: actions/checkout@v2
 
@@ -17,9 +20,13 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+
       - uses: pulumi/actions@v3
         with:
-          command: up
+          command: preview
           stack-name: thehossgame
           work-dir: src/TheHossGame.Cloud
         env:

@@ -1,16 +1,24 @@
-using TheHossGame.SharedKernel;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="NewItemAddedEvent.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.Core.ProjectAggregate.Events;
 
+using TheHossGame.SharedKernel;
+
 public class NewItemAddedEvent : DomainEventBase
 {
-  public ToDoItem NewItem { get; set; }
-  public Project Project { get; set; }
+    public NewItemAddedEvent(
+        Project project,
+        ToDoItem newItem)
+    {
+        this.Project = project;
+        this.NewItem = newItem;
+    }
 
-  public NewItemAddedEvent(Project project,
-      ToDoItem newItem)
-  {
-    Project = project;
-    NewItem = newItem;
-  }
+    public ToDoItem NewItem { get; }
+
+    public Project Project { get; }
 }

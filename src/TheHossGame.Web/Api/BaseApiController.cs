@@ -1,6 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="BaseApiController.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.Web.Api;
+
+using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
 /// If your API controllers will use a consistent route convention and the [ApiController] attribute (they should)

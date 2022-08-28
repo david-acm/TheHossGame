@@ -1,34 +1,38 @@
-using TheHossGame.Core.ProjectAggregate;
-using Xunit;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="Project_AddItem.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.UnitTests.Core.ProjectAggregate;
 
-public class Project_AddItem
+using TheHossGame.Core.ProjectAggregate;
+using Xunit;
+
+public class ProjectAddItem
 {
-  private Project _testProject = new Project("some name", PriorityStatus.Backlog);
+   private readonly Project testProject = new ("some name", PriorityStatus.Backlog);
 
-  [Fact]
-  public void AddsItemToItems()
-  {
-    var _testItem = new ToDoItem
-    {
-      Title = "title",
-      Description = "description"
-    };
+   [Fact]
+   public void AddsItemToItems()
+   {
+      var testItem = new ToDoItem
+      {
+         Title = "title",
+         Description = "description",
+      };
 
-    _testProject.AddItem(_testItem);
+      this.testProject.AddItem(testItem);
 
-    Assert.Contains(_testItem, _testProject.Items);
-  }
+      Assert.Contains(testItem, this.testProject.Items);
+   }
 
-  [Fact]
-  public void ThrowsExceptionGivenNullItem()
-  {
-#nullable disable
-    Action action = () => _testProject.AddItem(null);
-#nullable enable
+   [Fact]
+   public void ThrowsExceptionGivenNullItem()
+   {
+      void Action() => this.testProject.AddItem(null!);
 
-    var ex = Assert.Throws<ArgumentNullException>(action);
-    Assert.Equal("newItem", ex.ParamName);
-  }
+      var ex = Assert.Throws<ArgumentNullException>(Action);
+      Assert.Equal("newItem", ex.ParamName);
+   }
 }

@@ -1,14 +1,22 @@
-using TheHossGame.Core.ProjectAggregate;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ToDoConfiguration.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.Infrastructure.Data.Config;
 
+using Ardalis.GuardClauses;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TheHossGame.Core.ProjectAggregate;
+
 public class ToDoConfiguration : IEntityTypeConfiguration<ToDoItem>
 {
-  public void Configure(EntityTypeBuilder<ToDoItem> builder)
-  {
-    builder.Property(t => t.Title)
-        .IsRequired();
-  }
+    public void Configure(EntityTypeBuilder<ToDoItem> builder)
+    {
+        Guard.Against.Null(builder);
+        builder.Property(t => t.Title)
+            .IsRequired();
+    }
 }

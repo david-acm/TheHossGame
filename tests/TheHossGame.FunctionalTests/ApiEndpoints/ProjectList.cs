@@ -1,26 +1,34 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ProjectList.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.FunctionalTests.ApiEndpoints;
+
+using Ardalis.GuardClauses;
 using Ardalis.HttpClientTestExtensions;
 using TheHossGame.Web;
 using TheHossGame.Web.Endpoints.ProjectEndpoints;
 using Xunit;
 
-namespace TheHossGame.FunctionalTests.ApiEndpoints;
-
 [Collection("Sequential")]
 public class ProjectList : IClassFixture<CustomWebApplicationFactory<WebMarker>>
 {
-  private readonly HttpClient _client;
+    private readonly HttpClient client;
 
-  public ProjectList(CustomWebApplicationFactory<WebMarker> factory)
-  {
-    _client = factory.CreateClient();
-  }
+    public ProjectList(CustomWebApplicationFactory<WebMarker> factory)
+    {
+        Guard.Against.Null(factory);
+        this.client = factory.CreateClient();
+    }
 
-  [Fact]
-  public async Task ReturnsOneProject()
-  {
-    var result = await _client.GetAndDeserialize<ProjectListResponse>("/Projects");
+    [Fact]
+    public async Task ReturnsOneProject()
+    {
+        var result = await this.client.GetAndDeserializeAsync<ProjectListResponse>("/Projects");
 
-    Assert.Single(result.Projects);
-    Assert.Contains(result.Projects, i => i.Name == SeedData.TestProject1.Name);
-  }
+        Assert.Single(result.Projects);
+        Assert.Contains(result.Projects, i => i.name == SeedData.TestProject1.Name);
+    }
 }

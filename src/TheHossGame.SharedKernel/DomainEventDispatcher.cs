@@ -1,27 +1,51 @@
-using TheHossGame.SharedKernel.Interfaces;
-using MediatR;
+﻿// ---
+// 🃏 The HossGame 🃏
+// <copyright file="DomainEventDispatcher.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+// ---
 
 namespace TheHossGame.SharedKernel;
 
+using MediatR;
+using TheHossGame.SharedKernel.Interfaces;
+
+/// <inheritdoc/>
 public class DomainEventDispatcher : IDomainEventDispatcher
 {
-  private readonly IMediator _mediator;
+    private readonly IMediator mediator;
 
-  public DomainEventDispatcher(IMediator mediator)
-  {
-    _mediator = mediator;
-  }
-
-  public async Task DispatchAndClearEvents(IEnumerable<EntityBase> entitiesWithEvents)
-  {
-    foreach (var entity in entitiesWithEvents)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DomainEventDispatcher"/> class.
+    /// </summary>
+    /// <param name="mediator">The mediatR implementation.</param>
+    public DomainEventDispatcher(IMediator mediator)
     {
-      var events = entity.DomainEvents.ToArray();
-      entity.ClearDomainEvents();
-      foreach (var domainEvent in events)
-      {
-        await _mediator.Publish(domainEvent).ConfigureAwait(false);
-      }
+        this.mediator = mediator;
     }
-  }
+
+    /// <inheritdoc/>
+    public async Task DispatchAndClearEvents(IEnumerable<EntityBase> entitiesWithEvents)
+    {
+        if (entitiesWithEvents is null)
+        {
+            return;
+        }
+
+        foreach (var entity in entitiesWithEvents)
+        {
+            var events = entity.DomainEvents.ToArray();
+            entity.ClearDomainEvents();
+            await this.PublishEventsAsync(events).ConfigureAwait(false);
+        }
+    }
+
+    private async Task PublishEventsAsync(DomainEventBase[] events)
+    {
+        foreach (var domainEvent in events)
+        {
+            await this.mediator.Publish(domainEvent).ConfigureAwait(false);
+        }
+    }
 }

@@ -1,37 +1,45 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="Project.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.Core.ProjectAggregate;
+
 using Ardalis.GuardClauses;
 using TheHossGame.Core.ProjectAggregate.Events;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
 
-namespace TheHossGame.Core.ProjectAggregate;
-
 public class Project : EntityBase, IAggregateRoot
 {
-  public string Name { get; private set; }
+   private readonly List<ToDoItem> items = new ();
 
-  private List<ToDoItem> _items = new List<ToDoItem>();
-  public IEnumerable<ToDoItem> Items => _items.AsReadOnly();
-  public ProjectStatus Status => _items.All(i => i.IsDone) ? ProjectStatus.Complete : ProjectStatus.InProgress;
+   public Project(string name, PriorityStatus priority)
+   {
+      this.Name = Guard.Against.NullOrEmpty(name, nameof(name));
+      this.Priority = priority;
+   }
 
-  public PriorityStatus Priority { get; }
+   public string Name { get; private set; }
 
-  public Project(string name, PriorityStatus priority)
-  {
-    Name = Guard.Against.NullOrEmpty(name, nameof(name));
-    Priority = priority;
-  }
+   public IEnumerable<ToDoItem> Items => this.items.AsReadOnly();
 
-  public void AddItem(ToDoItem newItem)
-  {
-    Guard.Against.Null(newItem, nameof(newItem));
-    _items.Add(newItem);
+   public ProjectStatus Status => this.items.All(i => i.IsDone) ? ProjectStatus.Complete : ProjectStatus.InProgress;
 
-    var newItemAddedEvent = new NewItemAddedEvent(this, newItem);
-    base.RegisterDomainEvent(newItemAddedEvent);
-  }
+   public PriorityStatus Priority { get; }
 
-  public void UpdateName(string newName)
-  {
-    Name = Guard.Against.NullOrEmpty(newName, nameof(newName));
-  }
+   public void AddItem(ToDoItem newItem)
+   {
+      Guard.Against.Null(newItem, nameof(newItem));
+      this.items.Add(newItem);
+
+      var newItemAddedEvent = new NewItemAddedEvent(this, newItem);
+      this.RegisterDomainEvent(newItemAddedEvent);
+   }
+
+   public void UpdateName(string newName)
+   {
+      this.Name = Guard.Against.NullOrEmpty(newName, nameof(newName));
+   }
 }

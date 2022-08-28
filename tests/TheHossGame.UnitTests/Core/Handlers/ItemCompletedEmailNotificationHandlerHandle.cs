@@ -1,36 +1,40 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="ItemCompletedEmailNotificationHandlerHandle.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.UnitTests.Core.Handlers;
+
+using Moq;
 using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.ProjectAggregate;
 using TheHossGame.Core.ProjectAggregate.Events;
 using TheHossGame.Core.ProjectAggregate.Handlers;
-using Moq;
 using Xunit;
-
-namespace TheHossGame.UnitTests.Core.Handlers;
 
 public class ItemCompletedEmailNotificationHandlerHandle
 {
-  private ItemCompletedEmailNotificationHandler _handler;
-  private Mock<IEmailSender> _emailSenderMock;
+    private readonly ItemCompletedEmailNotificationHandler handler;
+    private readonly Mock<IEmailSender> emailSenderMock;
 
-  public ItemCompletedEmailNotificationHandlerHandle()
-  {
-    _emailSenderMock = new Mock<IEmailSender>();
-    _handler = new ItemCompletedEmailNotificationHandler(_emailSenderMock.Object);
-  }
+    public ItemCompletedEmailNotificationHandlerHandle()
+    {
+        this.emailSenderMock = new Mock<IEmailSender>();
+        this.handler = new ItemCompletedEmailNotificationHandler(this.emailSenderMock.Object);
+    }
 
-  [Fact]
-  public async Task ThrowsExceptionGivenNullEventArgument()
-  {
-#nullable disable
-    Exception ex = await Assert.ThrowsAsync<ArgumentNullException>(() => _handler.Handle(null, CancellationToken.None));
-#nullable enable
-  }
+    [Fact]
+    public async Task ThrowsExceptionGivenNullEventArgument()
+    {
+        await Assert.ThrowsAsync<ArgumentNullException>(() => this.handler.Handle(null!, CancellationToken.None));
+    }
 
-  [Fact]
-  public async Task SendsEmailGivenEventInstance()
-  {
-    await _handler.Handle(new ToDoItemCompletedEvent(new ToDoItem()), CancellationToken.None);
+    [Fact]
+    public async Task SendsEmailGivenEventInstance()
+    {
+        await this.handler.Handle(new ToDoItemCompletedEvent(new ToDoItem()), CancellationToken.None);
 
-    _emailSenderMock.Verify(sender => sender.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-  }
+        this.emailSenderMock.Verify(sender => sender.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+    }
 }

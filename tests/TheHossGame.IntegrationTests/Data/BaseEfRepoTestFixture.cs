@@ -1,43 +1,69 @@
-using TheHossGame.Core.ProjectAggregate;
-using TheHossGame.Infrastructure.Data;
-using TheHossGame.SharedKernel.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
+﻿// 🃏 The HossGame 🃏
+// <copyright file="BaseEfRepoTestFixture.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
 
 namespace TheHossGame.IntegrationTests.Data;
 
-public abstract class BaseEfRepoTestFixture
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using TheHossGame.Core.ProjectAggregate;
+using TheHossGame.Infrastructure.Data;
+using TheHossGame.SharedKernel.Interfaces;
+
+public abstract class BaseEfRepoTestFixture : IDisposable
 {
-  protected AppDbContext _dbContext;
+    private readonly AppDbContext dbContext;
+    private bool disposedValue;
 
-  protected BaseEfRepoTestFixture()
-  {
-    var options = CreateNewContextOptions();
-    var mockEventDispatcher = new Mock<IDomainEventDispatcher>();
+    protected BaseEfRepoTestFixture()
+    {
+        var options = CreateNewContextOptions();
+        var mockEventDispatcher = new Mock<IDomainEventDispatcher>();
 
-    _dbContext = new AppDbContext(options, mockEventDispatcher.Object);
-  }
+        this.dbContext = new AppDbContext(options, mockEventDispatcher.Object);
+    }
 
-  protected static DbContextOptions<AppDbContext> CreateNewContextOptions()
-  {
-    // Create a fresh service provider, and therefore a fresh
-    // InMemory database instance.
-    var serviceProvider = new ServiceCollection()
-        .AddEntityFrameworkInMemoryDatabase()
-        .BuildServiceProvider();
+    protected EfRepository<Project> Repository => new (this.DbContext);
 
-    // Create a new options instance telling the context to use an
-    // InMemory database and the new service provider.
-    var builder = new DbContextOptionsBuilder<AppDbContext>();
-    builder.UseInMemoryDatabase("cleanarchitecture")
-           .UseInternalServiceProvider(serviceProvider);
+    protected AppDbContext DbContext => this.dbContext;
 
-    return builder.Options;
-  }
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        this.Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 
-  protected EfRepository<Project> GetRepository()
-  {
-    return new EfRepository<Project>(_dbContext);
-  }
+    protected static DbContextOptions<AppDbContext> CreateNewContextOptions()
+    {
+        // Create a fresh service provider, and therefore a fresh
+        // InMemory database instance.
+        var serviceProvider = new ServiceCollection()
+            .AddEntityFrameworkInMemoryDatabase()
+            .BuildServiceProvider();
+
+        // Create a new options instance telling the context to use an
+        // InMemory database and the new service provider.
+        var builder = new DbContextOptionsBuilder<AppDbContext>();
+        builder.UseInMemoryDatabase("cleanarchitecture")
+               .UseInternalServiceProvider(serviceProvider);
+
+        return builder.Options;
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!this.disposedValue)
+        {
+            if (disposing)
+            {
+                this.dbContext.Dispose();
+            }
+
+            this.disposedValue = true;
+        }
+    }
 }

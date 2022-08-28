@@ -1,0 +1,1 @@
+git config core.hooksPath '.Sln Items/scripts/.githooks'

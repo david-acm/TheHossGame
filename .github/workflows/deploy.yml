@@ -1,6 +1,6 @@
 name: Deploy Pulumi
 on:
-  push:
+  release:
     branches: [main]
 
 jobs:

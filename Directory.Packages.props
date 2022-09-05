@@ -30,9 +30,22 @@
 		<PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.8" />
 		<PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8" />
 		<PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.8" />
+		<PackageVersion Include="FluentAssertions">
+		  <Version>6.7.0</Version>
+		</PackageVersion>
+		<PackageVersion Include="MediatR" Version="10.0.1" />
 		<PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8" />
 		<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8" />
 		<PackageVersion Include="Microsoft.Extensions.Hosting">
+		<PackageVersion Include="AutoFixture">
+		  <Version>4.17.0</Version>
+		</PackageVersion>
+		<PackageVersion Include="AutoFixture.AutoMoq">
+		  <Version>4.17.0</Version>
+		</PackageVersion>
+		<PackageVersion Include="AutoFixture.Xunit2">
+		  <Version>4.17.0</Version>
+		</PackageVersion>
 			<Version>6.0.1</Version>
 		</PackageVersion>
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.3.1" />

@@ -17,7 +17,7 @@ public class Project : EntityBase, IAggregateRoot
 
    public Project(string name, PriorityStatus priority)
    {
-      this.Name = Guard.Against.NullOrEmpty(name, nameof(name));
+      this.Name = Guard.Against.NullOrEmpty(name);
       this.Priority = priority;
    }
 
@@ -31,7 +31,7 @@ public class Project : EntityBase, IAggregateRoot
 
    public void AddItem(ToDoItem newItem)
    {
-      Guard.Against.Null(newItem, nameof(newItem));
+      Guard.Against.Null(newItem);
       this.items.Add(newItem);
 
       var newItemAddedEvent = new NewItemAddedEvent(this, newItem);
@@ -40,6 +40,6 @@ public class Project : EntityBase, IAggregateRoot
 
    public void UpdateName(string newName)
    {
-      this.Name = Guard.Against.NullOrEmpty(newName, nameof(newName));
+      this.Name = Guard.Against.NullOrEmpty(newName);
    }
 }

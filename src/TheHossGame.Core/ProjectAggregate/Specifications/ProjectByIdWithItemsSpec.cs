@@ -14,7 +14,7 @@ public class ProjectByIdWithItemsSpec : Specification<Project>, ISingleResultSpe
     public ProjectByIdWithItemsSpec(int projectId)
     {
         this.Query
-            .Where(project => project.Id == projectId)
+            .Where(project => project.IdValue == projectId)
             .Include(project => project.Items);
     }
 }

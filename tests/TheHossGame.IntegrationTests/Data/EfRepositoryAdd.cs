@@ -26,6 +26,6 @@ public class EfRepositoryAdd : BaseEfRepoTestFixture
 
         Assert.Equal(testProjectName, newProject?.Name);
         Assert.Equal(testProjectStatus, newProject?.Priority);
-        Assert.True(newProject?.Id > 0);
+        Assert.True((newProject?.Id ?? 0) > 0);
     }
 }

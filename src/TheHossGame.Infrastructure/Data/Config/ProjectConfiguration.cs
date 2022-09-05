@@ -13,16 +13,22 @@ using TheHossGame.Core.ProjectAggregate;
 
 public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 {
-    public void Configure(EntityTypeBuilder<Project> builder)
-    {
-        Guard.Against.Null(builder);
-        builder.Property(p => p.Name)
-        .HasMaxLength(100)
-        .IsRequired();
+   public void Configure(EntityTypeBuilder<Project> builder)
+   {
+      Guard.Against.Null(builder);
 
-        builder.Property(p => p.Priority)
-          .HasConversion(
-              p => p.Value,
-              p => PriorityStatus.FromValue(p));
-    }
+      builder
+         .HasKey(p => p.IdValue);
+      builder
+         .Ignore(p => p.Id);
+
+      builder.Property(p => p.Name)
+      .HasMaxLength(100)
+      .IsRequired();
+
+      builder.Property(p => p.Priority)
+        .HasConversion(
+            p => p.Value,
+            p => PriorityStatus.FromValue(p));
+   }
 }

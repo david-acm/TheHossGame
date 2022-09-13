@@ -8,10 +8,17 @@ namespace TheHossGame.UnitTests.Core.PlayerAggregate;
 
 using FluentAssertions;
 using TheHossGame.Core.PlayerAggregate;
+using TheHossGame.SharedKernel;
 using Xunit;
 
 public class PlayerEmailShould
 {
+   [Fact]
+   public void BeAValueObject()
+   {
+      typeof(PlayerEmail).Should().BeDerivedFrom<ValueObject>();
+   }
+
    [Fact]
    public void ThrowArgumentNullExceptionWhenEmailIsNull()
    {

@@ -262,6 +262,9 @@ dotnet_diagnostic.CA1711.severity = none
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = none
 
+# CA1030: Use events where appropriate
+dotnet_diagnostic.CA1030.severity = none
+
 [*.{cs,vb}]
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion

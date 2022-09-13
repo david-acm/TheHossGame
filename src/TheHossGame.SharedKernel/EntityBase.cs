@@ -79,6 +79,40 @@ public abstract class EntityBase<T>
    public IEnumerable<DomainEventBase> DomainEvents => this.domainEvents.AsReadOnly();
 
    /// <summary>
+   /// Performs identity based comparison.
+   /// </summary>
+   /// <param name="obj">The object to compare.</param>
+   /// <returns>Whether the two objects are equal.</returns>
+   public override bool Equals(object? obj)
+   {
+      if (obj is not EntityBase other)
+      {
+         return false;
+      }
+
+      if (ReferenceEquals(this, other))
+      {
+         return true;
+      }
+
+      if (this.GetType() != other.GetType())
+      {
+         return false;
+      }
+
+      return this.Id == other.Id;
+   }
+
+   /// <summary>
+   /// Gets the hash code of other entity.
+   /// </summary>
+   /// <returns>The hash code of the entity.</returns>
+   public override int GetHashCode()
+   {
+      return (this.GetType().ToString() + this.Id).GetHashCode(StringComparison.InvariantCulture);
+   }
+
+   /// <summary>
    /// Clears the collection of domain events.
    /// </summary>
    internal void ClearDomainEvents() => this.domainEvents.Clear();

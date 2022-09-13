@@ -119,7 +119,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
 
    private bool PropertiesAreEqual(object obj, PropertyInfo p)
    {
-      return object.Equals(p.GetValue(this, null), p.GetValue(obj, null));
+      return object.Equals(p.GetValue(this), p.GetValue(obj));
    }
 
    private bool FieldsAreEqual(object obj, FieldInfo f)

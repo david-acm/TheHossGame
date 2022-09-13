@@ -7,42 +7,21 @@
 namespace TheHossGame.UnitTests.Core.PlayerAggregate;
 
 using AutoFixture;
+using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using TheHossGame.Core.PlayerAggregate;
+using TheHossGame.SharedKernel;
+using TheHossGame.UnitTests.Core.Services;
 using Xunit;
 
 public class PlayerConstructorShould
 {
-   public PlayerConstructorShould()
-   {
-   }
+   [Fact]
+   public void DeriveFromEntityBase() => typeof(Player).Should()
+      .BeDerivedFrom<EntityBase<PlayerId>>();
 
    [Theory]
-   [AutoData]
+   [AutoPlayerData]
    public void CreateNewPlayer(Player player) => player.Should().NotBeNull();
-
-   [Fact]
-   public void ThrowArgumentNullExceptionWhenNameIsNull()
-   {
-      var fixture = new Fixture();
-      var playerCreation = () => new Player(
-         null!,
-         fixture.Create<PlayerEmail>());
-
-      var exception = playerCreation.Should().Throw<ArgumentException>();
-      exception.WithMessage("Value cannot be null. (Parameter 'name')");
-   }
-
-   [Fact]
-   public void ThrowArgumentNullExceptionWhenEmailIsNull()
-   {
-      var fixture = new Fixture();
-      var playerCreation = () => new Player(
-         fixture.Create<PlayerName>(),
-         null!);
-
-      var exception = playerCreation.Should().Throw<ArgumentException>();
-      exception.WithMessage("Value cannot be null. (Parameter 'email')");
-   }
 }

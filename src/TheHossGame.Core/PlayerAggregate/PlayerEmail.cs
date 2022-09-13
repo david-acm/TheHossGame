@@ -7,8 +7,9 @@
 namespace TheHossGame.Core.PlayerAggregate;
 
 using Ardalis.GuardClauses;
+using TheHossGame.SharedKernel;
 
-public class PlayerEmail
+public class PlayerEmail : ValueObject
 {
    public PlayerEmail(string address)
    {
@@ -17,5 +18,5 @@ public class PlayerEmail
       this.Address = address;
    }
 
-   public string Address { get; }
+   public string Address { get; private set; }
 }

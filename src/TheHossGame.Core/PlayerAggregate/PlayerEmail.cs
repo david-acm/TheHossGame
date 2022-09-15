@@ -7,13 +7,18 @@
 namespace TheHossGame.Core.PlayerAggregate;
 
 using Ardalis.GuardClauses;
+using System.ComponentModel.DataAnnotations;
 using TheHossGame.SharedKernel;
 
-public class PlayerEmail : ValueObject
+public record PlayerEmail : ValueObject
 {
-   public PlayerEmail(string address)
+   public static PlayerEmail FromString(string email) =>
+      new (email);
+
+   private PlayerEmail(string address)
    {
       Guard.Against.NullOrEmpty(address);
+      Guard.Against.InvalidInput(address, nameof(address), a => new EmailAddressAttribute().IsValid(address));
 
       this.Address = address;
    }

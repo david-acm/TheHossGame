@@ -8,12 +8,13 @@ namespace TheHossGame.Core.ProjectAggregate.Events;
 
 using TheHossGame.SharedKernel;
 
-public class ToDoItemCompletedEvent : DomainEventBase
+public record ToDoItemCompletedEvent : DomainEventBase
 {
-    public ToDoItemCompletedEvent(ToDoItem completedItem)
-    {
-        this.CompletedItem = completedItem;
-    }
+   public ToDoItemCompletedEvent(
+      ToDoItem completedItem)
+   {
+      this.CompletedItem = completedItem;
+   }
 
-    public ToDoItem CompletedItem { get; }
+   public ToDoItem CompletedItem { get; }
 }

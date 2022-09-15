@@ -6,8 +6,6 @@
 
 namespace TheHossGame.UnitTests.Core.PlayerAggregate;
 
-using AutoFixture;
-using AutoFixture.Xunit2;
 using FluentAssertions;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.Services;
@@ -16,17 +14,19 @@ using Events = TheHossGame.Core.PlayerAggregate.Events;
 
 public class PlayerRegisterShould
 {
-   [Theory]
-   [AutoPlayerData]
-   public void RaisePlayerRegisteredEvent(RegisterCommand command)
-   {
-      var player = Player.Register(command);
+    [Theory]
+    [AutoPlayerData]
+    [AutoMoqData]
+    public void RaisePlayerRegisteredEvent(
+        Player player)
+    {
+        player.Register();
 
-      var @event = player.Value.DomainEvents.Should().ContainSingle()
-         .Subject.As<Events.PlayerRegisteredEvent>();
-      @event = @event.Should().BeOfType<Events.PlayerRegisteredEvent>().Subject;
-      @event.PlayerId.Should().NotBeNull();
-      @event.PlayerName.Should().NotBeNull();
-      @event.PlayerEmail.Should().NotBeNull();
-   }
+        var @event = player.DomainEvents.Should().ContainSingle()
+           .Subject.As<Events.PlayerRegisteredEvent>();
+        @event = @event.Should().BeOfType<Events.PlayerRegisteredEvent>().Subject;
+        @event.PlayerId.Should().NotBeNull();
+        @event.PlayerName.Should().NotBeNull();
+        @event.PlayerEmail.Should().NotBeNull();
+    }
 }

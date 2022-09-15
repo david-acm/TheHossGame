@@ -6,19 +6,19 @@
 
 namespace TheHossGame.UnitTests.Core.PlayerAggregate;
 
-using AutoFixture;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using TheHossGame.Core.PlayerAggregate;
-using TheHossGame.SharedKernel;
 using Xunit;
 
 public class PlayerNameShould
 {
    [Theory]
    [AutoData]
-   public void NotBeLongerThan30Characters([Frozen] string name = "APlayer'sNameLongerThan30Characters")
+   public void NotBeLongerThan30Characters([Frozen] string name)
    {
       var playerCreation = () => new PlayerName(name);
 
@@ -34,9 +34,26 @@ public class PlayerNameShould
       playerCreation.Should().Throw<ArgumentException>();
    }
 
+   [Theory]
+   [AutoPlayerData]
+   public void HaveValueComparison([Frozen] PlayerName player1)
+   {
+      var player2 = new PlayerName(player1.Name);
+
+      (player1 == player2).Should().BeTrue();
+      player1.Equals(player2).Should().BeTrue();
+      player1.Should().BeEquivalentTo(player2);
+   }
+
    [Fact]
-   public void BeAValueObject() =>
-      typeof(PlayerName).Should().BeDerivedFrom<ValueObject>();
+   public void BeAnImmutableObject()
+   {
+      var customAttributes = typeof(PlayerName).GetTypeInfo().DeclaredProperties
+         .SelectMany(p => p.GetCustomAttributes(true));
+      var isRecord = customAttributes.FirstOrDefault() is CompilerGeneratedAttribute;
+
+      isRecord.Should().BeTrue();
+   }
 
    [Fact]
    public void ThrowArgumentExceptionWhenNameIsNull()

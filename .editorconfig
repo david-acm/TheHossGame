@@ -128,7 +128,7 @@ csharp_style_unused_value_assignment_preference = discard_variable:suggestion
 csharp_style_unused_value_expression_statement_preference = discard_variable:none
 
 # 'using' directive preferences
-csharp_using_directive_placement = outside_namespace:silent
+csharp_using_directive_placement = outside_namespace:none
 
 # New line preferences
 csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = true:silent
@@ -264,6 +264,12 @@ dotnet_diagnostic.CA1062.severity = none
 
 # CA1030: Use events where appropriate
 dotnet_diagnostic.CA1030.severity = none
+
+# IDE0065: Misplaced using directive
+dotnet_diagnostic.IDE0065.severity = none
+
+# IDE0005: Using directive is unnecessary.
+dotnet_diagnostic.IDE0005.severity = error
 
 [*.{cs,vb}]
 dotnet_style_coalesce_expression = true:suggestion

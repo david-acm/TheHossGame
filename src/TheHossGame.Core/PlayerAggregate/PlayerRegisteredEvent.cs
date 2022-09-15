@@ -7,18 +7,26 @@
 namespace TheHossGame.Core.PlayerAggregate.Events;
 using TheHossGame.SharedKernel;
 
-public class PlayerRegisteredEvent : DomainEventBase
+public record PlayerRegisteredEvent : DomainEventBase
 {
-   public PlayerRegisteredEvent(PlayerId playerId, PlayerEmail playerEmail, PlayerName playerName)
+   public PlayerRegisteredEvent(
+      PlayerId playerId,
+      PlayerEmail playerEmail,
+      PlayerName playerName)
    {
       this.PlayerId = playerId;
       this.PlayerEmail = playerEmail;
       this.PlayerName = playerName;
    }
 
-   public PlayerId PlayerId { get; private set; }
+   public delegate PlayerRegisteredEvent Factory(
+      PlayerId playerId,
+      PlayerEmail playerEmail,
+      PlayerName playerName);
 
-   public PlayerEmail PlayerEmail { get; private set; }
+   public PlayerId PlayerId { get; }
 
-   public PlayerName PlayerName { get; private set; }
+   public PlayerEmail PlayerEmail { get; }
+
+   public PlayerName PlayerName { get; }
 }

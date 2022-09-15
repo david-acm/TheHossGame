@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "TheHossGame.sln",
+    "projects": [
+      "src\\TheHossGame.Core\\TheHossGame.Core.csproj",
+      "src\\TheHossGame.SharedKernel\\TheHossGame.SharedKernel.csproj",
+      "tests\\TheHossGame.UnitTests\\TheHossGame.UnitTests.csproj"
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 ﻿// 🃏 The HossGame 🃏
-// <copyright file="PlayerWithNameSpecification.cs" company="Reactive">
+// <copyright file="PlayerWithEmailSpec.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
@@ -9,11 +9,11 @@ namespace TheHossGame.Core.Services;
 using Ardalis.Specification;
 using TheHossGame.Core.PlayerAggregate;
 
-public class PlayerWithNameSpec : Specification<Player>
+public class PlayerWithEmailSpec : Specification<Player>
 {
    private readonly Player player;
 
-   public PlayerWithNameSpec(Player player)
+   public PlayerWithEmailSpec(Player player)
    {
       this.player = player;
    }

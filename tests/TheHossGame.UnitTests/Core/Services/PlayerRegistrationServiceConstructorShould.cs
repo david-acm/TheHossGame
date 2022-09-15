@@ -6,7 +6,6 @@
 
 namespace TheHossGame.UnitTests.Core.Services;
 
-using AutoFixture.Xunit2;
 using FluentAssertions;
 using TheHossGame.Core.Services;
 using Xunit;

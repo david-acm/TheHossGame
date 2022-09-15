@@ -9,14 +9,15 @@
 namespace TheHossGame.SharedKernel;
 
 using MediatR;
+using System;
 
 /// <summary>
 /// Base class for domain events.
 /// </summary>
-public abstract class DomainEventBase : INotification
+public record DomainEventBase : INotification
 {
-    /// <summary>
-    /// Gets or sets the date the event ocurred on in UTC.
-    /// </summary>
-    public DateTime DateOccurred { get; protected set; } = DateTime.UtcNow;
+   /// <summary>
+   /// Gets the date the event ocurred on in UTC.
+   /// </summary>
+   public DateTime DateOccurred { get; init; }
 }

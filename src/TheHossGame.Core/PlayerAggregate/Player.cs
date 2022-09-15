@@ -6,8 +6,8 @@
 
 namespace TheHossGame.Core.PlayerAggregate;
 
-using Ardalis.GuardClauses;
 using Ardalis.Result;
+using TheHossGame.Core.PlayerAggregate.Events;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
 
@@ -25,15 +25,21 @@ public class Player : EntityBase<PlayerId>, IAggregateRoot
    {
    }
 
+   public enum PlayerState
+   {
+      Registered,
+   }
+
+   public PlayerState State { get; private set; }
+
    public PlayerName Name { get; }
 
    public PlayerEmail Email { get; }
 
-   public static Result<Player> Register(RegisterCommand command)
+   public Result<Player> Register()
    {
-      Player player = new (command.Name, command.Email);
-      player.RegisterDomainEvent(
-         new Events.PlayerRegisteredEvent(player.Id, command.Email, command.Name));
-      return Result.Success(player);
+      var @event = new PlayerRegisteredEvent(this.Id, this.Email, this.Name);
+      this.RegisterDomainEvent(@event);
+      return Result.Success(this);
    }
 }

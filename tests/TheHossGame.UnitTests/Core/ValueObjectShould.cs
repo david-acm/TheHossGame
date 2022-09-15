@@ -9,6 +9,7 @@ namespace TheHossGame.UnitTests.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using FluentAssertions;
 using FluentAssertions.Types;
 using TheHossGame.Core.PlayerAggregate;
@@ -20,11 +21,9 @@ public class ValueObjectShould
    [Fact]
    public void SetMethodsShouldBePrivate()
    {
-      var assembly = typeof(PlayerName).Assembly;
       IEnumerable<PropertyInfo> properties =
-         AllTypes.From(assembly)
-                 .ThatDeriveFrom<ValueObject>()
-                 .SelectMany(v => v.GetProperties());
+         GetValueTypesFromAssembly()
+         .SelectMany(v => v.GetProperties());
       var setMethods = properties.Select(p => p.SetMethod).OfType<MethodInfo>().ToList();
 
       setMethods.ForEach(m =>
@@ -35,10 +34,8 @@ public class ValueObjectShould
    [Fact]
    public void HaveReadOnlyProperties()
    {
-      var assembly = typeof(PlayerName).Assembly;
-      IEnumerable<PropertyInfo> properties = AllTypes
-         .From(assembly)
-         .ThatDeriveFrom<ValueObject>()
+      IEnumerable<PropertyInfo> properties =
+         GetValueTypesFromAssembly()
          .SelectMany(v => v.GetProperties());
       var readOnlyProperties = properties
          .Where(p => p.SetMethod is null)
@@ -46,5 +43,30 @@ public class ValueObjectShould
 
       readOnlyProperties.ForEach(p => p.CanWrite.Should().BeFalse(
          because: $"{p?.DeclaringType?.FullName} 👉 {p?.Name} property should be readOnly."));
+   }
+
+   [Fact]
+   public void BeImmutable()
+   {
+      List<Type> types = GetValueTypesFromAssembly();
+
+      types.ForEach(type => IsRecord(type).Should().BeTrue());
+   }
+
+   private static List<Type> GetValueTypesFromAssembly()
+   {
+      var assembly = typeof(PlayerName).Assembly;
+      List<Type> types =
+         AllTypes.From(assembly)
+                 .ThatDeriveFrom<ValueObject>()
+                 .ToList();
+      return types;
+   }
+
+   private static bool IsRecord(Type t)
+   {
+      var customAttributes = t.GetTypeInfo().DeclaredProperties
+               .SelectMany(p => p.GetCustomAttributes(true));
+      return customAttributes.FirstOrDefault() is CompilerGeneratedAttribute;
    }
 }

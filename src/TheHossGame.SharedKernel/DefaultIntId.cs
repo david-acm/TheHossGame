@@ -13,7 +13,7 @@ namespace TheHossGame.SharedKernel;
 /// <summary>
 /// A default value object that uses int for entity id.
 /// </summary>
-public class DefaultIntId : ValueObject
+public record DefaultIntId : ValueObject
 {
    /// <summary>
    /// Initializes a new instance of the <see cref="DefaultIntId"/> class.

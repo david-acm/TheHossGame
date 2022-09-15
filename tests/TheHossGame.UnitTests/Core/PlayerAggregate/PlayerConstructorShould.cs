@@ -5,14 +5,9 @@
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.UnitTests.Core.PlayerAggregate;
-
-using AutoFixture;
-using AutoFixture.AutoMoq;
-using AutoFixture.Xunit2;
 using FluentAssertions;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
-using TheHossGame.UnitTests.Core.Services;
 using Xunit;
 
 public class PlayerConstructorShould
@@ -23,5 +18,6 @@ public class PlayerConstructorShould
 
    [Theory]
    [AutoPlayerData]
-   public void CreateNewPlayer(Player player) => player.Should().NotBeNull();
+   public void CreateNewPlayer(Player player) =>
+      player.Should().NotBeNull();
 }

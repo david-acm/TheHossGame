@@ -7,10 +7,9 @@
 namespace TheHossGame.UnitTests.Core.PlayerAggregate;
 
 using AutoFixture.Kernel;
-using System;
 using TheHossGame.Core.PlayerAggregate;
 
-public class PlayerNameGenerator : ISpecimenBuilder
+internal class PlayerNameGenerator : ISpecimenBuilder
 {
    public object Create(object request, ISpecimenContext context)
    {

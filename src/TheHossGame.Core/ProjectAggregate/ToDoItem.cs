@@ -32,7 +32,7 @@ public class ToDoItem : EntityBase
       {
          this.IsDone = true;
 
-         this.RegisterDomainEvent(new ToDoItemCompletedEvent(this));
+         this.RaiseDomainEvent(new ToDoItemCompletedEvent(this));
       }
    }
 
@@ -40,5 +40,15 @@ public class ToDoItem : EntityBase
    {
       string status = this.IsDone ? "Done!" : "Not done.";
       return $"{this.Id}: Status: {status} - {this.Title} - {this.Description}";
+   }
+
+   protected override void When(DomainEventBase @event)
+   {
+      throw new NotImplementedException();
+   }
+
+   protected override void EnsureValidState()
+   {
+      throw new NotImplementedException();
    }
 }

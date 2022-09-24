@@ -12,6 +12,7 @@ public record ToDoItemCompletedEvent : DomainEventBase
 {
    public ToDoItemCompletedEvent(
       ToDoItem completedItem)
+      : base(completedItem.Id)
    {
       this.CompletedItem = completedItem;
    }

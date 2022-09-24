@@ -4,7 +4,7 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.UnitTests.Core.PlayerAggregate;
+namespace TheHossGame.UnitTests.Core.PlayerAggregate.Player;
 using FluentAssertions;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;

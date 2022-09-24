@@ -4,9 +4,11 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.UnitTests.Core.GameAggregate;
+namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 
+using AutoFixture.Xunit2;
 using FluentAssertions;
+using TheHossGame.Core.GameAggregate;
 using TheHossGame.SharedKernel.Interfaces;
 using Xunit;
 
@@ -16,11 +18,10 @@ public class ConstructorShould
    {
    }
 
-   [Fact]
-   public void ReturnNewGameAggregate()
+   [Theory]
+   [AutoData]
+   public void ReturnNewGameAggregate(Game game)
    {
-      var game = new Game();
-
       game.Should().NotBeNull();
       typeof(Game).Should().Implement<IAggregateRoot>();
    }

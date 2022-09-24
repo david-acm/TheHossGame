@@ -17,6 +17,20 @@ using System;
 public record DomainEventBase : INotification
 {
    /// <summary>
+   /// Initializes a new instance of the <see cref="DomainEventBase"/> class.
+   /// </summary>
+   /// <param name="entityId">The entity id.</param>
+   public DomainEventBase(ValueObject entityId)
+   {
+      this.EntityId = entityId;
+   }
+
+   /// <summary>
+   /// Gets the entity id.
+   /// </summary>
+   public ValueObject EntityId { get; init; }
+
+   /// <summary>
    /// Gets the date the event ocurred on in UTC.
    /// </summary>
    public DateTime DateOccurred { get; init; }

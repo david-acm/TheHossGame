@@ -26,7 +26,9 @@ public class DomainEventShould
                  .ThatDeriveFrom<DomainEventBase>()
                  .SelectMany(v => v.GetProperties());
       var setMethods = properties.Select(p => p.SetMethod).OfType<MethodInfo>()
-         .Where(p => p.DeclaringType != typeof(DomainEventBase))
+          .Where(p =>
+            p.DeclaringType != typeof(DomainEventBase) &&
+            !p.CustomAttributes.Any())
          .ToList();
 
       setMethods.ForEach(m =>

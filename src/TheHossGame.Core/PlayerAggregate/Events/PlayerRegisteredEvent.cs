@@ -1,0 +1,15 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="PlayerRegisteredEvent.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+
+namespace TheHossGame.Core.PlayerAggregate.Events;
+using TheHossGame.SharedKernel;
+
+public record PlayerRegisteredEvent(
+   PlayerId PlayerId,
+   PlayerName PlayerName)
+   : DomainEventBase(PlayerId)
+{
+}

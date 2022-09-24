@@ -35,11 +35,21 @@ public class Project : EntityBase, IAggregateRoot
       this.items.Add(newItem);
 
       var newItemAddedEvent = new NewItemAddedEvent(this, newItem);
-      this.RegisterDomainEvent(newItemAddedEvent);
+      this.RaiseDomainEvent(newItemAddedEvent);
    }
 
    public void UpdateName(string newName)
    {
       this.Name = Guard.Against.NullOrEmpty(newName);
+   }
+
+   protected override void EnsureValidState()
+   {
+      throw new NotImplementedException();
+   }
+
+   protected override void When(DomainEventBase @event)
+   {
+      throw new NotImplementedException();
    }
 }

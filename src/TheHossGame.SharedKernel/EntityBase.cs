@@ -118,8 +118,30 @@ public abstract class EntityBase<T>
    internal void ClearDomainEvents() => this.domainEvents.Clear();
 
    /// <summary>
+   /// Applies an event to an entity.
+   /// </summary>
+   /// <param name="event">The event to apply.</param>
+   protected void Apply(DomainEventBase @event)
+   {
+      this.When(@event);
+      this.EnsureValidState();
+      this.domainEvents.Add(@event);
+   }
+
+   /// <summary>
+   /// Applies concrete event to enentity.
+   /// </summary>
+   /// <param name="event">The event to apply.</param>
+   protected abstract void When(DomainEventBase @event);
+
+   /// <summary>
+   /// Ensures the entity is in a valid state.
+   /// </summary>
+   protected abstract void EnsureValidState();
+
+   /// <summary>
    /// Adds a new domain event to the collection.
    /// </summary>
    /// <param name="domainEvent">The domain event to be added.</param>
-   protected void RegisterDomainEvent(DomainEventBase domainEvent) => this.domainEvents.Add(domainEvent);
+   protected void RaiseDomainEvent(DomainEventBase domainEvent) => this.domainEvents.Add(domainEvent);
 }

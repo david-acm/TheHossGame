@@ -13,13 +13,47 @@ using TheHossGame.Core.PlayerAggregate.Events;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
 
-public class Player : EntityBase<PlayerId>, IAggregateRoot
+public abstract class Player : EntityBase<APlayerId>, IAggregateRoot
 {
-   private Player(PlayerId id, PlayerName name)
+   protected Player(APlayerId id)
+      : base(id)
+   {
+      this.JoiningGameId = new NoGameId();
+   }
+
+   public bool IsJoiningGame => this.JoiningGameId is GameId;
+
+   public AGameId JoiningGameId { get; protected set; }
+
+   public abstract void RequestJoinGame(AGameId gameId);
+}
+
+public class NoPlayer : Player
+{
+   public NoPlayer()
+      : base(new APlayerId())
+   {
+   }
+
+   public override void RequestJoinGame(AGameId gameId)
+   {
+   }
+
+   protected override void EnsureValidState()
+   {
+   }
+
+   protected override void When(DomainEventBase @event)
+   {
+   }
+}
+
+public class APlayer : Player
+{
+   private APlayer(APlayerId id, PlayerName name)
       : base(id)
    {
       this.Name = name;
-      this.JoiningGameId = new NoGameId();
    }
 
    public enum PlayerState
@@ -32,20 +66,16 @@ public class Player : EntityBase<PlayerId>, IAggregateRoot
 
    public PlayerName Name { get; }
 
-   public AGameId JoiningGameId { get; private set; }
-
-   public bool IsJoiningGame => this.JoiningGameId is GameId;
-
-   public static Player FromRegister(PlayerId playerId, PlayerName playerName)
+   public static APlayer FromRegister(APlayerId playerId, PlayerName playerName)
    {
-      var player = new Player(playerId, playerName);
+      var player = new APlayer(playerId, playerName);
       var @event = new PlayerRegisteredEvent(playerId, playerName);
       player.RaiseDomainEvent(@event);
 
       return player;
    }
 
-   public void RequestJoinGame(AGameId gameId)
+   public override void RequestJoinGame(AGameId gameId)
    {
       /*This should be checked both by the client before sending the command and by a domain service after hydrating the player aggregate and before calling this method. There is a race condition where a player can join a game and tries to join another game after the condition is checked. Allowing a player to briefly join two games. This edge and rare case could be solved by:
       - Defining an SLA (?)
@@ -57,7 +87,7 @@ public class Player : EntityBase<PlayerId>, IAggregateRoot
       {
          this.RaiseDomainEvent(new CannotJoinGameEvent(
             this.Id,
-            $"Player already in a game"));
+            $"APlayer already in a game"));
       }
 
       // Post conditions
@@ -79,7 +109,7 @@ public class Player : EntityBase<PlayerId>, IAggregateRoot
 
       if (!valid)
       {
-         throw new InvalidEntityStateException(this, $"Failed to validate entity {nameof(Player)}");
+         throw new InvalidEntityStateException(this, $"Failed to validate entity {nameof(APlayer)}");
       }
    }
 
@@ -92,7 +122,7 @@ public class Player : EntityBase<PlayerId>, IAggregateRoot
 [Serializable]
 public class InvalidEntityStateException : Exception
 {
-   private readonly Player? player;
+   private readonly APlayer? player;
    private readonly string? message;
 
    public InvalidEntityStateException()
@@ -104,7 +134,7 @@ public class InvalidEntityStateException : Exception
    {
    }
 
-   public InvalidEntityStateException(Player player, string message)
+   public InvalidEntityStateException(APlayer player, string message)
       : this(message)
    {
       this.player = player;

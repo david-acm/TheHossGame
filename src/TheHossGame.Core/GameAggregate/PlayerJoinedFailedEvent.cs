@@ -9,7 +9,7 @@ namespace TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 
-public record PlayerJoinedFailedEvent(PlayerId playerId)
+public record PlayerJoinedFailedEvent(APlayerId playerId)
    : DomainEventBase(playerId)
 {
 }

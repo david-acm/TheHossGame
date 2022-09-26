@@ -10,7 +10,7 @@ using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using static TheHossGame.Core.GameAggregate.Game;
 
-public record PlayerJoinedEvent(PlayerId PlayerId, TeamId TeamId)
+public record PlayerJoinedEvent(APlayerId PlayerId, TeamId TeamId)
    : DomainEventBase(PlayerId)
 {
 }

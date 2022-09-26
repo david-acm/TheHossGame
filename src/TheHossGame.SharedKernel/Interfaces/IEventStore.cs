@@ -19,8 +19,9 @@ public interface IEventStore<TAggregate>
    /// Gets an aggregate root by its Id.
    /// </summary>
    /// <returns>The aggregate root.</returns>
+   /// <param name="id">The id of the aggregate to get.</param>
    /// <typeparam name="TId">The type of the aggregate.</typeparam>
-   Task<TAggregate> GetAggregateAsync<TId>()
+   Task<TAggregate> GetAggregateAsync<TId>(TId id)
       where TId : ValueObject;
 
    /// <summary>

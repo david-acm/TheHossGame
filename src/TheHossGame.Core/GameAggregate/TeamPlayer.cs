@@ -9,4 +9,4 @@ namespace TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using static TheHossGame.Core.GameAggregate.Game;
 
-public record TeamPlayer(PlayerId PlayerId, TeamId TeamId);
+public record TeamPlayer(APlayerId PlayerId, TeamId TeamId);

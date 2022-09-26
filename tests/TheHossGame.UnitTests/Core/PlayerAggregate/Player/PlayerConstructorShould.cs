@@ -13,11 +13,11 @@ using Xunit;
 public class PlayerConstructorShould
 {
    [Fact]
-   public void DeriveFromEntityBase() => typeof(Player).Should()
-      .BeDerivedFrom<EntityBase<PlayerId>>();
+   public void DeriveFromEntityBase() => typeof(APlayer).Should()
+      .BeDerivedFrom<EntityBase<APlayerId>>();
 
    [Theory]
    [AutoPlayerData]
-   public void CreateNewPlayer(Player player) =>
+   public void CreateNewPlayer(APlayer player) =>
       player.Should().NotBeNull();
 }

@@ -16,9 +16,9 @@ public class StartGameShould
 {
    [Theory]
    [AutoPlayerData]
-   public void RaiseGameStartedEvent(PlayerId playerId)
+   public void RaiseGameStartedEvent(APlayerId playerId)
    {
-      var game = Game.StartForPlayer(playerId);
+      var game = AGame.StartForPlayer(playerId);
 
       var startEvent = game.DomainEvents.Should()
          .ContainSingle(e => e is GameStartedEvent)
@@ -29,8 +29,8 @@ public class StartGameShould
          .Subject.As<PlayerJoinedEvent>();
 
       startEvent.StartedBy.Should().Be(playerId);
-      startEvent.StartedBy.Should().BeOfType<PlayerId>();
+      startEvent.StartedBy.Should().BeOfType<APlayerId>();
       joinedEvent.PlayerId.Should().Be(playerId);
-      joinedEvent.TeamId.Should().Be(Game.TeamId.Team1);
+      joinedEvent.TeamId.Should().Be(AGame.TeamId.Team1);
    }
 }

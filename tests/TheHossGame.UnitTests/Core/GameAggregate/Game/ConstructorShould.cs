@@ -20,9 +20,9 @@ public class ConstructorShould
 
    [Theory]
    [AutoData]
-   public void ReturnNewGameAggregate(Game game)
+   public void ReturnNewGameAggregate(AGame game)
    {
       game.Should().NotBeNull();
-      typeof(Game).Should().Implement<IAggregateRoot>();
+      typeof(AGame).Should().Implement<IAggregateRoot>();
    }
 }

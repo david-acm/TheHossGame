@@ -9,11 +9,11 @@ namespace TheHossGame.Core.Services;
 using Ardalis.Specification;
 using TheHossGame.Core.PlayerAggregate;
 
-public class PlayerWithNameSpec : Specification<Player>
+public class PlayerWithNameSpec : Specification<APlayer>
 {
-   private readonly Player player;
+   private readonly APlayer player;
 
-   public PlayerWithNameSpec(Player player)
+   public PlayerWithNameSpec(APlayer player)
    {
       this.player = player;
    }

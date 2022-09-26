@@ -21,9 +21,9 @@ public class PlayerRegistrationServiceRegisterShould
     [AutoMoqData]
     [AutoPlayerData]
     public async Task CheckUserNameIsUnique(
-       [Frozen] Mock<IRepository<Player>> playerRepository,
+       [Frozen] Mock<IRepository<APlayer>> playerRepository,
        PlayerRegistrationService service,
-       Player player)
+       APlayer player)
     {
         await service.RegisterAsync(player);
 
@@ -37,10 +37,10 @@ public class PlayerRegistrationServiceRegisterShould
     [AutoMoqData]
     [AutoPlayerData]
     public async Task CheckPlayerIsNotRegistered(
-       [Frozen] Mock<IRepository<Player>> playerRepository,
-       [Frozen] Mock<IEventStore<Player>> eventStore,
+       [Frozen] Mock<IRepository<APlayer>> playerRepository,
+       [Frozen] Mock<IEventStore<APlayer>> eventStore,
        PlayerRegistrationService service,
-       Player player)
+       APlayer player)
     {
         await service.RegisterAsync(player);
 

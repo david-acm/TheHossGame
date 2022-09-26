@@ -10,14 +10,11 @@ using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
 
-public class Game : EntityBase<GameId>, IAggregateRoot
+public abstract class Game : EntityBase<AGameId>, IAggregateRoot
 {
-   private readonly List<TeamPlayer> teamPlayers = new ();
-
-   private Game(PlayerId playerId)
-      : base(new GameId())
+   protected Game(AGameId id)
+      : base(id)
    {
-      this.PlayerId = playerId;
    }
 
    public enum TeamId
@@ -26,11 +23,24 @@ public class Game : EntityBase<GameId>, IAggregateRoot
       Team2,
    }
 
-   public PlayerId PlayerId { get; }
+   public abstract void JoinPlayer(APlayerId playerId, TeamId teamId);
+}
 
-   public static Game StartForPlayer(PlayerId playerId)
+public class AGame : Game
+{
+   private readonly List<TeamPlayer> teamPlayers = new ();
+
+   private AGame(APlayerId playerId)
+      : base(new GameId())
    {
-      Game game = new (playerId);
+      this.PlayerId = playerId;
+   }
+
+   public APlayerId PlayerId { get; }
+
+   public static AGame StartForPlayer(APlayerId playerId)
+   {
+      AGame game = new (playerId);
       game.RaiseDomainEvent(new GameStartedEvent(playerId));
       game.RaiseDomainEvent(new PlayerJoinedEvent(playerId, TeamId.Team1));
 
@@ -40,7 +50,7 @@ public class Game : EntityBase<GameId>, IAggregateRoot
    public IReadOnlyCollection<TeamPlayer> TeamPlayers(TeamId teamId) => this.teamPlayers.Where(p => p.TeamId == teamId)
       .ToList().AsReadOnly();
 
-   public void JoinPlayer(PlayerId playerId, TeamId teamId)
+   public override void JoinPlayer(APlayerId playerId, TeamId teamId)
       => this.Apply(new PlayerJoinedEvent(playerId, teamId));
 
    protected override void When(DomainEventBase @event)
@@ -69,5 +79,25 @@ public class Game : EntityBase<GameId>, IAggregateRoot
 
       bool ValidTeamPlayers(TeamId team1) =>
          this.TeamPlayers(team1).Count <= 2;
+   }
+}
+
+public class NoGame : Game
+{
+   public NoGame()
+      : base(new NoGameId())
+   {
+   }
+
+   public override void JoinPlayer(APlayerId playerId, TeamId teamId)
+   {
+   }
+
+   protected override void EnsureValidState()
+   {
+   }
+
+   protected override void When(DomainEventBase @event)
+   {
    }
 }

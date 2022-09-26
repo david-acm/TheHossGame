@@ -12,18 +12,18 @@ using TheHossGame.SharedKernel.Interfaces;
 
 public class PlayerRegistrationService
 {
-   private readonly IRepository<Player> repository;
-   private readonly IEventStore<Player> store;
+   private readonly IRepository<APlayer> repository;
+   private readonly IEventStore<APlayer> store;
 
    public PlayerRegistrationService(
-      IRepository<Player> repository,
-      IEventStore<Player> store)
+      IRepository<APlayer> repository,
+      IEventStore<APlayer> store)
    {
       this.repository = repository;
       this.store = store;
    }
 
-   public async Task RegisterAsync(Player player)
+   public async Task RegisterAsync(APlayer player)
    {
       bool playerIsRegistered = await this.PlayerIsRegistered(player);
       if (playerIsRegistered)
@@ -42,13 +42,13 @@ public class PlayerRegistrationService
       await this.store.PushEventsAsync(player.DomainEvents);
    }
 
-   private async Task<bool> UserNameIsUniqueAsync(Player player)
+   private async Task<bool> UserNameIsUniqueAsync(APlayer player)
    {
       var specification = new PlayerWithNameSpec(player);
       return await this.repository.AnyAsync(specification);
    }
 
-   private async Task<bool> PlayerIsRegistered(Player player)
+   private async Task<bool> PlayerIsRegistered(APlayer player)
    {
       var specification = new PlayerWithEmailSpec(player);
       return await this.repository.AnyAsync(specification);

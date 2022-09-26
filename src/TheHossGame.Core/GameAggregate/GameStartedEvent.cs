@@ -10,7 +10,7 @@ using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Doesn't applut to records.")]
-public record GameStartedEvent(PlayerId StartedBy)
+public record GameStartedEvent(APlayerId StartedBy)
    : DomainEventBase(StartedBy)
 {
 }

@@ -19,10 +19,10 @@ public class RegisterShould
    [AutoPlayerData]
    [AutoMoqData]
    public void RaisePlayerRegisteredEvent(
-       PlayerId playerId,
+       APlayerId playerId,
        PlayerName playerName)
    {
-      var player = Player.FromRegister(playerId, playerName);
+      var player = APlayer.FromRegister(playerId, playerName);
 
       var @event = player.DomainEvents.Should().ContainSingle()
          .Subject.As<PlayerRegisteredEvent>();

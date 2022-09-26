@@ -7,6 +7,7 @@
 namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 
 using FluentAssertions;
+using System;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate;

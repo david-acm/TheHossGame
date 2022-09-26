@@ -24,3 +24,8 @@ public record TeamsFormedEvent(GameId gameId)
    : DomainEventBase(gameId)
 {
 }
+
+public record PlayerReadyEvent(GameId GameId, PlayerId PlayerId)
+   : DomainEventBase(GameId)
+{
+}

@@ -30,7 +30,7 @@ public class RequestJoinGameShould
    [Theory]
    [AutoPlayerData]
    public void RaiseCannotJoinGameEventWhenPlayerAlreadyInAGame(
-      APlayer player, AGameId gameId, GameId anotherGameId)
+      APlayer player, AGameId gameId, AGameId anotherGameId)
    {
       player.RequestJoinGame(gameId);
       player.RequestJoinGame(anotherGameId);

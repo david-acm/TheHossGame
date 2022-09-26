@@ -11,7 +11,7 @@ using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
 
-public class AGame : Game
+public sealed class AGame : Game
 {
    private readonly List<TeamPlayer> teamPlayers = new ();
 
@@ -44,12 +44,20 @@ public class AGame : Game
       => this.teamPlayers.Where(p => p.TeamId == teamId)
          .ToList().AsReadOnly();
 
+   public IReadOnlyCollection<TeamPlayer> TeamPlayers()
+      => this.teamPlayers.ToList().AsReadOnly();
+
+   public TeamPlayer TeamPlayer(PlayerId playerId)
+      => this.TeamPlayers().FirstOrDefault(p => p.PlayerId == playerId)
+         ?? new NoTeamPlayer();
+
    public override void CreateNewGame(PlayerId playerId)
       => this.Apply(new NewGameCreatedEvent(playerId));
 
    public override void JoinPlayer(PlayerId playerId, TeamId teamId)
    {
-      if (this.teamPlayers.Any(t => t.PlayerId == playerId))
+      bool playerIsMember = this.TeamPlayer(playerId) is not NoTeamPlayer;
+      if (playerIsMember)
       {
          this.Apply(new PlayerAlreadyInGame(playerId));
          return;
@@ -63,12 +71,23 @@ public class AGame : Game
       }
    }
 
+   public void TeamPlayerReady(PlayerId playerId)
+   {
+      bool playerIsNotMember = this.TeamPlayer(playerId) is NoTeamPlayer;
+      if (playerIsNotMember)
+      {
+         return;
+      }
+
+      this.Apply(new PlayerReadyEvent(this.Id, playerId));
+   }
+
    protected override void When(DomainEventBase @event)
    {
       switch (@event)
       {
          case PlayerJoinedEvent e:
-            this.teamPlayers.Add(new TeamPlayer(e.PlayerId, e.TeamId));
+            this.teamPlayers.Add(new ATeamPlayer(e.PlayerId, e.TeamId));
             break;
 
          case NewGameCreatedEvent e:
@@ -76,6 +95,12 @@ public class AGame : Game
 
          case TeamsFormedEvent e:
             this.State = GameState.TeamsFormed;
+            break;
+
+         case PlayerReadyEvent e:
+            this.teamPlayers.Replace(
+               t => t.PlayerId == e.PlayerId,
+               t => t with { IsReady = true });
             break;
 
          default:
@@ -114,6 +139,7 @@ public abstract class Game : EntityBase<GameId>, IAggregateRoot
 
    public enum TeamId
    {
+      NoTeamId,
       Team1,
       Team2,
    }
@@ -144,5 +170,21 @@ public class NoGame : Game
 
    protected override void When(DomainEventBase @event)
    {
+   }
+}
+
+public static class ListExtensions
+{
+   public static bool Replace<T>(this List<T> list, Func<T, bool> selector, Func<T, T> modifier)
+   {
+      var item = list.FirstOrDefault(selector);
+      if (item is null)
+      {
+         return false;
+      }
+
+      list.Remove(item);
+      list.Add(modifier(item));
+      return true;
    }
 }

@@ -9,4 +9,17 @@ namespace TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using static TheHossGame.Core.GameAggregate.Game;
 
-public record TeamPlayer(PlayerId PlayerId, TeamId TeamId);
+public abstract record class TeamPlayer(PlayerId PlayerId, TeamId TeamId)
+{
+   public bool IsReady { get; init; }
+}
+
+public record ATeamPlayer(PlayerId PlayerId, TeamId TeamId)
+   : TeamPlayer(PlayerId, TeamId)
+{
+}
+
+public record NoTeamPlayer()
+   : TeamPlayer(new NoPlayerId(), TeamId.NoTeamId)
+{
+}

@@ -51,14 +51,6 @@ public class PlayerEmailShould
    }
 
    [Fact]
-   public void ThrowArgumentNullExceptionWhenEmailIsNull()
-   {
-      var playerEmail = () => PlayerEmail.FromString(null!);
-
-      playerEmail.Should().Throw<ArgumentException>();
-   }
-
-   [Fact]
    public void ThrowArgumentNullExceptionWhenEmailIsEmpty()
    {
       var playerEmail = () => PlayerEmail.FromString(string.Empty);

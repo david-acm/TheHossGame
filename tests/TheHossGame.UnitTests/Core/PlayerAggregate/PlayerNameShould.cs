@@ -56,14 +56,6 @@ public class PlayerNameShould
    }
 
    [Fact]
-   public void ThrowArgumentExceptionWhenNameIsNull()
-   {
-      var playerName = () => new PlayerName(null!);
-
-      playerName.Should().Throw<ArgumentException>();
-   }
-
-   [Fact]
    public void ThrowArgumentNullExceptionWhenNameIsEmpty()
    {
       var playerName = () => new PlayerName(string.Empty);

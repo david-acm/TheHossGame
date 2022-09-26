@@ -13,19 +13,19 @@ using TheHossGame.Core.PlayerAggregate.Events;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
 
-public abstract class Player : EntityBase<APlayerId>, IAggregateRoot
+public abstract class Player : EntityBase<PlayerId>, IAggregateRoot
 {
-   protected Player(APlayerId id)
+   protected Player(PlayerId id)
       : base(id)
    {
       this.JoiningGameId = new NoGameId();
    }
 
-   public bool IsJoiningGame => this.JoiningGameId is GameId;
+   public bool IsJoiningGame => this.JoiningGameId is AGameId;
 
-   public AGameId JoiningGameId { get; protected set; }
+   public GameId JoiningGameId { get; protected set; }
 
-   public abstract void RequestJoinGame(AGameId gameId);
+   public abstract void RequestJoinGame(GameId gameId);
 }
 
 public class NoPlayer : Player
@@ -35,7 +35,7 @@ public class NoPlayer : Player
    {
    }
 
-   public override void RequestJoinGame(AGameId gameId)
+   public override void RequestJoinGame(GameId gameId)
    {
    }
 
@@ -50,7 +50,7 @@ public class NoPlayer : Player
 
 public class APlayer : Player
 {
-   private APlayer(APlayerId id, PlayerName name)
+   private APlayer(PlayerId id, PlayerName name)
       : base(id)
    {
       this.Name = name;
@@ -66,7 +66,7 @@ public class APlayer : Player
 
    public PlayerName Name { get; }
 
-   public static APlayer FromRegister(APlayerId playerId, PlayerName playerName)
+   public static APlayer FromRegister(PlayerId playerId, PlayerName playerName)
    {
       var player = new APlayer(playerId, playerName);
       var @event = new PlayerRegisteredEvent(playerId, playerName);
@@ -75,7 +75,7 @@ public class APlayer : Player
       return player;
    }
 
-   public override void RequestJoinGame(AGameId gameId)
+   public override void RequestJoinGame(GameId gameId)
    {
       /*This should be checked both by the client before sending the command and by a domain service after hydrating the player aggregate and before calling this method. There is a race condition where a player can join a game and tries to join another game after the condition is checked. Allowing a player to briefly join two games. This edge and rare case could be solved by:
       - Defining an SLA (?)

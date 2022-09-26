@@ -6,10 +6,10 @@
 
 namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 
-using AutoFixture.Xunit2;
 using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.SharedKernel.Interfaces;
+using TheHossGame.UnitTests.Core.PlayerAggregate;
 using Xunit;
 
 public class ConstructorShould
@@ -19,10 +19,11 @@ public class ConstructorShould
    }
 
    [Theory]
-   [AutoData]
+   [AutoPlayerData]
    public void ReturnNewGameAggregate(AGame game)
    {
       game.Should().NotBeNull();
+
       typeof(AGame).Should().Implement<IAggregateRoot>();
    }
 }

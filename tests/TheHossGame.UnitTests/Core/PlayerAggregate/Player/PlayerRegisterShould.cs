@@ -24,7 +24,7 @@ public class RegisterShould
    {
       var player = APlayer.FromRegister(playerId, playerName);
 
-      var @event = player.DomainEvents.Should().ContainSingle()
+      var @event = player.Events.Should().ContainSingle()
          .Subject.As<PlayerRegisteredEvent>();
       @event = @event.Should().BeOfType<Events.PlayerRegisteredEvent>().Subject;
       @event.PlayerId.Should().NotBeNull();

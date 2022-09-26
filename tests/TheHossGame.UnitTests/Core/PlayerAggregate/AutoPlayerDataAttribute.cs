@@ -24,5 +24,7 @@ internal class PlayerDataCustomization : ICustomization
    {
       fixture.Customizations.Add(new PlayerNameGenerator());
       fixture.Customizations.Add(new PlayerEmailGenerator());
+      fixture.Customizations.Add(new PlayerIdGenerator());
+      fixture.Customizations.Add(new PlayerGenerator());
    }
 }

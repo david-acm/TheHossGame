@@ -39,7 +39,7 @@ public class PlayerRegistrationService
 #pragma warning restore S3626 // Jump statements should not be redundant
       }
 
-      await this.store.PushEventsAsync(player.DomainEvents);
+      await this.store.PushEventsAsync(player.Events);
    }
 
    private async Task<bool> UserNameIsUniqueAsync(APlayer player)

@@ -7,12 +7,12 @@
 namespace TheHossGame.Core.GameAggregate;
 using TheHossGame.SharedKernel;
 
-public abstract record AGameId : ValueObject;
+public abstract record GameId : ValueObject;
 
-public record GameId : AGameId
+public record AGameId : GameId
 {
 }
 
-public record NoGameId : AGameId
+public record NoGameId : GameId
 {
 }

@@ -14,7 +14,7 @@ public class PlayerConstructorShould
 {
    [Fact]
    public void DeriveFromEntityBase() => typeof(APlayer).Should()
-      .BeDerivedFrom<EntityBase<APlayerId>>();
+      .BeDerivedFrom<EntityBase<PlayerId>>();
 
    [Theory]
    [AutoPlayerData]

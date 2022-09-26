@@ -9,7 +9,7 @@ namespace TheHossGame.Core.PlayerAggregate.Events;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.SharedKernel;
 
-public record RequestedJoinGameEvent(AGameId GameId)
+public record RequestedJoinGameEvent(GameId GameId)
    : DomainEventBase(GameId)
 {
 }

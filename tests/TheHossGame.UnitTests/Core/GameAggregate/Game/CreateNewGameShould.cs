@@ -1,5 +1,5 @@
 ﻿// 🃏 The HossGame 🃏
-// <copyright file="StartGameShould.cs" company="Reactive">
+// <copyright file="CreateNewGameShould.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
@@ -11,26 +11,27 @@ using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate;
 using Xunit;
+using static TheHossGame.Core.GameAggregate.Game.TeamId;
 
-public class StartGameShould
+public class CreateNewGameShould
 {
    [Theory]
    [AutoPlayerData]
    public void RaiseGameStartedEvent(APlayerId playerId)
    {
-      var game = AGame.StartForPlayer(playerId);
+      var game = AGame.CreateNewForPlayer(playerId);
 
-      var startEvent = game.DomainEvents.Should()
-         .ContainSingle(e => e is GameStartedEvent)
-         .Subject.As<GameStartedEvent>();
+      var startEvent = game.Events.Should()
+         .ContainSingle(e => e is NewGameCreatedEvent)
+         .Subject.As<NewGameCreatedEvent>();
 
-      var joinedEvent = game.DomainEvents.Should()
+      var joinedEvent = game.Events.Should()
          .ContainSingle(e => e is PlayerJoinedEvent)
          .Subject.As<PlayerJoinedEvent>();
 
       startEvent.StartedBy.Should().Be(playerId);
       startEvent.StartedBy.Should().BeOfType<APlayerId>();
       joinedEvent.PlayerId.Should().Be(playerId);
-      joinedEvent.TeamId.Should().Be(AGame.TeamId.Team1);
+      joinedEvent.TeamId.Should().Be(Team1);
    }
 }

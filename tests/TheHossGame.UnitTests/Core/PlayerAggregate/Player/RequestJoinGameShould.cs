@@ -17,11 +17,11 @@ public class RequestJoinGameShould
    [Theory]
    [AutoPlayerData]
    public void RaiseRequestJoinGameEvent(
-      APlayer player, GameId gameId)
+      APlayer player, AGameId gameId)
    {
       player.RequestJoinGame(gameId);
 
-      player.DomainEvents
+      player.Events
          .Should().ContainSingle(e => e is RequestedJoinGameEvent)
          .Which.Should().BeOfType<RequestedJoinGameEvent>()
          .Which.GameId.Should().Be(gameId);
@@ -30,12 +30,12 @@ public class RequestJoinGameShould
    [Theory]
    [AutoPlayerData]
    public void RaiseCannotJoinGameEventWhenPlayerAlreadyInAGame(
-      APlayer player, GameId gameId, GameId anotherGameId)
+      APlayer player, AGameId gameId, GameId anotherGameId)
    {
       player.RequestJoinGame(gameId);
       player.RequestJoinGame(anotherGameId);
 
-      player.DomainEvents
+      player.Events
          .Should().ContainSingle(e => e is CannotJoinGameEvent)
          .Which.Should().BeOfType<CannotJoinGameEvent>()
          .Which.Reason.Should().Be("APlayer already in a game");

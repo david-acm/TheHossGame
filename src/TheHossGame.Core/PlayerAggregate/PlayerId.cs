@@ -16,6 +16,16 @@ public record NoPlayerId : PlayerId
 {
 }
 
-public abstract record PlayerId : ValueObject
+public abstract record PlayerId : ValueId
 {
+}
+
+public abstract record ValueId : ValueObject
+{
+   protected ValueId()
+   {
+      this.Id = Guid.NewGuid();
+   }
+
+   public Guid Id { get; }
 }

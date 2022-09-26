@@ -35,7 +35,7 @@ public class DomainEventDispatcher : IDomainEventDispatcher
 
         foreach (var entity in entitiesWithEvents)
         {
-            var events = entity.DomainEvents.ToArray();
+            var events = entity.Events.ToArray();
             entity.ClearDomainEvents();
             await this.PublishEventsAsync(events).ConfigureAwait(false);
         }

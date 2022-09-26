@@ -76,7 +76,7 @@ public abstract class EntityBase<T>
    /// Gets a readonly collection of domain events.
    /// </summary>
    [NotMapped]
-   public IEnumerable<DomainEventBase> DomainEvents => this.domainEvents.AsReadOnly();
+   public IEnumerable<DomainEventBase> Events => this.domainEvents.AsReadOnly();
 
    /// <summary>
    /// Performs identity based comparison.

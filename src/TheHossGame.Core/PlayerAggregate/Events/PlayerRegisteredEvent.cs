@@ -8,7 +8,7 @@ namespace TheHossGame.Core.PlayerAggregate.Events;
 using TheHossGame.SharedKernel;
 
 public record PlayerRegisteredEvent(
-   APlayerId PlayerId,
+   PlayerId PlayerId,
    PlayerName PlayerName)
    : DomainEventBase(PlayerId)
 {

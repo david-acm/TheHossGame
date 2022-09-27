@@ -5,9 +5,6 @@
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.Core.PlayerAggregate;
-
-using TheHossGame.SharedKernel;
-
 public record APlayerId : PlayerId
 {
 }
@@ -18,14 +15,4 @@ public record NoPlayerId : PlayerId
 
 public abstract record PlayerId : ValueId
 {
-}
-
-public abstract record ValueId : ValueObject
-{
-   protected ValueId()
-   {
-      this.Id = Guid.NewGuid();
-   }
-
-   public Guid Id { get; }
 }

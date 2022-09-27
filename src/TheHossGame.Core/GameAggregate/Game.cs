@@ -6,12 +6,13 @@
 
 namespace TheHossGame.Core.GameAggregate;
 
+using Ardalis.Specification;
 using System.Linq;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
 
-public sealed class AGame : Game
+public class AGame : Game
 {
    private readonly List<TeamPlayer> teamPlayers = new ();
 
@@ -40,23 +41,23 @@ public sealed class AGame : Game
       return game;
    }
 
-   public IReadOnlyCollection<TeamPlayer> TeamPlayers(TeamId teamId)
+   public IReadOnlyCollection<TeamPlayer> FindTeamPlayers(TeamId teamId)
       => this.teamPlayers.Where(p => p.TeamId == teamId)
          .ToList().AsReadOnly();
 
-   public IReadOnlyCollection<TeamPlayer> TeamPlayers()
+   public IReadOnlyCollection<TeamPlayer> FindTeamPlayers()
       => this.teamPlayers.ToList().AsReadOnly();
 
-   public TeamPlayer TeamPlayer(PlayerId playerId)
-      => this.TeamPlayers().FirstOrDefault(p => p.PlayerId == playerId)
+   public TeamPlayer FindSinglePlayer(PlayerId playerId)
+      => this.FindTeamPlayers().FirstOrDefault(p => p.PlayerId == playerId)
          ?? new NoTeamPlayer();
 
    public override void CreateNewGame(PlayerId playerId)
-      => this.Apply(new NewGameCreatedEvent(playerId));
+      => this.Apply(new NewGameCreatedEvent(this.Id, playerId));
 
    public override void JoinPlayer(PlayerId playerId, TeamId teamId)
    {
-      bool playerIsMember = this.TeamPlayer(playerId) is not NoTeamPlayer;
+      bool playerIsMember = this.FindSinglePlayer(playerId) is not NoTeamPlayer;
       if (playerIsMember)
       {
          this.Apply(new PlayerAlreadyInGame(playerId));
@@ -73,7 +74,7 @@ public sealed class AGame : Game
 
    public void TeamPlayerReady(PlayerId playerId)
    {
-      bool playerIsNotMember = this.TeamPlayer(playerId) is NoTeamPlayer;
+      bool playerIsNotMember = this.FindSinglePlayer(playerId) is NoTeamPlayer;
       if (playerIsNotMember)
       {
          return;
@@ -82,31 +83,7 @@ public sealed class AGame : Game
       this.Apply(new PlayerReadyEvent(this.Id, playerId));
    }
 
-   protected override void When(DomainEventBase @event)
-   {
-      switch (@event)
-      {
-         case PlayerJoinedEvent e:
-            this.teamPlayers.Add(new ATeamPlayer(e.PlayerId, e.TeamId));
-            break;
-
-         case NewGameCreatedEvent e:
-            break;
-
-         case TeamsFormedEvent e:
-            this.State = GameState.TeamsFormed;
-            break;
-
-         case PlayerReadyEvent e:
-            this.teamPlayers.Replace(
-               t => t.PlayerId == e.PlayerId,
-               t => t with { IsReady = true });
-            break;
-
-         default:
-            break;
-      }
-   }
+   protected static void ApplyToEntity(IInternalEventHandler eventHandler, PlayerJoinedEvent @event) => eventHandler.Handle(@event);
 
    protected override void EnsureValidState()
    {
@@ -123,14 +100,46 @@ public sealed class AGame : Game
       }
    }
 
+   protected override void When(DomainEventBase @event) => (@event switch
+   {
+      PlayerJoinedEvent e => (Action)(() => HandleJoin(e)),
+      NewGameCreatedEvent e => () => HandleNameCreated(e),
+      TeamsFormedEvent e => () => HandleTeamsFormedEvent(),
+      PlayerReadyEvent e => () => HandlePlayerReadyEvent(e),
+      _ => () => { },
+   }).Invoke();
+
+   private void HandlePlayerReadyEvent(PlayerReadyEvent e)
+   {
+      var player = this.FindSinglePlayer(e.PlayerId);
+      this.ApplyToEntity(player, e);
+   }
+
+   private void HandleTeamsFormedEvent()
+   {
+      this.State = GameState.TeamsFormed;
+   }
+
+   private void HandleNameCreated(NewGameCreatedEvent e)
+   {
+      this.Id = e.GameId;
+   }
+
+   private void HandleJoin(PlayerJoinedEvent e)
+   {
+      ATeamPlayer teamPlayer = new(e.PlayerId, e.TeamId, this.Apply);
+      ApplyToEntity(teamPlayer, e);
+      this.teamPlayers.Add(teamPlayer);
+   }
+
    private bool TeamValid(TeamId team1) =>
-            this.TeamPlayers(team1).Count <= 2;
+            this.FindTeamPlayers(team1).Count <= 2;
 
    private bool TeamComplete(TeamId team1) =>
-            this.TeamPlayers(team1).Count == 2;
+            this.FindTeamPlayers(team1).Count == 2;
 }
 
-public abstract class Game : EntityBase<GameId>, IAggregateRoot
+public abstract class Game : AggregateRoot<GameId>, IAggregateRoot
 {
    protected Game(GameId id)
       : base(id)
@@ -161,14 +170,6 @@ public class NoGame : Game
    }
 
    public override void CreateNewGame(PlayerId playerId)
-   {
-   }
-
-   protected override void EnsureValidState()
-   {
-   }
-
-   protected override void When(DomainEventBase @event)
    {
    }
 }

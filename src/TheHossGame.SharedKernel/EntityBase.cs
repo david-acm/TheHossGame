@@ -53,7 +53,7 @@ public abstract class EntityBase : EntityBase<DefaultIntId>
 /// Base class for entities.
 /// </summary>
 /// <typeparam name="T">The id type.</typeparam>
-public abstract class EntityBase<T>
+public abstract class EntityBase<T> : IInternalEventHandler
    where T : ValueObject
 {
    private readonly List<DomainEventBase> domainEvents = new ();
@@ -65,18 +65,35 @@ public abstract class EntityBase<T>
    protected EntityBase(T id)
    {
       this.Id = id;
+      this.Applier = (o) => this.Apply(o);
    }
 
    /// <summary>
-   /// Gets the id.
+   /// Initializes a new instance of the <see cref="EntityBase{T}"/> class.
    /// </summary>
-   public T Id { get; private set; }
+   /// <param name="id">The entity id.</param>
+   /// <param name="applier">The event applier.</param>
+   protected EntityBase(T id, Action<DomainEventBase> applier)
+      : this(id)
+   {
+      this.Applier = applier;
+   }
+
+   /// <summary>
+   /// Gets or sets the id.
+   /// </summary>
+   public T Id { get; protected set; }
 
    /// <summary>
    /// Gets a readonly collection of domain events.
    /// </summary>
    [NotMapped]
    public IEnumerable<DomainEventBase> Events => this.domainEvents.AsReadOnly();
+
+   /// <summary>
+   /// Gets the event applier.
+   /// </summary>
+   public Action<DomainEventBase> Applier { get; }
 
    /// <summary>
    /// Performs identity based comparison.
@@ -113,6 +130,13 @@ public abstract class EntityBase<T>
    }
 
    /// <summary>
+   /// Handles a domain event.
+   /// </summary>
+   /// <param name="event">The event to handle.</param>
+   public void Handle(DomainEventBase @event)
+      => this.When(@event);
+
+   /// <summary>
    /// Clears the collection of domain events.
    /// </summary>
    internal void ClearDomainEvents() => this.domainEvents.Clear();
@@ -121,11 +145,11 @@ public abstract class EntityBase<T>
    /// Applies an event to an entity.
    /// </summary>
    /// <param name="event">The event to apply.</param>
-   protected void Apply(DomainEventBase @event)
+   protected virtual void Apply(DomainEventBase @event)
    {
       this.When(@event);
       this.EnsureValidState();
-      this.domainEvents.Add(@event);
+      this.Applier(@event);
    }
 
    /// <summary>

@@ -31,7 +31,7 @@ public class PlayerReadyShould
       readyEvent.Should().NotBeNull();
       readyEvent.PlayerId.Should().Be(playerId);
       readyEvent.GameId.Should().Be(game.Id);
-      game.TeamPlayer(playerId).IsReady
+      game.FindSinglePlayer(playerId).IsReady
          .Should().BeTrue();
    }
 
@@ -47,7 +47,7 @@ public class PlayerReadyShould
          .Where(e => e is PlayerReadyEvent)
          .Should().BeEmpty();
 
-      game.TeamPlayer(playerId).IsReady
+      game.FindSinglePlayer(playerId).IsReady
          .Should().BeFalse();
    }
 }

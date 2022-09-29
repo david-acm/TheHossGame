@@ -8,7 +8,6 @@ namespace TheHossGame.Core.GameAggregate;
 
 using Ardalis.Specification;
 using System.Linq;
-using TheHossGame.Core.PlayerAggregate;
 
 /// <summary>
 /// State side.

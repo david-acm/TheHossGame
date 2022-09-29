@@ -10,6 +10,7 @@ using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate;
+using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using Xunit;
 using static TheHossGame.Core.GameAggregate.Game.TeamId;
 

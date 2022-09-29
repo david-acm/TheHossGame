@@ -10,6 +10,7 @@ using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.Core.PlayerAggregate.Events;
+using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using Xunit;
 
 public class RequestJoinGameShould

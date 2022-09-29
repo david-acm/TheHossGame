@@ -1,19 +1,19 @@
 ﻿// 🃏 The HossGame 🃏
-// <copyright file="PlayerNameGenerator.cs" company="Reactive">
+// <copyright file="PlayerIdGenerator.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.UnitTests.Core.PlayerAggregate;
+namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 using AutoFixture.Kernel;
 using TheHossGame.Core.PlayerAggregate;
 
-internal class PlayerNameGenerator : ISpecimenBuilder
+internal class PlayerIdGenerator : ISpecimenBuilder
 {
    public object Create(object request, ISpecimenContext context)
    {
-      if (!typeof(PlayerName).Equals(request))
+      if (!typeof(PlayerId).Equals(request))
       {
          return new NoSpecimen();
       }
@@ -23,6 +23,6 @@ internal class PlayerNameGenerator : ISpecimenBuilder
 
    private static object RandomPlayerName()
    {
-      return new PlayerName($"Player_{DateTime.Now.Ticks}");
+      return new APlayerId();
    }
 }

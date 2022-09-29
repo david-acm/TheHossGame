@@ -9,7 +9,7 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.SharedKernel.Interfaces;
-using TheHossGame.UnitTests.Core.PlayerAggregate;
+using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using Xunit;
 
 public class ConstructorShould

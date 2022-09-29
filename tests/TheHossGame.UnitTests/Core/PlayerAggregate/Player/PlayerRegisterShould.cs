@@ -9,6 +9,7 @@ namespace TheHossGame.UnitTests.Core.PlayerAggregate.Player;
 using FluentAssertions;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.Core.PlayerAggregate.Events;
+using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Core.Services;
 using Xunit;
 using Events = TheHossGame.Core.PlayerAggregate.Events;

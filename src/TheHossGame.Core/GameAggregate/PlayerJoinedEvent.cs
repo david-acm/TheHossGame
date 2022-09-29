@@ -29,3 +29,8 @@ public record PlayerReadyEvent(GameId GameId, PlayerId PlayerId)
    : DomainEventBase(GameId)
 {
 }
+
+public record GameStartedEvent(GameId GameId)
+   : DomainEventBase(GameId)
+{
+}

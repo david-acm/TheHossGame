@@ -8,6 +8,7 @@ namespace TheHossGame.UnitTests.Core.PlayerAggregate.Player;
 using FluentAssertions;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
+using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using Xunit;
 
 public class PlayerConstructorShould

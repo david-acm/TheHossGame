@@ -5,6 +5,8 @@
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.Core.PlayerAggregate;
+
+using TheHossGame.SharedKernel;
 public record APlayerId : PlayerId
 {
 }

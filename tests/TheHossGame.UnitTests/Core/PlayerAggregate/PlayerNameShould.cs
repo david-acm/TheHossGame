@@ -12,6 +12,7 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using TheHossGame.Core.PlayerAggregate;
+using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using Xunit;
 
 public class PlayerNameShould

@@ -10,11 +10,30 @@ using AutoFixture.Xunit2;
 using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
-using TheHossGame.UnitTests.Core.PlayerAggregate;
+using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using TheHossGame.UnitTests.Extensions;
 using Xunit;
+using static TheHossGame.Core.GameAggregate.AGame.GameState;
 
 public class PlayerReadyShould
 {
+   [Theory]
+   [AutoReadyGameData]
+   public void RaiseGameStartedEventWhenAllPlayersHaveJoined(
+      AGame readyGame)
+   {
+      readyGame.Events.ShouldContain()
+         .ManyEventsOfType<PlayerReadyEvent>(4);
+      readyGame.Events.ShouldContain()
+         .SingleEventOfType<TeamsFormedEvent>();
+      var startedEvent = readyGame.Events.ShouldContain()
+         .SingleEventOfType<GameStartedEvent>();
+
+      startedEvent.Should().NotBeNull();
+      startedEvent.GameId.Should().Be(readyGame.Id);
+      readyGame.State.Should().Be(Started);
+   }
+
    [Theory]
    [AutoPlayerData]
    public void RaisePlayerReadyEventWhenPlayerIsMember(
@@ -24,15 +43,15 @@ public class PlayerReadyShould
       game.TeamPlayerReady(playerId);
 
       var readyEvent = game.Events
-         .Where(e => e is PlayerReadyEvent)
-         .Should().ContainSingle()
-         .Subject.As<PlayerReadyEvent>();
+         .ShouldContain()
+         .SingleEventOfType<PlayerReadyEvent>();
 
       readyEvent.Should().NotBeNull();
       readyEvent.PlayerId.Should().Be(playerId);
       readyEvent.GameId.Should().Be(game.Id);
       game.FindSinglePlayer(playerId).IsReady
          .Should().BeTrue();
+      game.State.Should().Be(Created);
    }
 
    [Theory]

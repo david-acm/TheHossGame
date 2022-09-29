@@ -1,23 +1,24 @@
 ﻿// 🃏 The HossGame 🃏
-// <copyright file="PlayerGenerator.cs" company="Reactive">
+// <copyright file="PlayerEmailGenerator.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.UnitTests.Core.PlayerAggregate;
+namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 using AutoFixture;
 using AutoFixture.Kernel;
+using System.Net.Mail;
 using TheHossGame.Core.PlayerAggregate;
 
-public class PlayerGenerator : ISpecimenBuilder
+internal class PlayerEmailGenerator : ISpecimenBuilder
 {
    private ISpecimenContext? context;
 
    public object Create(object request, ISpecimenContext context)
    {
       this.context = context;
-      if (!typeof(TheHossGame.Core.PlayerAggregate.Player).Equals(request))
+      if (!typeof(PlayerEmail).Equals(request))
       {
          return new NoSpecimen();
       }
@@ -27,8 +28,7 @@ public class PlayerGenerator : ISpecimenBuilder
 
    private object RandomPlayerEmail()
    {
-      var playerId = this.context.Create<APlayerId>();
-      var playerName = this.context.Create<PlayerName>();
-      return APlayer.FromRegister(playerId, playerName);
+      string address = this.context.Create<MailAddress>().Address;
+      return PlayerEmail.FromString(address);
    }
 }

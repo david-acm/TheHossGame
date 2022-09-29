@@ -12,7 +12,7 @@ using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.Core.Services;
 using TheHossGame.SharedKernel;
 using TheHossGame.SharedKernel.Interfaces;
-using TheHossGame.UnitTests.Core.PlayerAggregate;
+using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using Xunit;
 
 public class PlayerRegistrationServiceRegisterShould

@@ -18,7 +18,6 @@ public class RegisterShould
 {
    [Theory]
    [AutoPlayerData]
-   [AutoMoqData]
    public void RaisePlayerRegisteredEvent(
        APlayerId playerId,
        PlayerName playerName)
@@ -27,7 +26,7 @@ public class RegisterShould
 
       var @event = player.Events.Should().ContainSingle()
          .Subject.As<PlayerRegisteredEvent>();
-      @event = @event.Should().BeOfType<Events.PlayerRegisteredEvent>().Subject;
+      @event = @event.Should().BeOfType<PlayerRegisteredEvent>().Subject;
       @event.PlayerId.Should().NotBeNull();
       @event.PlayerName.Should().NotBeNull();
    }

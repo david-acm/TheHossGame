@@ -7,6 +7,7 @@
 namespace TheHossGame.Core.RoundAggregate;
 
 using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 
@@ -17,6 +18,7 @@ public class Round : AggregateRoot<RoundId>
    {
       this.GameId = gameId;
       this.FirstBidder = firstBidder;
+      this.Deck = NoDeck.New;
    }
 
    public enum RoundState
@@ -29,35 +31,41 @@ public class Round : AggregateRoot<RoundId>
 
    public PlayerId FirstBidder { get; }
 
-   public RoundState State { get; set; }
+   public RoundState State { get; private set; }
 
-   public static Round StartNew(GameId gameId, PlayerId playerId)
+   public Deck Deck { get; private set; }
+
+   public static Round StartNew(GameId gameId, PlayerId playerId, IShufflingService shufflingService)
    {
-      Round round = new (gameId, playerId);
-      round.Apply(new RoundStartedEvent(gameId));
+      var round = new Round(gameId, playerId);
+      var shuffledDeck = ADeck.FromShuffling(shufflingService);
+      round.Apply(new RoundStartedEvent(
+         gameId,
+         round.Id,
+         shuffledDeck));
+
       return round;
    }
 
-#pragma warning disable SA1119 // Statement should not use unnecessary parenthesis
    protected override void EnsureValidState()
       => (this.State switch
       {
          RoundState.None => (Action)(() => this.Validate()),
          RoundState.Started => () => this.Validate(),
-         _ => () => { },
+         _ => () => throw new InvalidEntityStateException(),
       }).Invoke();
 
    protected override void When(DomainEventBase @event)
       => (@event switch
       {
-         RoundStartedEvent e => (Action)(() => this.HandleStartedEvent()),
+         RoundStartedEvent e => (Action)(() => this.HandleStartedEvent(e)),
          _ => () => { },
       }).Invoke();
-#pragma warning restore SA1119 // Statement should not use unnecessary parenthesis
 
-   private void HandleStartedEvent()
+   private void HandleStartedEvent(RoundStartedEvent e)
    {
       this.State = RoundState.Started;
+      this.Deck = e.Deck;
    }
 
    private void Validate()

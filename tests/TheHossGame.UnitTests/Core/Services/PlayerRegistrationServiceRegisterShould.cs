@@ -18,7 +18,6 @@ using Xunit;
 public class PlayerRegistrationServiceRegisterShould
 {
     [Theory]
-    [AutoMoqData]
     [AutoPlayerData]
     public async Task CheckUserNameIsUnique(
        [Frozen] Mock<IRepository<APlayer>> playerRepository,
@@ -34,7 +33,6 @@ public class PlayerRegistrationServiceRegisterShould
     }
 
     [Theory]
-    [AutoMoqData]
     [AutoPlayerData]
     public async Task CheckPlayerIsNotRegistered(
        [Frozen] Mock<IRepository<APlayer>> playerRepository,

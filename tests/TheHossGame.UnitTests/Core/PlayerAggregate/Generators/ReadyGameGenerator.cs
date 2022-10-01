@@ -21,16 +21,16 @@ public class ReadyGameGenerator : ISpecimenBuilder
          return new NoSpecimen();
       }
 
-      return GeneratePlayerEnumerable(request, context);
+      return this.GeneratePlayerEnumerable();
    }
 
-   private static object GeneratePlayerEnumerable(object request, ISpecimenContext context)
+   private object GeneratePlayerEnumerable()
    {
       var generator = new PlayerEnumerableGenerator();
 
-      request = typeof(IEnumerable<TheHossGame.Core.PlayerAggregate.Player>);
+      var request = typeof(IEnumerable<TheHossGame.Core.PlayerAggregate.Player>);
 
-      var playerList = ((IEnumerable<TheHossGame.Core.PlayerAggregate.Player>)generator.Create(request, context)).ToList();
+      var playerList = ((IEnumerable<TheHossGame.Core.PlayerAggregate.Player>)generator.Create(request, this.context!)).ToList();
 
       var readyGame = AGame.CreateNewForPlayer(playerList.First().Id);
       readyGame.JoinPlayerToTeam(playerList[0].Id, Game.TeamId.Team1);

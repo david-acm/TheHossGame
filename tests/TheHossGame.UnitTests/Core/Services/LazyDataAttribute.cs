@@ -13,6 +13,7 @@ public abstract class LazyDataAttribute : AutoDataAttribute
    protected LazyDataAttribute()
       : base(ApplyCustomizations)
    {
+      Customizations.Clear();
    }
 
    public static Func<IFixture> ApplyCustomizations { get; private set; } = () =>

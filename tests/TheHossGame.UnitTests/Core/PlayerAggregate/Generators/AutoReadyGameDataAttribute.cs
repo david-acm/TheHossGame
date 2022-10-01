@@ -13,5 +13,6 @@ public sealed class AutoReadyGameDataAttribute : LazyDataAttribute
    public AutoReadyGameDataAttribute()
    {
       AddCustomization(new ReadyGameCustomization());
+      AddCustomization(new AutoOrderedDeckCustomization());
    }
 }

@@ -13,12 +13,15 @@ using TheHossGame.SharedKernel;
 
 public class Round : AggregateRoot<RoundId>
 {
-   private Round(GameId gameId, PlayerId firstBidder)
+   private readonly List<PlayerId> roundPlayers;
+   private List<PlayerCards> playerCards = new ();
+
+   private Round(GameId gameId, IEnumerable<PlayerId> playerIds)
       : base(new RoundId())
    {
       this.GameId = gameId;
-      this.FirstBidder = firstBidder;
       this.Deck = NoDeck.New;
+      this.roundPlayers = playerIds.ToList();
    }
 
    public enum RoundState
@@ -29,20 +32,24 @@ public class Round : AggregateRoot<RoundId>
 
    public GameId GameId { get; }
 
-   public PlayerId FirstBidder { get; }
-
    public RoundState State { get; private set; }
 
    public Deck Deck { get; private set; }
 
-   public static Round StartNew(GameId gameId, PlayerId playerId, IShufflingService shufflingService)
+   public IReadOnlyList<PlayerCards> PlayerCards => this.playerCards.AsReadOnly();
+
+   public IReadOnlyList<PlayerId> RoundPlayers => this.roundPlayers.AsReadOnly();
+
+   public static Round StartNew(GameId gameId, IEnumerable<PlayerId> playerIds, IShufflingService shufflingService)
    {
-      var round = new Round(gameId, playerId);
+      var round = new Round(gameId, playerIds);
       var shuffledDeck = ADeck.FromShuffling(shufflingService);
+      List<PlayerCards> cards = DealCards(shuffledDeck, playerIds);
       round.Apply(new RoundStartedEvent(
          gameId,
          round.Id,
-         shuffledDeck));
+         shuffledDeck,
+         cards));
 
       return round;
    }
@@ -62,10 +69,25 @@ public class Round : AggregateRoot<RoundId>
          _ => () => { },
       }).Invoke();
 
+   private static List<PlayerCards> DealCards(
+      ADeck deck,
+      IEnumerable<PlayerId> playerIds)
+   {
+      var playerHand = playerIds.Select(p => new PlayerCards(p)).ToList();
+
+      while (deck.HasCards)
+      {
+         playerHand.ForEach(p => p.ReceibeCard(deck.Deal()));
+      }
+
+      return playerHand;
+   }
+
    private void HandleStartedEvent(RoundStartedEvent e)
    {
       this.State = RoundState.Started;
       this.Deck = e.Deck;
+      this.playerCards = e.PlayerCards.ToList();
    }
 
    private void Validate()

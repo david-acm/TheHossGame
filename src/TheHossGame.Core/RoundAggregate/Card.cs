@@ -6,7 +6,9 @@
 
 namespace TheHossGame.Core.RoundAggregate;
 
-public class Card
+using TheHossGame.SharedKernel;
+
+public record Card : ValueObject
 {
    public Card(CardSuit suit, CardRank rank)
    {

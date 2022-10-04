@@ -35,7 +35,7 @@ public class EventCollectionAssertions<TEvent> : GenericCollectionAssertions<IEn
       var @event = this.Subject
          .Where(e => e is TExpectedEvent)
          .Should().HaveCount(count, because, becauseArgs)
-         .And.Subject.As<IEnumerable<TExpectedEvent>>();
+         .And.Subject.Cast<TExpectedEvent>().As<IEnumerable<TExpectedEvent>>();
 
       return @event;
    }

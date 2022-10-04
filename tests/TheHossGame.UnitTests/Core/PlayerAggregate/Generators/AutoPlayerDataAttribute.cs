@@ -40,6 +40,7 @@ internal class ReadyGameCustomization : ICustomization
       fixture.Customizations.Add(new PlayerEmailGenerator());
       fixture.Customizations.Add(new PlayerIdGenerator());
       fixture.Customizations.Add(new PlayerGenerator());
+      fixture.Customizations.Add(new PlayerEnumerableGenerator());
       fixture.Customizations.Add(new ReadyGameGenerator());
    }
 }

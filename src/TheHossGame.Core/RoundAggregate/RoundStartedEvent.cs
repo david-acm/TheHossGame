@@ -10,29 +10,27 @@ using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 
-public record RoundStartedEvent(GameId GameId,
+public record RoundStartedEvent(
+   GameId GameId,
    RoundId RoundId,
-   ADeck Deck,
-   IEnumerable<PlayerCards> PlayerCards)
+   IEnumerable<PlayerId> PlayerIds)
    : DomainEventBase(GameId)
 {
 }
 
-public record PlayerCards
-   : ValueObject
+public record PlayerCardsDealtEvent(
+   GameId GameId,
+   RoundId RoundId,
+   PlayerDeal playerCards)
+   : DomainEventBase(GameId)
 {
-   private readonly List<Card> cards = new List<Card>();
 
-   public PlayerCards(PlayerId PlayerId)
-   {
-      this.PlayerId = PlayerId;
-   }
+}
 
-   public PlayerId PlayerId { get; }
-   public IReadOnlyList<Card> Cards => this.cards.AsReadOnly();
+public record AllCardsDealtEvent(
+   GameId GameId,
+   RoundId RoundId)
+   : DomainEventBase(GameId)
+{
 
-   public void ReceibeCard(Card cards)
-   {
-      this.cards.Add(cards);
-   }
 }

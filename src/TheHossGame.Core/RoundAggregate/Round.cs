@@ -13,14 +13,13 @@ using TheHossGame.SharedKernel;
 
 public class Round : AggregateRoot<RoundId>
 {
-   private readonly List<PlayerId> roundPlayers;
-   private List<PlayerCards> playerCards = new ();
+   private readonly List<PlayerDeal> playerCards = new ();
+   private List<PlayerId> roundPlayers;
 
    private Round(GameId gameId, IEnumerable<PlayerId> playerIds)
       : base(new RoundId())
    {
       this.GameId = gameId;
-      this.Deck = NoDeck.New;
       this.roundPlayers = playerIds.ToList();
    }
 
@@ -28,15 +27,15 @@ public class Round : AggregateRoot<RoundId>
    {
       None,
       Started,
+      CardsShuffled,
+      CardsDealt,
    }
 
    public GameId GameId { get; }
 
    public RoundState State { get; private set; }
 
-   public Deck Deck { get; private set; }
-
-   public IReadOnlyList<PlayerCards> PlayerCards => this.playerCards.AsReadOnly();
+   public IReadOnlyList<PlayerDeal> PlayerDeals => this.playerCards.AsReadOnly();
 
    public IReadOnlyList<PlayerId> RoundPlayers => this.roundPlayers.AsReadOnly();
 
@@ -44,36 +43,48 @@ public class Round : AggregateRoot<RoundId>
    {
       var round = new Round(gameId, playerIds);
       var shuffledDeck = ADeck.FromShuffling(shufflingService);
-      List<PlayerCards> cards = DealCards(shuffledDeck, playerIds);
-      round.Apply(new RoundStartedEvent(
-         gameId,
-         round.Id,
-         shuffledDeck,
-         cards));
+      List<PlayerDeal> playerDeals = DealCards(shuffledDeck, playerIds);
+      round
+         .Apply(new RoundStartedEvent(gameId, round.Id, playerIds));
+      playerDeals.ForEach(cards => round
+         .Apply(new PlayerCardsDealtEvent(gameId, round.Id, cards)));
+      round
+         .Apply(new AllCardsDealtEvent(gameId, round.Id));
 
       return round;
    }
-
-   protected override void EnsureValidState()
-      => (this.State switch
-      {
-         RoundState.None => (Action)(() => this.Validate()),
-         RoundState.Started => () => this.Validate(),
-         _ => () => throw new InvalidEntityStateException(),
-      }).Invoke();
 
    protected override void When(DomainEventBase @event)
       => (@event switch
       {
          RoundStartedEvent e => (Action)(() => this.HandleStartedEvent(e)),
+         PlayerCardsDealtEvent e => () => this.HandlePlayerCardsDealtEvent(e),
+         AllCardsDealtEvent e => () => this.HandleCardsDealtEvent(),
          _ => () => { },
       }).Invoke();
 
-   private static List<PlayerCards> DealCards(
+   protected override void EnsureValidState()
+   {
+      bool valid = this.State switch
+      {
+         RoundState.None => false,
+         RoundState.Started => this.ValidateStarting(),
+         RoundState.CardsShuffled => this.ValidatePlayerCardsDealt(),
+         RoundState.CardsDealt => this.ValidateAllCardsDealt(),
+         _ => throw new InvalidEntityStateException(),
+      };
+
+      if (!valid)
+      {
+         throw new InvalidEntityStateException();
+      }
+   }
+
+   private static List<PlayerDeal> DealCards(
       ADeck deck,
       IEnumerable<PlayerId> playerIds)
    {
-      var playerHand = playerIds.Select(p => new PlayerCards(p)).ToList();
+      var playerHand = playerIds.Select(p => new PlayerDeal(p)).ToList();
 
       while (deck.HasCards)
       {
@@ -86,15 +97,20 @@ public class Round : AggregateRoot<RoundId>
    private void HandleStartedEvent(RoundStartedEvent e)
    {
       this.State = RoundState.Started;
-      this.Deck = e.Deck;
-      this.playerCards = e.PlayerCards.ToList();
+      this.roundPlayers = e.PlayerIds.ToList();
    }
 
-   private void Validate()
+   private void HandlePlayerCardsDealtEvent(PlayerCardsDealtEvent e)
    {
-      if (this.State != RoundState.Started)
-      {
-         throw new InvalidEntityStateException();
-      }
+      this.State = RoundState.CardsShuffled;
+      this.playerCards.Add(e.playerCards);
    }
+
+   private void HandleCardsDealtEvent() => this.State = RoundState.CardsDealt;
+
+   private bool ValidateStarting() => this.RoundPlayers.Count == 4;
+
+   private bool ValidatePlayerCardsDealt() => this.PlayerDeals.All(p => p.Cards.Count == 6);
+
+   private bool ValidateAllCardsDealt() => this.ValidatePlayerCardsDealt() && this.PlayerDeals.Count == 4;
 }

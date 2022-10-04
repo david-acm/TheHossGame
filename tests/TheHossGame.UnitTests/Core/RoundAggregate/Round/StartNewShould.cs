@@ -19,7 +19,7 @@ using TheHossGame.UnitTests.Extensions;
 using Xunit;
 using Round = TheHossGame.Core.RoundAggregate.Round;
 
-public class StartNewShould
+public sealed class StartNewShould
 {
    [Theory]
    [AutoReadyGameData]
@@ -28,14 +28,15 @@ public class StartNewShould
       [Frozen] IEnumerable<Player> roundPlayers,
       Round sut)
    {
-      var roundPLayerIds = roundPlayers.Select(p => p.Id);
+      var roundPLayerIds = roundPlayers
+         .Select(p => p.Id);
 
       sut.Should().NotBeNull();
       sut.Id.Should().NotBeNull();
       sut.GameId.Should().Be(gameId);
       sut.RoundPlayers.Should().Contain(roundPLayerIds);
-      sut.State.Should().Be(Round.RoundState.Started);
-      sut.PlayerCards.Should().HaveCount(4);
+      sut.State.Should().Be(Round.RoundState.CardsDealt);
+      sut.PlayerDeals.Should().HaveCount(4);
    }
 
    [Theory]
@@ -45,26 +46,25 @@ public class StartNewShould
       Round sut)
    {
       var startedEvent = sut.Events.ShouldContain()
-      .SingleEventOfType<RoundStartedEvent>();
+         .SingleEventOfType<RoundStartedEvent>();
 
       startedEvent.GameId.Should().Be(gameId);
       startedEvent.RoundId.Should().NotBeNull();
-      startedEvent.Deck.Should().NotBeNull();
    }
 
    [Theory]
    [AutoReadyGameData]
-   public void DealCards(
-   Round sut)
+   public void RaiseCardsDealtPerPlayer(Round sut)
    {
-      var startedEvent = sut.Events.ShouldContain()
-         .SingleEventOfType<RoundStartedEvent>();
-      startedEvent.Deck.Cards.Should().BeEmpty();
-      startedEvent.PlayerCards.Should().HaveCount(4);
-      startedEvent.PlayerCards
-         .Should().AllSatisfy(p => p.Cards.Should().HaveCount(6));
+      var @event = sut.Events.ShouldContain()
+         .ManyEventsOfType<PlayerCardsDealtEvent>(4);
+      @event.Should().NotBeNull();
 
-      var allCards = startedEvent.PlayerCards.SelectMany(p => p.Cards);
+      @event.Should().HaveCount(4);
+      @event.Should().AllSatisfy(
+         p => p.playerCards.Cards.Should().HaveCount(6));
+
+      var allCards = @event.SelectMany(e => e.playerCards.Cards);
       allCards.Should().HaveCount(24);
       allCards.GroupBy(c => c.Suit).Should().HaveCount(4);
       allCards.GroupBy(c => c.Rank).Should().HaveCount(6);
@@ -72,11 +72,26 @@ public class StartNewShould
 
    [Theory]
    [AutoReadyGameData]
-   public void CallShuffleService(
-   [Frozen] Mock<IShufflingService> shuffleService,
-   Round sut)
+   public void RaiseAllCardsDealtEvent(
+      [Frozen] AGameId gameId,
+      Round sut)
    {
-      sut.PlayerCards.Should().HaveCount(4);
+      var startedEvent = sut.Events.ShouldContain()
+         .SingleEventOfType<AllCardsDealtEvent>();
+
+      startedEvent.GameId.Should().Be(gameId);
+      startedEvent.RoundId.Should().NotBeNull();
+
+      sut.State.Should().Be(Round.RoundState.CardsDealt);
+   }
+
+   [Theory]
+   [AutoReadyGameData]
+   public void CallShuffleService(
+      [Frozen] Mock<IShufflingService> shuffleService,
+      Round sut)
+   {
+      sut.PlayerDeals.Should().HaveCount(4);
       shuffleService.Verify(
       s => s.Shuffle(It.IsAny<IList<Card>>()),
       Times.Once);

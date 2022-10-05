@@ -49,6 +49,6 @@
 		<PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
 		<PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
 		<PackageVersion Include="Pulumi.AzureNative" Version="1.74.0" />
-		<PackageVersion Include="Pulumi" Version="3.39" />
+		<PackageVersion Include="Pulumi" Version="3.40.3" />
 	</ItemGroup>
 </Project>

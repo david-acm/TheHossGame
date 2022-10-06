@@ -20,10 +20,10 @@ public class ShufflingServiceShould
    public void OrderTheDeckRandomly(
       [Frozen] Mock<IRandomNumberProvider> randomProvider,
       ShufflingService service,
-      ADeck deck)
+      ADeck deck,
+      RandomNumberProvider random)
    {
       int attemps = 0;
-      var random = new RandomNumberProvider();
       int maxValue = 0;
       randomProvider.Setup(r => r.NextInt(It.IsAny<int>()))
          .Callback((int i) => maxValue = i)

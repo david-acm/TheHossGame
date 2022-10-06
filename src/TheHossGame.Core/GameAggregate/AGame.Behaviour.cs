@@ -25,16 +25,16 @@ public partial class AGame : Game
       return game;
    }
 
-   public TeamPlayer FindSinglePlayer(PlayerId playerId)
+   public GamePlayer FindSinglePlayer(PlayerId playerId)
       => this.FindTeamPlayers().FirstOrDefault(p => p.PlayerId == playerId)
-         ?? new NoTeamPlayer();
+         ?? new NoGamePlayer();
 
    public override void CreateNewGame(PlayerId playerId)
       => this.Apply(new NewGameCreatedEvent(this.Id, playerId));
 
    public override void JoinPlayerToTeam(PlayerId playerId, TeamId teamId)
    {
-      bool playerIsMember = this.FindSinglePlayer(playerId) is not NoTeamPlayer;
+      bool playerIsMember = this.FindSinglePlayer(playerId) is not NoGamePlayer;
       if (playerIsMember)
       {
          this.Apply(new PlayerAlreadyInGame(playerId));
@@ -51,7 +51,7 @@ public partial class AGame : Game
 
    public override void TeamPlayerReady(PlayerId playerId)
    {
-      bool playerIsNotMember = this.FindSinglePlayer(playerId) is NoTeamPlayer;
+      bool playerIsNotMember = this.FindSinglePlayer(playerId) is NoGamePlayer;
       if (playerIsNotMember)
       {
          return;
@@ -108,7 +108,7 @@ public partial class AGame : Game
 
    private void HandleJoin(PlayerJoinedEvent e)
    {
-      ATeamPlayer teamPlayer = new (e.PlayerId, e.TeamId, this.Apply);
+      AGamePlayer teamPlayer = new (e.PlayerId, e.TeamId, this.Apply);
       ApplyToEntity(teamPlayer, e);
       this.teamPlayers.Add(teamPlayer);
    }

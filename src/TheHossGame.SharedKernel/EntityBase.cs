@@ -65,7 +65,10 @@ public abstract class EntityBase<T> : IInternalEventHandler
    protected EntityBase(T id)
    {
       this.Id = id;
-      this.Applier = (o) => this.Apply(o);
+      this.Applier = (DomainEventBase @event) =>
+      {
+         this.RaiseDomainEvent(@event);
+      };
    }
 
    /// <summary>
@@ -74,8 +77,8 @@ public abstract class EntityBase<T> : IInternalEventHandler
    /// <param name="id">The entity id.</param>
    /// <param name="applier">The event applier.</param>
    protected EntityBase(T id, Action<DomainEventBase> applier)
-      : this(id)
    {
+      this.Id = id;
       this.Applier = applier;
    }
 

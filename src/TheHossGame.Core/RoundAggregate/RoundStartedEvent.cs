@@ -7,13 +7,12 @@
 namespace TheHossGame.Core.RoundAggregate;
 
 using TheHossGame.Core.GameAggregate;
-using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 
 public record RoundStartedEvent(
    GameId GameId,
    RoundId RoundId,
-   IEnumerable<PlayerId> PlayerIds)
+   IEnumerable<TeamPlayer> TeamPlayers)
    : DomainEventBase(GameId)
 {
 }
@@ -33,4 +32,9 @@ public record AllCardsDealtEvent(
    : DomainEventBase(GameId)
 {
 
+}
+
+public record BidEvent(GameId GameId, RoundId RoundId, Bid Bid)
+   : DomainEventBase(GameId)
+{
 }

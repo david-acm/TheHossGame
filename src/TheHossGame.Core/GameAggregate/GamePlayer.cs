@@ -1,5 +1,5 @@
 ﻿// 🃏 The HossGame 🃏
-// <copyright file="TeamPlayer.cs" company="Reactive">
+// <copyright file="GamePlayer.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
@@ -11,9 +11,9 @@ using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using static TheHossGame.Core.GameAggregate.Game;
 
-public abstract class TeamPlayer : EntityBase<PlayerId>
+public abstract class GamePlayer : EntityBase<PlayerId>
 {
-   protected TeamPlayer(PlayerId playerId, TeamId teamId, Action<DomainEventBase> applier)
+   protected GamePlayer(PlayerId playerId, TeamId teamId, Action<DomainEventBase> applier)
       : base(playerId, applier)
    {
       this.PlayerId = playerId;
@@ -27,10 +27,10 @@ public abstract class TeamPlayer : EntityBase<PlayerId>
    public TeamId TeamId { get; protected set; }
 }
 
-public class ATeamPlayer
-   : TeamPlayer
+public class AGamePlayer
+   : GamePlayer
 {
-   public ATeamPlayer(PlayerId PlayerId, TeamId TeamId, Action<DomainEventBase> applier)
+   public AGamePlayer(PlayerId PlayerId, TeamId TeamId, Action<DomainEventBase> applier)
       : base(PlayerId, TeamId, applier)
    {
    }
@@ -57,10 +57,10 @@ public class ATeamPlayer
    }
 }
 
-public class NoTeamPlayer
-   : TeamPlayer
+public class NoGamePlayer
+   : GamePlayer
 {
-   public NoTeamPlayer()
+   public NoGamePlayer()
       : base(new NoPlayerId(), TeamId.NoTeamId, (o) => { })
    {
    }

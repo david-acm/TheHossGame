@@ -12,7 +12,6 @@ using Moq;
 using System.Collections.Generic;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.Interfaces;
-using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.Core.RoundAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
@@ -24,17 +23,13 @@ public sealed class StartNewShould
    [Theory]
    [AutoReadyGameData]
    public void HaveValidState(
-      [Frozen] AGameId gameId,
-      [Frozen] IEnumerable<Player> roundPlayers,
+      [Frozen] AGame game,
       Round sut)
    {
-      var roundPLayerIds = roundPlayers
-         .Select(p => p.Id);
-
-      sut.Should().NotBeNull();
+      var teamPlayers = game.FindTeamPlayers().Select(g => new TeamPlayer(g.PlayerId, g.TeamId));
       sut.Id.Should().NotBeNull();
-      sut.GameId.Should().Be(gameId);
-      sut.RoundPlayers.Should().Contain(roundPLayerIds);
+      sut.GameId.Should().Be(game.Id);
+      sut.TeamPlayers.Should().Contain(teamPlayers);
       sut.State.Should().Be(Round.RoundState.CardsDealt);
       sut.PlayerDeals.Should().HaveCount(4);
    }
@@ -42,13 +37,13 @@ public sealed class StartNewShould
    [Theory]
    [AutoReadyGameData]
    public void RaiseStartEvent(
-      [Frozen] AGameId gameId,
+      [Frozen] AGame game,
       Round sut)
    {
       var startedEvent = sut.Events.ShouldContain()
          .SingleEventOfType<RoundStartedEvent>();
 
-      startedEvent.GameId.Should().Be(gameId);
+      startedEvent.GameId.Should().Be(game.Id);
       startedEvent.RoundId.Should().NotBeNull();
    }
 
@@ -73,13 +68,13 @@ public sealed class StartNewShould
    [Theory]
    [AutoReadyGameData]
    public void RaiseAllCardsDealtEvent(
-      [Frozen] AGameId gameId,
+      [Frozen] AGame game,
       Round sut)
    {
       var startedEvent = sut.Events.ShouldContain()
          .SingleEventOfType<AllCardsDealtEvent>();
 
-      startedEvent.GameId.Should().Be(gameId);
+      startedEvent.GameId.Should().Be(game.Id);
       startedEvent.RoundId.Should().NotBeNull();
 
       sut.State.Should().Be(Round.RoundState.CardsDealt);

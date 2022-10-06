@@ -14,7 +14,7 @@ using System.Linq;
 /// </summary>
 public partial class AGame : Game
 {
-   private readonly List<TeamPlayer> teamPlayers = new ();
+   private readonly List<GamePlayer> teamPlayers = new ();
    private readonly List<RoundId> roundIds = new ();
 
    private AGame()
@@ -33,10 +33,10 @@ public partial class AGame : Game
 
    public IReadOnlyList<RoundId> RoundIds => this.roundIds.AsReadOnly();
 
-   public IReadOnlyCollection<TeamPlayer> FindTeamPlayers(TeamId teamId)
+   public IReadOnlyCollection<GamePlayer> FindTeamPlayers(TeamId teamId)
       => this.teamPlayers.Where(p => p.TeamId == teamId)
          .ToList().AsReadOnly();
 
-   public IReadOnlyCollection<TeamPlayer> FindTeamPlayers()
+   public IReadOnlyCollection<GamePlayer> FindTeamPlayers()
       => this.teamPlayers.ToList().AsReadOnly();
 }

@@ -27,8 +27,11 @@ public class ValueObjectShould
       var setMethods = properties.Select(p => p.SetMethod).OfType<MethodInfo>().ToList();
 
       setMethods.ForEach(m =>
-         m.IsPrivate.Should().BeTrue(
-            because: $"{m?.DeclaringType?.FullName} 👉 {m?.Name} method should be private."));
+      {
+         var privateOrInit = m.IsPrivate;
+         privateOrInit.Should().BeTrue(
+            because: $"{m?.DeclaringType?.FullName} 👉 {m?.Name} method should be private.");
+      });
    }
 
    [Fact]

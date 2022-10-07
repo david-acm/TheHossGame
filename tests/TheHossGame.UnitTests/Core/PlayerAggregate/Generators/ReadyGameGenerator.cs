@@ -6,8 +6,12 @@
 
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
+using AutoFixture;
 using AutoFixture.Kernel;
+using Moq;
 using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.Interfaces;
+using Player = TheHossGame.Core.PlayerAggregate.Player;
 
 public class ReadyGameGenerator : ISpecimenBuilder
 {
@@ -21,23 +25,22 @@ public class ReadyGameGenerator : ISpecimenBuilder
          return new NoSpecimen();
       }
 
-      return this.GeneratePlayerEnumerable();
+      return this.GenerateReadyGame();
    }
 
-   private object GeneratePlayerEnumerable()
+   private AGame GenerateReadyGame()
    {
-      var generator = new PlayerEnumerableGenerator();
+      var shufflingService = this.context!.Create<Mock<IShufflingService>>();
+      var players = this.context.Create<IEnumerable<Player>>().ToList();
 
-      var request = typeof(IEnumerable<TheHossGame.Core.PlayerAggregate.Player>);
+      var readyGame = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
 
-      var playerList = ((IEnumerable<TheHossGame.Core.PlayerAggregate.Player>)generator.Create(request, this.context!)).ToList();
+      readyGame.JoinPlayerToTeam(players[0].Id, Game.TeamId.Team1);
+      readyGame.JoinPlayerToTeam(players[1].Id, Game.TeamId.Team1);
+      readyGame.JoinPlayerToTeam(players[2].Id, Game.TeamId.Team2);
+      readyGame.JoinPlayerToTeam(players[3].Id, Game.TeamId.Team2);
 
-      var readyGame = AGame.CreateNewForPlayer(playerList.First().Id);
-      readyGame.JoinPlayerToTeam(playerList[0].Id, Game.TeamId.Team1);
-      readyGame.JoinPlayerToTeam(playerList[1].Id, Game.TeamId.Team1);
-      readyGame.JoinPlayerToTeam(playerList[2].Id, Game.TeamId.Team2);
-      readyGame.JoinPlayerToTeam(playerList[3].Id, Game.TeamId.Team2);
-      playerList.ForEach(p => readyGame.TeamPlayerReady(p.Id));
+      players.ForEach(player => readyGame.TeamPlayerReady(player.Id));
 
       return readyGame;
    }

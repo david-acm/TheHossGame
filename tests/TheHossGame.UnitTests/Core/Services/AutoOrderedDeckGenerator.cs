@@ -6,7 +6,6 @@
 
 namespace TheHossGame.UnitTests.Core.Services;
 
-using AutoFixture;
 using AutoFixture.Kernel;
 using Moq;
 using TheHossGame.Core.Interfaces;
@@ -24,12 +23,12 @@ public class AutoOrderedDeckGenerator : ISpecimenBuilder
          return new NoSpecimen();
       }
 
-      return this.GeneratePlayerEnumerable();
+      return GenerateShuffledDeck();
    }
 
-   private object GeneratePlayerEnumerable()
+   private static ADeck GenerateShuffledDeck()
    {
-      var shufflingService = this.context.Create<Mock<IShufflingService>>();
+      var shufflingService = new Mock<IShufflingService>();
       var cards = new List<Card>();
       shufflingService
          .Setup(s => s.Shuffle(It.IsAny<IList<Card>>()))

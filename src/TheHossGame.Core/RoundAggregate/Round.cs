@@ -12,47 +12,40 @@ using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using static TheHossGame.Core.GameAggregate.Game;
 
-public class Round : AggregateRoot<RoundId>
+public class ARound : Round
 {
    private readonly List<PlayerDeal> playerCards = new ();
    private readonly List<Bid> bids = new ();
    private Queue<TeamPlayer> teamPlayers;
+   private RoundState state;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-   private Round(GameId gameId, IEnumerable<TeamPlayer> teamPlayers)
+   private ARound(GameId gameId, IEnumerable<TeamPlayer> teamPlayers, Action<DomainEventBase> when)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-      : base(new RoundId())
+      : base(new RoundId(), when)
    {
       this.GameId = gameId;
       this.OrderPlayers(teamPlayers);
    }
 
-   public enum RoundState
+   public override GameId GameId { get; }
+
+   public override RoundState State => this.state;
+
+   public override IReadOnlyList<PlayerDeal> PlayerDeals => this.playerCards.AsReadOnly();
+
+   public override IReadOnlyList<TeamPlayer> TeamPlayers => this.teamPlayers.ToList().AsReadOnly();
+
+   public override IReadOnlyList<Bid> Bids => this.bids.AsReadOnly();
+
+   public override PlayerId CurrentPlayerId => this.teamPlayers.Peek().PlayerId;
+
+   internal static ARound StartNew(GameId gameId, IEnumerable<TeamPlayer> teamPlayers, IShufflingService shufflingService, Action<DomainEventBase> when)
    {
-      None,
-      Started,
-      CardsShuffled,
-      CardsDealt,
-   }
-
-   public GameId GameId { get; }
-
-   public RoundState State { get; private set; }
-
-   public IReadOnlyList<PlayerDeal> PlayerDeals => this.playerCards.AsReadOnly();
-
-   public IReadOnlyList<TeamPlayer> TeamPlayers => this.teamPlayers.ToList().AsReadOnly();
-
-   public IReadOnlyList<Bid> Bids => this.bids.AsReadOnly();
-
-   public PlayerId CurrentPlayerId => this.teamPlayers.Peek().PlayerId;
-
-   public static Round StartNew(GameId gameId, IEnumerable<TeamPlayer> teamPlayers, IShufflingService shufflingService)
-   {
-      var round = new Round(gameId, teamPlayers);
+      var round = new ARound(gameId, teamPlayers, when);
       var shuffledDeck = ADeck.FromShuffling(shufflingService);
       List<PlayerDeal> playerDeals = DealCards(shuffledDeck, teamPlayers);
-      round.Apply(new RoundStartedEvent(gameId, round.Id, round.teamPlayers));
+      round.Apply(new RoundStartedEvent(gameId, round, round.teamPlayers));
       playerDeals.ForEach(cards => round
          .Apply(new PlayerCardsDealtEvent(gameId, round.Id, cards)));
       round.Apply(new AllCardsDealtEvent(gameId, round.Id));
@@ -60,7 +53,7 @@ public class Round : AggregateRoot<RoundId>
       return round;
    }
 
-   public void Bid(BidCommand bid)
+   internal override void Bid(BidCommand bid)
    {
       this.Apply(new BidEvent(this.GameId, this.Id, new Bid(bid.PlayerId, bid.Value)));
    }
@@ -119,17 +112,17 @@ public class Round : AggregateRoot<RoundId>
 
    private void HandleStartedEvent(RoundStartedEvent e)
    {
-      this.State = RoundState.Started;
+      this.state = RoundState.Started;
       this.teamPlayers = new Queue<TeamPlayer>(e.TeamPlayers.ToList());
    }
 
    private void HandlePlayerCardsDealtEvent(PlayerCardsDealtEvent e)
    {
-      this.State = RoundState.CardsShuffled;
+      this.state = RoundState.CardsShuffled;
       this.playerCards.Add(e.playerCards);
    }
 
-   private void HandleCardsDealtEvent() => this.State = RoundState.CardsDealt;
+   private void HandleCardsDealtEvent() => this.state = RoundState.CardsDealt;
 
    private void HandleBidEvent(BidEvent e)
    {
@@ -192,5 +185,67 @@ public class Round : AggregateRoot<RoundId>
 
             return isSameBid || bidIsBiggerThanLast || bidIsAPass;
          });
+   }
+}
+
+public abstract class Round : EntityBase<RoundId>
+{
+   protected Round(RoundId id, Action<DomainEventBase> when)
+      : base(id, when)
+   {
+   }
+
+   public enum RoundState
+   {
+      None,
+      Started,
+      CardsShuffled,
+      CardsDealt,
+   }
+
+   public abstract GameId GameId { get; }
+
+   public abstract RoundState State { get; }
+
+   public abstract IReadOnlyList<PlayerDeal> PlayerDeals { get; }
+
+   public abstract IReadOnlyList<TeamPlayer> TeamPlayers { get; }
+
+   public abstract IReadOnlyList<Bid> Bids { get; }
+
+   public abstract PlayerId CurrentPlayerId { get; }
+
+   internal abstract void Bid(BidCommand bid);
+}
+
+public class NoRound : Round
+{
+   public NoRound()
+      : base(new RoundId(), (DomainEventBase e) => { })
+   {
+   }
+
+   public override GameId GameId => new NoGameId();
+
+   public override RoundState State => RoundState.None;
+
+   public override IReadOnlyList<PlayerDeal> PlayerDeals => new List<PlayerDeal>() { };
+
+   public override IReadOnlyList<TeamPlayer> TeamPlayers => new List<TeamPlayer>() { };
+
+   public override IReadOnlyList<Bid> Bids => new List<Bid>() { };
+
+   public override PlayerId CurrentPlayerId => new NoPlayerId();
+
+   internal override void Bid(BidCommand bid)
+   {
+   }
+
+   protected override void EnsureValidState()
+   {
+   }
+
+   protected override void When(DomainEventBase @event)
+   {
    }
 }

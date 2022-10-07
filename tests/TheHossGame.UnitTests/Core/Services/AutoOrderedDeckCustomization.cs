@@ -16,6 +16,5 @@ internal class AutoOrderedDeckCustomization : ICustomization
       fixture.Customizations.Add(new AutoOrderedDeckGenerator());
       fixture.Customizations.Add(new AutoShufflingServiceGenerator());
       fixture.Customizations.Add(new PlayerEnumerableGenerator());
-      fixture.Customizations.Add(new RoundGenerator());
    }
 }

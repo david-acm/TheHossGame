@@ -16,42 +16,26 @@ using TheHossGame.Core.RoundAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
-using Round = TheHossGame.Core.RoundAggregate.Round;
+using ARound = TheHossGame.Core.RoundAggregate.ARound.RoundState;
 
 public sealed class StartNewShould
 {
    [Theory]
    [AutoReadyGameData]
-   public void HaveValidState(
-      [Frozen] AGame game,
-      Round sut)
+   public void HaveValidState([Frozen] AGame sut)
    {
-      var teamPlayers = game.FindTeamPlayers().Select(g => new TeamPlayer(g.PlayerId, g.TeamId));
-      sut.Id.Should().NotBeNull();
-      sut.GameId.Should().Be(game.Id);
-      sut.TeamPlayers.Should().Contain(teamPlayers);
-      sut.State.Should().Be(Round.RoundState.CardsDealt);
-      sut.PlayerDeals.Should().HaveCount(4);
+      var teamPlayers = sut.FindTeamPlayers().Select(g => new TeamPlayer(g.PlayerId, g.TeamId));
+      sut.CurrentRound.Id.Should().NotBeNull();
+      sut.CurrentRound.TeamPlayers.Should().Contain(teamPlayers);
+      sut.CurrentRound.State.Should().Be(ARound.CardsDealt);
+      sut.CurrentRound.PlayerDeals.Should().HaveCount(4);
    }
 
    [Theory]
    [AutoReadyGameData]
-   public void RaiseStartEvent(
-      [Frozen] AGame game,
-      Round sut)
+   public void RaiseCardsDealtPerPlayer(AGame game)
    {
-      var startedEvent = sut.Events.ShouldContain()
-         .SingleEventOfType<RoundStartedEvent>();
-
-      startedEvent.GameId.Should().Be(game.Id);
-      startedEvent.RoundId.Should().NotBeNull();
-   }
-
-   [Theory]
-   [AutoReadyGameData]
-   public void RaiseCardsDealtPerPlayer(Round sut)
-   {
-      var @event = sut.Events.ShouldContain()
+      var @event = game.Events.ShouldContain()
          .ManyEventsOfType<PlayerCardsDealtEvent>(4);
       @event.Should().NotBeNull();
 
@@ -67,26 +51,24 @@ public sealed class StartNewShould
 
    [Theory]
    [AutoReadyGameData]
-   public void RaiseAllCardsDealtEvent(
-      [Frozen] AGame game,
-      Round sut)
+   public void RaiseAllCardsDealtEvent([Frozen] AGame game)
    {
-      var startedEvent = sut.Events.ShouldContain()
+      var startedEvent = game.Events.ShouldContain()
          .SingleEventOfType<AllCardsDealtEvent>();
 
       startedEvent.GameId.Should().Be(game.Id);
       startedEvent.RoundId.Should().NotBeNull();
 
-      sut.State.Should().Be(Round.RoundState.CardsDealt);
+      game.CurrentRound.State.Should().Be(ARound.CardsDealt);
    }
 
    [Theory]
    [AutoReadyGameData]
    public void CallShuffleService(
       [Frozen] Mock<IShufflingService> shuffleService,
-      Round sut)
+      AGame sut)
    {
-      sut.PlayerDeals.Should().HaveCount(4);
+      sut.CurrentRound.PlayerDeals.Should().HaveCount(4);
       shuffleService.Verify(
       s => s.Shuffle(It.IsAny<IList<Card>>()),
       Times.Once);

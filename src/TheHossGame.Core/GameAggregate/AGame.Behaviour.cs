@@ -7,7 +7,9 @@
 namespace TheHossGame.Core.GameAggregate;
 
 using System.Linq;
+using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.PlayerAggregate;
+using TheHossGame.Core.RoundAggregate;
 using TheHossGame.SharedKernel;
 using static Game.TeamId;
 
@@ -16,9 +18,13 @@ using static Game.TeamId;
 /// </summary>
 public partial class AGame : Game
 {
-   public static AGame CreateNewForPlayer(PlayerId playerId)
+   private readonly IShufflingService shufflingService;
+
+   public static AGame CreateForPlayer(
+      PlayerId playerId,
+      IShufflingService shufflingService)
    {
-      AGame game = new ();
+      AGame game = new (shufflingService);
       game.CreateNewGame(playerId);
       game.JoinPlayerToTeam(playerId, Team1);
 
@@ -59,12 +65,14 @@ public partial class AGame : Game
 
       this.Apply(new PlayerReadyEvent(this.Id, playerId));
 
-      bool allPlayersAreReady = this.FindTeamPlayers().All(p => p.IsReady) && this.TeamComplete(Team1) && this.TeamComplete(Team2);
-      if (allPlayersAreReady)
+      if (this.AreAllPlayersReady())
       {
          this.Apply(new GameStartedEvent(this.Id));
+         this.StartNewRound();
       }
    }
+
+   public void Bid(BidCommand bidCommand) => this.LastRound.Bid(bidCommand);
 
    protected static void ApplyToEntity(IInternalEventHandler eventHandler, PlayerJoinedEvent @event) => eventHandler.Handle(@event);
 
@@ -91,8 +99,22 @@ public partial class AGame : Game
       TeamsFormedEvent e => () => HandleTeamsFormedEvent(),
       PlayerReadyEvent e => () => HandlePlayerReadyEvent(e),
       GameStartedEvent e => () => HandleGameStartedEvent(),
+      RoundStartedEvent e => () => HandleRoundStartedEvent(e),
       _ => () => { },
    }).Invoke();
+
+   private void StartNewRound()
+   {
+      ARound.StartNew(
+         this.Id,
+         this.FindTeamPlayers().Select(g => new TeamPlayer(g.Id, g.TeamId)),
+         this.shufflingService,
+         this.Apply);
+   }
+
+   private bool AreAllPlayersReady() => this.FindTeamPlayers().All(p => p.IsReady) && this.TeamComplete(Team1) && this.TeamComplete(Team2);
+
+   private void HandleRoundStartedEvent(RoundStartedEvent e) => this.rounds.Add(e.Round);
 
    private void HandleGameStartedEvent() => this.State = GameState.Started;
 

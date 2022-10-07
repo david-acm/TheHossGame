@@ -11,7 +11,7 @@ using TheHossGame.SharedKernel;
 
 public record RoundStartedEvent(
    GameId GameId,
-   RoundId RoundId,
+   Round Round,
    IEnumerable<TeamPlayer> TeamPlayers)
    : DomainEventBase(GameId)
 {

@@ -8,8 +8,8 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 
 using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.PlayerAggregate;
-using TheHossGame.UnitTests.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using Xunit;
 using static TheHossGame.Core.GameAggregate.Game.TeamId;
@@ -18,9 +18,11 @@ public class CreateNewGameShould
 {
    [Theory]
    [AutoPlayerData]
-   public void RaiseGameStartedEvent(APlayerId playerId)
+   public void RaiseGameStartedEvent(
+      APlayerId playerId,
+      IShufflingService shuffleService)
    {
-      var game = AGame.CreateNewForPlayer(playerId);
+      var game = AGame.CreateForPlayer(playerId, shuffleService);
 
       var startEvent = game.Events.Should()
          .ContainSingle(e => e is NewGameCreatedEvent)

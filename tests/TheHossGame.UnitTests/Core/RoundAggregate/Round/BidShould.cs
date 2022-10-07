@@ -3,98 +3,100 @@
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
+
 namespace TheHossGame.UnitTests.Core.RoundAggregate.Round;
 
 using FluentAssertions;
+using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.Core.RoundAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
 using static TheHossGame.Core.GameAggregate.Game.TeamId;
-using Round = TheHossGame.Core.RoundAggregate.Round;
+using ARound = TheHossGame.Core.RoundAggregate.ARound;
 
 public class BidShould
 {
    [Theory]
    [AutoReadyGameData]
-   public void RaiseBidEvent(Round round)
+   public void RaiseBidEvent(AGame game)
    {
-      var bidCommand = new BidCommand(round.TeamPlayers[0].PlayerId, BidValue.One);
-      round.Bid(bidCommand);
-      var @event = round.Events.ShouldContain()
+      var bidCommand = new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One);
+      game.Bid(bidCommand);
+      var @event = game.Events.ShouldContain()
          .SingleEventOfType<BidEvent>();
 
-      @event.GameId.Should().Be(round.GameId);
-      @event.RoundId.Should().Be(round.Id);
+      @event.GameId.Should().Be(game.Id);
+      @event.RoundId.Should().Be(game.CurrentRound.Id);
       @event.Bid.PlayerId.Should().Be(bidCommand.PlayerId);
       @event.Bid.Value.Should().Be(bidCommand.Value);
    }
 
    [Theory]
    [AutoReadyGameData]
-   public void AddBidToRound(Round round)
+   public void AddBidToRound(AGame game)
    {
-      var bidCommand = new BidCommand(round.TeamPlayers[0].PlayerId, BidValue.One);
-      round.Bid(bidCommand);
-      round.State.Should().Be(Round.RoundState.CardsDealt);
-      var bid = round.Bids.Should().ContainSingle().Subject;
+      var bidCommand = new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One);
+      game.Bid(bidCommand);
+      game.CurrentRound.State.Should().Be(ARound.RoundState.CardsDealt);
+      var bid = game.CurrentRound.Bids.Should().ContainSingle().Subject;
       bid.PlayerId.Should().Be(bidCommand.PlayerId);
       bid.Value.Should().Be(bidCommand.Value);
    }
 
    [Theory]
    [AutoReadyGameData]
-   public void AllowPlayersToPass(
-      Round round)
+   public void AllowPlayersToPass(AGame game)
    {
-      round.Bid(new BidCommand(round.CurrentPlayerId, BidValue.One));
-      round.Bid(new BidCommand(round.CurrentPlayerId, BidValue.Two));
-      round.Bid(new BidCommand(round.CurrentPlayerId, BidValue.Pass));
+      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
+      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.Two));
+      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.Pass));
 
-      round.Bids.Should().HaveCount(3);
+      game.CurrentRound.Bids.Should().HaveCount(3);
    }
 
    [Theory]
    [AutoReadyGameData]
-   public void ThrowInvalidEntityExceptionWhenBidLowerThanOthers(
-      Round round)
+   public void ThrowInvalidEntityExceptionWhenBidLowerThanOthers(AGame game)
    {
-      round.Bid(new BidCommand(round.CurrentPlayerId, BidValue.One));
-      round.Bid(new BidCommand(round.CurrentPlayerId, BidValue.Two));
+      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
+      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.Two));
 
-      var bidAction = () => round.Bid(new BidCommand(round.CurrentPlayerId, BidValue.One));
+      var bidAction = () => game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
 
       bidAction.Should().Throw<InvalidEntityStateException>();
    }
 
    [Theory]
    [AutoReadyGameData]
-   public void PlayerOrderShouldBeCorrect(Round round)
+   public void PlayerOrderShouldBeCorrect(AGame game)
    {
-      round.TeamPlayers.Should().ContainInOrder(
-         round.TeamPlayers.First(p => p.TeamId == Team1),
-         round.TeamPlayers.First(p => p.TeamId == Team2),
-         round.TeamPlayers.Last(p => p.TeamId == Team1),
-         round.TeamPlayers.Last(p => p.TeamId == Team2));
+      game.CurrentRound.TeamPlayers.Should().ContainInOrder(
+         game.CurrentRound.TeamPlayers.First(p => p.TeamId == Team1),
+         game.CurrentRound.TeamPlayers.First(p => p.TeamId == Team2),
+         game.CurrentRound.TeamPlayers.Last(p => p.TeamId == Team1),
+         game.CurrentRound.TeamPlayers.Last(p => p.TeamId == Team2));
    }
 
    [Theory]
    [AutoReadyGameData]
-   public void ThrowInvalidEntityExceptionWhenOutOfTurn(Round round)
+   public void ThrowInvalidEntityExceptionWhenOutOfTurn(AGame game)
    {
-      round.Bid(new BidCommand(round.TeamPlayers[0].PlayerId, BidValue.One));
+      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
 
-      var bidAction = () => round.Bid(new BidCommand(round.TeamPlayers[2].PlayerId, BidValue.Two));
+      var bidAction = () => game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
 
       bidAction.Should().Throw<InvalidEntityStateException>();
    }
 
    [Theory]
    [AutoReadyGameData]
-   public void ThrowInvalidEntityExceptionWhenPLayerNotInGame(Round round, APlayer player)
+   public void ThrowInvalidEntityExceptionWhenPLayerNotInGame(
+      PlayerId playerId,
+      AGame game)
    {
-      var bidAction = () => round.Bid(new BidCommand(player.Id, BidValue.One));
+      var bidAction = () => game.Bid(new BidCommand(playerId, BidValue.One));
 
       bidAction.Should().Throw<InvalidEntityStateException>();
    }

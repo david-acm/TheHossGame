@@ -10,6 +10,7 @@ using AutoFixture.Xunit2;
 using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
+using TheHossGame.Core.RoundAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
@@ -17,6 +18,18 @@ using static TheHossGame.Core.GameAggregate.AGame.GameState;
 
 public class PlayerReadyShould
 {
+   [Theory]
+   [AutoReadyGameData]
+   public void RaiseStartEvent(
+      [Frozen] AGame game)
+   {
+      var startedEvent = game.Events.ShouldContain()
+         .SingleEventOfType<RoundStartedEvent>();
+
+      startedEvent.GameId.Should().Be(game.Id);
+      startedEvent.Round.Id.Should().NotBeNull();
+   }
+
    [Theory]
    [AutoReadyGameData]
    public void RaiseGameStartedEventWhenAllPlayersHaveJoined(

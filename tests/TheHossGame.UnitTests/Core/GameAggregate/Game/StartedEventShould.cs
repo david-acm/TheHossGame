@@ -7,7 +7,7 @@
 namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 
 using FluentAssertions;
-using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.GameAggregate.Events;
 using TheHossGame.SharedKernel;
 using TheHossGame.UnitTests.Core.Services;
 using Xunit;

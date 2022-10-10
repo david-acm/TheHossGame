@@ -7,9 +7,13 @@
 namespace TheHossGame.Core.GameAggregate;
 
 using System.Linq;
+using TheHossGame.Core.GameAggregate.Events;
+using TheHossGame.Core.GameAggregate.PlayerEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.PlayerAggregate;
-using TheHossGame.Core.RoundAggregate;
 using TheHossGame.SharedKernel;
 using static Game.TeamId;
 
@@ -109,7 +113,7 @@ public partial class AGame : Game
       this.State = GameState.Started;
    }
 
-   private IEnumerable<TeamPlayer> GetTeamPlayers() => this.FindTeamPlayers().Select(g => new TeamPlayer(g.Id, g.TeamId));
+   private IEnumerable<RoundPlayer> GetTeamPlayers() => this.FindTeamPlayers().Select(g => new RoundPlayer(g.Id, g.TeamId));
 
    private void HandleTeamsFormedEvent() => this.State = GameState.TeamsFormed;
 

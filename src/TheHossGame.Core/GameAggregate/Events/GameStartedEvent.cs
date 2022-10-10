@@ -4,7 +4,7 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Core.GameAggregate;
+namespace TheHossGame.Core.GameAggregate.Events;
 
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;

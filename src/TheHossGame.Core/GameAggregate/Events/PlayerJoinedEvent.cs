@@ -4,10 +4,12 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Core.GameAggregate;
+namespace TheHossGame.Core.GameAggregate.Events;
 
+using TheHossGame.Core.GameAggregate.RoundEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.PlayerAggregate;
-using TheHossGame.Core.RoundAggregate;
 using TheHossGame.SharedKernel;
 using static TheHossGame.Core.GameAggregate.Game;
 
@@ -34,7 +36,7 @@ public record PlayerReadyEvent(GameId GameId, PlayerId PlayerId)
 public record GameStartedEvent(
    GameId GameId,
    RoundId RoundId,
-   IEnumerable<TeamPlayer> TeamPlayers,
+   IEnumerable<RoundPlayer> TeamPlayers,
    IEnumerable<PlayerDeal> Deals,
    IEnumerable<Bid> Bids)
    : DomainEventBase(GameId)

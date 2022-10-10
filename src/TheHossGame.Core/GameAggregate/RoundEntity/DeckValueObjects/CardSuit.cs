@@ -4,7 +4,7 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Core.RoundAggregate;
+namespace TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
 using Ardalis.SmartEnum;
 

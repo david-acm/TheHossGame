@@ -11,12 +11,13 @@ using FluentAssertions;
 using Moq;
 using System.Collections.Generic;
 using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.GameAggregate.RoundEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
+using TheHossGame.Core.GameAggregate.RoundEntity.Events;
 using TheHossGame.Core.Interfaces;
-using TheHossGame.Core.RoundAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
-using ARound = TheHossGame.Core.RoundAggregate.ARound.RoundState;
 
 public sealed class StartNewShould
 {
@@ -24,10 +25,10 @@ public sealed class StartNewShould
    [AutoReadyGameData]
    public void HaveValidState([Frozen] AGame sut)
    {
-      var teamPlayers = sut.FindTeamPlayers().Select(g => new TeamPlayer(g.PlayerId, g.TeamId));
+      var teamPlayers = sut.FindTeamPlayers().Select(g => new RoundPlayer(g.PlayerId, g.TeamId));
       sut.CurrentRound.Id.Should().NotBeNull();
       sut.CurrentRound.TeamPlayers.Should().Contain(teamPlayers);
-      sut.CurrentRound.State.Should().Be(ARound.CardsDealt);
+      sut.CurrentRound.State.Should().Be(Round.RoundState.CardsDealt);
       sut.CurrentRound.PlayerDeals.Should().HaveCount(4);
    }
 
@@ -59,7 +60,7 @@ public sealed class StartNewShould
       startedEvent.GameId.Should().Be(game.Id);
       startedEvent.RoundId.Should().NotBeNull();
 
-      game.CurrentRound.State.Should().Be(ARound.CardsDealt);
+      game.CurrentRound.State.Should().Be(Round.RoundState.CardsDealt);
    }
 
    [Theory]

@@ -1,18 +1,18 @@
 ﻿// 🃏 The HossGame 🃏
-// <copyright file="TeamPlayer.cs" company="Reactive">
+// <copyright file="RoundPlayer.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Core.RoundAggregate;
+namespace TheHossGame.Core.GameAggregate.RoundEntity;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using static TheHossGame.Core.GameAggregate.Game;
 
-public record TeamPlayer
+public record RoundPlayer
    : ValueObject
 {
-   public TeamPlayer(PlayerId PlayerId, TeamId TeamId)
+   public RoundPlayer(PlayerId PlayerId, TeamId TeamId)
    {
       this.PlayerId = PlayerId;
       this.TeamId = TeamId;

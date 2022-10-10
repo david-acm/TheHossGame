@@ -8,7 +8,7 @@ namespace TheHossGame.Core.Interfaces;
 
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using TheHossGame.Core.RoundAggregate;
+using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
 public interface IShufflingService
 {

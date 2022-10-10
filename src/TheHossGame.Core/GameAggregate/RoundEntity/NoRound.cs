@@ -4,16 +4,18 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Core.RoundAggregate;
+namespace TheHossGame.Core.GameAggregate.RoundEntity;
 
 using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 
 public class NoRound : Round
 {
    public NoRound()
-      : base(new RoundId(), (DomainEventBase e) => { })
+      : base(new RoundId(), (e) => { })
    {
    }
 
@@ -25,7 +27,7 @@ public class NoRound : Round
 
    public override IReadOnlyList<PlayerDeal> PlayerDeals => new List<PlayerDeal>() { };
 
-   public override IReadOnlyList<TeamPlayer> TeamPlayers => new List<TeamPlayer>() { };
+   public override IReadOnlyList<RoundPlayer> TeamPlayers => new List<RoundPlayer>() { };
 
    public override IReadOnlyList<Bid> Bids => new List<Bid>() { };
 

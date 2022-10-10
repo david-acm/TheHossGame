@@ -8,8 +8,8 @@ namespace TheHossGame.UnitTests.Core.Services;
 
 using AutoFixture.Kernel;
 using Moq;
+using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.Interfaces;
-using TheHossGame.Core.RoundAggregate;
 
 public class AutoShufflingServiceGenerator : ISpecimenBuilder
 {

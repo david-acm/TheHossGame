@@ -4,7 +4,7 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Core.GameAggregate;
+namespace TheHossGame.Core.GameAggregate.RoundEntity;
 
 using TheHossGame.SharedKernel;
 public record RoundId : ValueId

@@ -4,17 +4,18 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.UnitTests.Core.RoundAggregate.Round;
+namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.GameAggregate.RoundEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.Events;
 using TheHossGame.Core.PlayerAggregate;
-using TheHossGame.Core.RoundAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
 using static TheHossGame.Core.GameAggregate.Game.TeamId;
-using ARound = TheHossGame.Core.RoundAggregate.ARound;
 
 public class BidShould
 {
@@ -39,7 +40,7 @@ public class BidShould
    {
       var bidCommand = new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One);
       game.Bid(bidCommand);
-      game.CurrentRound.State.Should().Be(ARound.RoundState.CardsDealt);
+      game.CurrentRound.State.Should().Be(Round.RoundState.CardsDealt);
       var bid = game.CurrentRound.Bids.Should().ContainSingle().Subject;
       bid.PlayerId.Should().Be(bidCommand.PlayerId);
       bid.Value.Should().Be(bidCommand.Value);

@@ -4,9 +4,11 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Core.GameAggregate;
+namespace TheHossGame.Core.GameAggregate.PlayerEntity;
 
 using System;
+using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.GameAggregate.Events;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using static TheHossGame.Core.GameAggregate.Game;

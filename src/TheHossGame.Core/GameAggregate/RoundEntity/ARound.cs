@@ -4,9 +4,13 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Core.RoundAggregate;
+namespace TheHossGame.Core.GameAggregate.RoundEntity;
 
 using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.GameAggregate.Events;
+using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
+using TheHossGame.Core.GameAggregate.RoundEntity.Events;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using static TheHossGame.Core.GameAggregate.Game;
@@ -15,10 +19,10 @@ public class ARound : Round
 {
    private List<Bid> bids = new ();
    private List<PlayerDeal> deals = new ();
-   private Queue<TeamPlayer> teamPlayers = new ();
+   private Queue<RoundPlayer> teamPlayers = new ();
    private RoundState state;
 
-   private ARound(GameId gameId, IEnumerable<TeamPlayer> teamPlayers, Action<DomainEventBase> when)
+   private ARound(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Action<DomainEventBase> when)
       : this(gameId, new RoundId(), when)
    {
       this.OrderPlayers(teamPlayers);
@@ -36,7 +40,7 @@ public class ARound : Round
 
    public override IReadOnlyList<PlayerDeal> PlayerDeals => this.deals.AsReadOnly();
 
-   public override IReadOnlyList<TeamPlayer> TeamPlayers => this.teamPlayers.ToList().AsReadOnly();
+   public override IReadOnlyList<RoundPlayer> TeamPlayers => this.teamPlayers.ToList().AsReadOnly();
 
    public override IReadOnlyList<Bid> Bids => this.bids.AsReadOnly();
 
@@ -44,7 +48,7 @@ public class ARound : Round
 
    public override bool IsNull => false;
 
-   internal static ARound StartNew(GameId gameId, IEnumerable<TeamPlayer> teamPlayers, Deck shuffledDeck, Action<DomainEventBase> when)
+   internal static ARound StartNew(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Deck shuffledDeck, Action<DomainEventBase> when)
    {
       var round = new ARound(gameId, teamPlayers, when);
       List<PlayerDeal> playerDeals = DealCards(shuffledDeck, teamPlayers);
@@ -59,7 +63,7 @@ public class ARound : Round
    internal static ARound FromStream(GameStartedEvent @event, Action<DomainEventBase> when)
       => new (@event.GameId, @event.RoundId, when)
       {
-         teamPlayers = new Queue<TeamPlayer>(@event.TeamPlayers),
+         teamPlayers = new Queue<RoundPlayer>(@event.TeamPlayers),
          deals = @event.Deals.ToList(),
          bids = @event.Bids.ToList(),
          state = RoundState.CardsDealt,
@@ -99,7 +103,7 @@ public class ARound : Round
 
    private static List<PlayerDeal> DealCards(
       Deck deck,
-      IEnumerable<TeamPlayer> teamPlayers)
+      IEnumerable<RoundPlayer> teamPlayers)
    {
       var playerHand = teamPlayers.Select(p => new PlayerDeal(p.PlayerId)).ToList();
 
@@ -111,7 +115,7 @@ public class ARound : Round
       return playerHand;
    }
 
-   private void OrderPlayers(IEnumerable<TeamPlayer> teamPlayers)
+   private void OrderPlayers(IEnumerable<RoundPlayer> teamPlayers)
    {
       var teamPlayerList = teamPlayers.OrderBy(t => t.TeamId).ToList();
       var secondPlayer = teamPlayerList.First(t => t.TeamId == TeamId.Team2);
@@ -119,13 +123,13 @@ public class ARound : Round
       teamPlayerList[2] = thirdPlayer;
       teamPlayerList[1] = secondPlayer;
 
-      this.teamPlayers = new Queue<TeamPlayer>(teamPlayerList);
+      this.teamPlayers = new Queue<RoundPlayer>(teamPlayerList);
    }
 
    private void HandleStartedEvent(RoundStartedEvent e)
    {
       this.state = RoundState.Started;
-      this.teamPlayers = new Queue<TeamPlayer>(e.TeamPlayers.ToList());
+      this.teamPlayers = new Queue<RoundPlayer>(e.TeamPlayers.ToList());
    }
 
    private void HandlePlayerCardsDealtEvent(PlayerCardsDealtEvent e)

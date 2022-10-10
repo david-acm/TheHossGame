@@ -9,8 +9,9 @@ namespace TheHossGame.Core.GameAggregate;
 using Ardalis.Specification;
 using System.Collections.Generic;
 using System.Linq;
+using TheHossGame.Core.GameAggregate.PlayerEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity;
 using TheHossGame.Core.PlayerAggregate;
-using TheHossGame.Core.RoundAggregate;
 
 /// <summary>
 /// State side.

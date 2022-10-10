@@ -9,8 +9,8 @@ namespace TheHossGame.UnitTests.Core.Services;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using Moq;
+using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.Interfaces;
-using TheHossGame.Core.RoundAggregate;
 using Xunit;
 
 public class ShufflingServiceShould

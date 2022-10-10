@@ -1,14 +1,15 @@
 ﻿// 🃏 The HossGame 🃏
-// <copyright file="AGame.State.cs" company="Reactive">
+// <copyright file="CurrentRound.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Core.GameAggregate;
+namespace TheHossGame.Core.GameAggregate.RoundEntity;
 
 using System.Collections.Generic;
+using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
+using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.PlayerAggregate;
-using TheHossGame.Core.RoundAggregate;
 using TheHossGame.SharedKernel;
 
 public record CurrentRound : ValueObject
@@ -30,5 +31,5 @@ public record CurrentRound : ValueObject
 
    public IReadOnlyList<Bid> Bids => this.currentRound.Bids;
 
-   public IReadOnlyList<TeamPlayer> TeamPlayers => this.currentRound.TeamPlayers;
+   public IReadOnlyList<RoundPlayer> TeamPlayers => this.currentRound.TeamPlayers;
 }

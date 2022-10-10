@@ -1,53 +1,27 @@
 ﻿// 🃏 The HossGame 🃏
-// <copyright file="ARound.cs" company="Reactive">
+// <copyright file="ARound.Behavior.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.Core.GameAggregate.RoundEntity;
 
-using TheHossGame.Core.GameAggregate;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using static TheHossGame.Core.GameAggregate.Game;
 using TheHossGame.Core.GameAggregate.Events;
 using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
 using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.GameAggregate.RoundEntity.Events;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
-using static TheHossGame.Core.GameAggregate.Game;
 
-public class ARound : Round
+/// <summary>
+/// The behaviour side.
+/// </summary>
+public partial class ARound : Round
 {
-   private List<Bid> bids = new ();
-   private List<PlayerDeal> deals = new ();
-   private Queue<RoundPlayer> teamPlayers = new ();
-   private RoundState state;
-
-   private ARound(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Action<DomainEventBase> when)
-      : this(gameId, new RoundId(), when)
-   {
-      this.OrderPlayers(teamPlayers);
-   }
-
-   private ARound(GameId gameId, RoundId roundId, Action<DomainEventBase> when)
-      : base(roundId, when)
-   {
-      this.GameId = gameId;
-   }
-
-   public override GameId GameId { get; }
-
-   public override RoundState State => this.state;
-
-   public override IReadOnlyList<PlayerDeal> PlayerDeals => this.deals.AsReadOnly();
-
-   public override IReadOnlyList<RoundPlayer> TeamPlayers => this.teamPlayers.ToList().AsReadOnly();
-
-   public override IReadOnlyList<Bid> Bids => this.bids.AsReadOnly();
-
-   public override PlayerId CurrentPlayerId => this.teamPlayers.Peek().PlayerId;
-
-   public override bool IsNull => false;
-
    internal static ARound StartNew(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Deck shuffledDeck, Action<DomainEventBase> when)
    {
       var round = new ARound(gameId, teamPlayers, when);
@@ -138,8 +112,6 @@ public class ARound : Round
       this.deals.Add(e.playerCards);
    }
 
-   private void HandleCardsDealtEvent() => this.state = RoundState.CardsDealt;
-
    private void HandleBidEvent(BidEvent e)
    {
       this.bids.Add(e.Bid);
@@ -151,13 +123,10 @@ public class ARound : Round
    private bool ValidateCardsShuffled()
       => this.ValidateStarted() && this.PlayerDeals.All(p => p.Cards.Count == 6);
 
-   private bool ValidateAllCardsDealt()
-   {
-      return this.ValidateCardsShuffled() &&
+   private bool ValidateAllCardsDealt() => this.ValidateCardsShuffled() &&
          this.PlayerDeals.Count == 4 &&
          this.ValidateBids() &&
          this.ValidatePlayerOrder();
-   }
 
    private bool ValidatePlayerOrder()
    {
@@ -165,10 +134,8 @@ public class ARound : Round
       {
          return this.BidPerformedByPlayerInTurn();
       }
-      else
-      {
-         return true;
-      }
+
+      return true;
    }
 
    private bool BidPerformedByPlayerInTurn()
@@ -191,15 +158,15 @@ public class ARound : Round
          .ToList();
 
       return orderedBids.TrueForAll(c =>
-         {
-            int indexOfPreviousBid = c.Index - 1 > 0 ? c.Index - 1 : 0;
-            var lastBid = this.Bids[indexOfPreviousBid].Value;
+      {
+         int indexOfPreviousBid = c.Index - 1 > 0 ? c.Index - 1 : 0;
+         var lastBid = this.Bids[indexOfPreviousBid].Value;
 
-            bool isSameBid = c.Index == indexOfPreviousBid;
-            bool bidIsBiggerThanLast = c.Bid.Value > lastBid;
-            bool bidIsAPass = c.Bid.Value == BidValue.Pass;
+         bool isSameBid = c.Index == indexOfPreviousBid;
+         bool bidIsBiggerThanLast = c.Bid.Value > lastBid;
+         bool bidIsAPass = c.Bid.Value == BidValue.Pass;
 
-            return isSameBid || bidIsBiggerThanLast || bidIsAPass;
-         });
+         return isSameBid || bidIsBiggerThanLast || bidIsAPass;
+      });
    }
 }

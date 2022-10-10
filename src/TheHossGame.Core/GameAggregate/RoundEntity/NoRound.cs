@@ -21,17 +21,17 @@ public class NoRound : Round
 
    public override bool IsNull => true;
 
-   public override GameId GameId => new NoGameId();
+   internal override GameId GameId => new NoGameId();
 
-   public override RoundState State => RoundState.None;
+   internal override RoundState State => RoundState.None;
 
-   public override IReadOnlyList<PlayerDeal> PlayerDeals => new List<PlayerDeal>() { };
+   internal override IReadOnlyList<PlayerDeal> PlayerDeals => new List<PlayerDeal>() { };
 
-   public override IReadOnlyList<RoundPlayer> TeamPlayers => new List<RoundPlayer>() { };
+   internal override IReadOnlyList<RoundPlayer> TeamPlayers => new List<RoundPlayer>() { };
 
-   public override IReadOnlyList<Bid> Bids => new List<Bid>() { };
+   internal override IReadOnlyList<Bid> Bids => new List<Bid>() { };
 
-   public override PlayerId CurrentPlayerId => new NoPlayerId();
+   internal override PlayerId CurrentPlayerId => new NoPlayerId();
 
    internal override void Bid(BidCommand bid)
    {

@@ -27,17 +27,17 @@ public abstract class Round : EntityBase<RoundId>
       CardsDealt,
    }
 
-   public abstract GameId GameId { get; }
+   internal abstract GameId GameId { get; }
 
-   public abstract RoundState State { get; }
+   internal abstract RoundState State { get; }
 
-   public abstract IReadOnlyList<PlayerDeal> PlayerDeals { get; }
+   internal abstract IReadOnlyList<PlayerDeal> PlayerDeals { get; }
 
-   public abstract IReadOnlyList<RoundPlayer> TeamPlayers { get; }
+   internal abstract IReadOnlyList<RoundPlayer> TeamPlayers { get; }
 
-   public abstract IReadOnlyList<Bid> Bids { get; }
+   internal abstract IReadOnlyList<Bid> Bids { get; }
 
-   public abstract PlayerId CurrentPlayerId { get; }
+   internal abstract PlayerId CurrentPlayerId { get; }
 
    internal abstract void Bid(BidCommand bid);
 }

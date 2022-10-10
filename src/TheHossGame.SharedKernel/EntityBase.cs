@@ -98,7 +98,9 @@ public abstract class EntityBase<T> : IInternalEventHandler
    /// </summary>
    public Action<DomainEventBase> Applier { get; }
 
-   /// <inheritdoc/>
+   /// <summary>
+   /// Gets a value indicating whether the entity is null.
+   /// </summary>
    public abstract bool IsNull { get; }
 
    /// <summary>

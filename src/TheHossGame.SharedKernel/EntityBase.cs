@@ -98,6 +98,9 @@ public abstract class EntityBase<T> : IInternalEventHandler
    /// </summary>
    public Action<DomainEventBase> Applier { get; }
 
+   /// <inheritdoc/>
+   public abstract bool IsNull { get; }
+
    /// <summary>
    /// Performs identity based comparison.
    /// </summary>
@@ -137,7 +140,10 @@ public abstract class EntityBase<T> : IInternalEventHandler
    /// </summary>
    /// <param name="event">The event to handle.</param>
    public void Handle(DomainEventBase @event)
-      => this.When(@event);
+   {
+      this.When(@event);
+      this.EnsureValidState();
+   }
 
    /// <summary>
    /// Clears the collection of domain events.
@@ -150,6 +156,11 @@ public abstract class EntityBase<T> : IInternalEventHandler
    /// <param name="event">The event to apply.</param>
    protected virtual void Apply(DomainEventBase @event)
    {
+      if (this.IsNull)
+      {
+         return;
+      }
+
       this.When(@event);
       this.EnsureValidState();
       this.Applier(@event);

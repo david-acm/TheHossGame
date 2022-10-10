@@ -38,6 +38,8 @@ public class NoGame : Game
    {
    }
 
+   public override bool IsNull => true;
+
    public override void JoinPlayerToTeam(PlayerId playerId, TeamId teamId)
    {
    }

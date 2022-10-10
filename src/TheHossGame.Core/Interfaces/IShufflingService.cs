@@ -12,7 +12,7 @@ using TheHossGame.Core.RoundAggregate;
 
 public interface IShufflingService
 {
-   void Shuffle(IList<Card> cards);
+   void Shuffle(IList<ACard> cards);
 }
 
 public class ShufflingService : IShufflingService
@@ -24,7 +24,7 @@ public class ShufflingService : IShufflingService
       this.provider = provider;
    }
 
-   public void Shuffle(IList<Card> cards)
+   public void Shuffle(IList<ACard> cards)
    {
       int swap = cards.Count;
 

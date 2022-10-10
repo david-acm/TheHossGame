@@ -16,9 +16,12 @@ public sealed class CardRank : SmartEnum<CardRank, string>
    public static readonly CardRank Jack = new (nameof(Jack), "J");
    public static readonly CardRank Ten = new (nameof(Ten), "10");
    public static readonly CardRank Nine = new (nameof(Nine), "9");
+   public static readonly CardRank None = new (nameof(None), string.Empty);
 
    private CardRank(string name, string value)
       : base(name, value)
    {
    }
+
+   public static new IReadOnlyCollection<CardRank> List => SmartEnum<CardRank, string>.List.Except(new List<CardRank>() { None }).ToList().AsReadOnly();
 }

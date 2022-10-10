@@ -29,10 +29,10 @@ public class AutoOrderedDeckGenerator : ISpecimenBuilder
    private static ADeck GenerateShuffledDeck()
    {
       var shufflingService = new Mock<IShufflingService>();
-      var cards = new List<Card>();
+      var cards = new List<ACard>();
       shufflingService
-         .Setup(s => s.Shuffle(It.IsAny<IList<Card>>()))
-         .Callback((IList<Card> a) => cards = a.ToList());
-      return ADeck.FromShuffling(shufflingService.Object);
+         .Setup(s => s.Shuffle(It.IsAny<IList<ACard>>()))
+         .Callback((IList<ACard> a) => cards = a.ToList());
+      return ADeck.ShuffleNew(shufflingService.Object);
    }
 }

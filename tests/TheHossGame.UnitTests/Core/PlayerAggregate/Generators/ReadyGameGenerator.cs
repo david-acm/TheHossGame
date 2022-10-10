@@ -35,7 +35,6 @@ public class ReadyGameGenerator : ISpecimenBuilder
 
       var readyGame = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
 
-      readyGame.JoinPlayerToTeam(players[0].Id, Game.TeamId.Team1);
       readyGame.JoinPlayerToTeam(players[1].Id, Game.TeamId.Team1);
       readyGame.JoinPlayerToTeam(players[2].Id, Game.TeamId.Team2);
       readyGame.JoinPlayerToTeam(players[3].Id, Game.TeamId.Team2);

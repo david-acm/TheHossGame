@@ -29,10 +29,10 @@ public class AutoShufflingServiceGenerator : ISpecimenBuilder
    private static Mock<IShufflingService> GeneratePlayerEnumerable()
    {
       var shufflingService = new Mock<IShufflingService>();
-      var cards = new List<Card>();
+      var cards = new List<ACard>();
       shufflingService
-         .Setup(s => s.Shuffle(It.IsAny<IList<Card>>()))
-         .Callback((IList<Card> a) => cards = a.ToList());
+         .Setup(s => s.Shuffle(It.IsAny<IList<ACard>>()))
+         .Callback((IList<ACard> a) => cards = a.ToList());
       return shufflingService;
    }
 }

@@ -22,8 +22,8 @@ public record PlayerDeal
    public PlayerId PlayerId { get; }
    public IReadOnlyList<Card> Cards => this.cards.AsReadOnly();
 
-   public void ReceibeCard(Card cards)
+   public void ReceibeCard(Card card)
    {
-      this.cards.Add(cards);
+      this.cards.Add(card);
    }
 }

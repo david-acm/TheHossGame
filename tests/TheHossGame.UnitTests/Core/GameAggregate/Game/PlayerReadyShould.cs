@@ -27,7 +27,7 @@ public class PlayerReadyShould
          .SingleEventOfType<RoundStartedEvent>();
 
       startedEvent.GameId.Should().Be(game.Id);
-      startedEvent.Round.Id.Should().NotBeNull();
+      startedEvent.RoundId.Should().NotBeNull();
    }
 
    [Theory]
@@ -62,7 +62,7 @@ public class PlayerReadyShould
       readyEvent.Should().NotBeNull();
       readyEvent.PlayerId.Should().Be(playerId);
       readyEvent.GameId.Should().Be(game.Id);
-      game.FindSinglePlayer(playerId).IsReady
+      game.FindPlayer(playerId).IsReady
          .Should().BeTrue();
       game.State.Should().Be(Created);
    }
@@ -79,7 +79,7 @@ public class PlayerReadyShould
          .Where(e => e is PlayerReadyEvent)
          .Should().BeEmpty();
 
-      game.FindSinglePlayer(playerId).IsReady
+      game.FindPlayer(playerId).IsReady
          .Should().BeFalse();
    }
 }

@@ -7,10 +7,11 @@
 namespace TheHossGame.Core.GameAggregate;
 
 using TheHossGame.Core.PlayerAggregate;
+using TheHossGame.Core.RoundAggregate;
 using TheHossGame.SharedKernel;
 using static TheHossGame.Core.GameAggregate.Game;
 
-public record PlayerJoinedEvent(PlayerId PlayerId, TeamId TeamId)
+public record PlayerJoinedEvent(GameId gameId, PlayerId PlayerId, TeamId TeamId)
    : DomainEventBase(PlayerId)
 {
 }
@@ -30,7 +31,12 @@ public record PlayerReadyEvent(GameId GameId, PlayerId PlayerId)
 {
 }
 
-public record GameStartedEvent(GameId GameId)
+public record GameStartedEvent(
+   GameId GameId,
+   RoundId RoundId,
+   IEnumerable<TeamPlayer> TeamPlayers,
+   IEnumerable<PlayerDeal> Deals,
+   IEnumerable<Bid> Bids)
    : DomainEventBase(GameId)
 {
 }

@@ -11,16 +11,15 @@ using System.Collections.Generic;
 using System.Linq;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.Core.RoundAggregate;
-using TheHossGame.SharedKernel;
 
 /// <summary>
 /// State side.
 /// </summary>
 public partial class AGame : Game
 {
-   private readonly List<GamePlayer> teamPlayers = new ();
+   private readonly List<GamePlayer> gamePlayers = new ();
    private readonly List<RoundId> roundIds = new ();
-   private List<Round> rounds = new List<ARound>().Cast<Round>().ToList();
+   private readonly List<Round> rounds = new List<ARound>().Cast<Round>().ToList();
 
    private AGame(Interfaces.IShufflingService shufflingService)
       : base(new AGameId())
@@ -41,34 +40,17 @@ public partial class AGame : Game
 
    public IReadOnlyList<RoundId> RoundIds => this.roundIds.AsReadOnly();
 
-   private Round LastRound => this.rounds.Last() ?? new NoRound();
+   private Round LastRound => this.rounds
+      .FirstOrDefault(r => r.State == Round.RoundState.CardsDealt) ?? new NoRound();
 
-   public IReadOnlyCollection<GamePlayer> FindTeamPlayers(TeamId teamId)
-      => this.teamPlayers.Where(p => p.TeamId == teamId)
+   public IReadOnlyCollection<GamePlayer> FindGamePlayers(TeamId teamId)
+      => this.gamePlayers.Where(p => p.TeamId == teamId)
          .ToList().AsReadOnly();
 
    public IReadOnlyCollection<GamePlayer> FindTeamPlayers()
-      => this.teamPlayers.ToList().AsReadOnly();
-}
+      => this.gamePlayers.ToList().AsReadOnly();
 
-public record CurrentRound : ValueObject
-{
-   private readonly Round currentRound;
-
-   public CurrentRound(Round currentRound)
-   {
-      this.currentRound = currentRound;
-   }
-
-   public IReadOnlyList<PlayerDeal> PlayerDeals => this.currentRound.PlayerDeals;
-
-   public PlayerId CurrentPlayerId => this.currentRound.CurrentPlayerId;
-
-   public RoundId Id => this.currentRound.Id;
-
-   public Round.RoundState State => this.currentRound.State;
-
-   public IReadOnlyList<Bid> Bids => this.currentRound.Bids;
-
-   public IReadOnlyList<TeamPlayer> TeamPlayers => this.currentRound.TeamPlayers;
+   public GamePlayer FindPlayer(PlayerId playerId)
+      => this.FindTeamPlayers().FirstOrDefault(p => p.PlayerId == playerId)
+      ?? new NoGamePlayer(this.Id, playerId, this.Apply);
 }

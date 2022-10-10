@@ -70,7 +70,7 @@ public sealed class StartNewShould
    {
       sut.CurrentRound.PlayerDeals.Should().HaveCount(4);
       shuffleService.Verify(
-      s => s.Shuffle(It.IsAny<IList<Card>>()),
+      s => s.Shuffle(It.IsAny<IList<ACard>>()),
       Times.Once);
    }
 }

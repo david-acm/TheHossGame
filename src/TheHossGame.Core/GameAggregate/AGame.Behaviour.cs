@@ -20,6 +20,8 @@ public partial class AGame : Game
 {
    private readonly IShufflingService shufflingService;
 
+   public override bool IsNull => false;
+
    public static AGame CreateForPlayer(
       PlayerId playerId,
       IShufflingService shufflingService)
@@ -31,25 +33,14 @@ public partial class AGame : Game
       return game;
    }
 
-   public GamePlayer FindSinglePlayer(PlayerId playerId)
-      => this.FindTeamPlayers().FirstOrDefault(p => p.PlayerId == playerId)
-         ?? new NoGamePlayer();
-
    public override void CreateNewGame(PlayerId playerId)
       => this.Apply(new NewGameCreatedEvent(this.Id, playerId));
 
    public override void JoinPlayerToTeam(PlayerId playerId, TeamId teamId)
    {
-      bool playerIsMember = this.FindSinglePlayer(playerId) is not NoGamePlayer;
-      if (playerIsMember)
-      {
-         this.Apply(new PlayerAlreadyInGame(playerId));
-         return;
-      }
+      this.FindPlayer(playerId).Join(teamId);
 
-      this.Apply(new PlayerJoinedEvent(playerId, teamId));
-
-      if (this.TeamComplete(Team1) && this.TeamComplete(Team2))
+      if (this.TeamsAreComplete())
       {
          this.Apply(new TeamsFormedEvent(this.Id));
       }
@@ -57,24 +48,26 @@ public partial class AGame : Game
 
    public override void TeamPlayerReady(PlayerId playerId)
    {
-      bool playerIsNotMember = this.FindSinglePlayer(playerId) is NoGamePlayer;
-      if (playerIsNotMember)
-      {
-         return;
-      }
-
-      this.Apply(new PlayerReadyEvent(this.Id, playerId));
+      this.FindPlayer(playerId).Ready();
 
       if (this.AreAllPlayersReady())
       {
-         this.Apply(new GameStartedEvent(this.Id));
-         this.StartNewRound();
+         var shuffledDeck = ADeck.ShuffleNew(this.shufflingService);
+         var round = ARound.StartNew(this.Id, this.GetTeamPlayers(), shuffledDeck, this.Apply);
+
+         this.Apply(new GameStartedEvent(
+            this.Id,
+            round.Id,
+            round.TeamPlayers,
+            round.PlayerDeals,
+            round.Bids));
       }
    }
 
-   public void Bid(BidCommand bidCommand) => this.LastRound.Bid(bidCommand);
-
-   protected static void ApplyToEntity(IInternalEventHandler eventHandler, PlayerJoinedEvent @event) => eventHandler.Handle(@event);
+   public void Bid(BidCommand bidCommand)
+   {
+      this.LastRound.Bid(bidCommand);
+   }
 
    protected override void EnsureValidState()
    {
@@ -97,32 +90,26 @@ public partial class AGame : Game
       PlayerJoinedEvent e => (Action)(() => HandleJoin(e)),
       NewGameCreatedEvent e => () => HandleNameCreated(e),
       TeamsFormedEvent e => () => HandleTeamsFormedEvent(),
-      PlayerReadyEvent e => () => HandlePlayerReadyEvent(e),
-      GameStartedEvent e => () => HandleGameStartedEvent(),
-      RoundStartedEvent e => () => HandleRoundStartedEvent(e),
+      GameStartedEvent e => () => HandleGameStartedEvent(e),
       _ => () => { },
    }).Invoke();
 
-   private void StartNewRound()
+   private bool TeamsAreComplete() => this.TeamComplete(Team1) && this.TeamComplete(Team2);
+
+   private bool AreAllPlayersReady()
+      => this.FindTeamPlayers().All(p => p.IsReady) &&
+         this.TeamComplete(Team1) &&
+         this.TeamComplete(Team2);
+
+   private void HandleGameStartedEvent(GameStartedEvent @event)
    {
-      ARound.StartNew(
-         this.Id,
-         this.FindTeamPlayers().Select(g => new TeamPlayer(g.Id, g.TeamId)),
-         this.shufflingService,
-         this.Apply);
+      var round = ARound.FromStream(@event, this.Apply);
+      this.rounds.Add(round);
+
+      this.State = GameState.Started;
    }
 
-   private bool AreAllPlayersReady() => this.FindTeamPlayers().All(p => p.IsReady) && this.TeamComplete(Team1) && this.TeamComplete(Team2);
-
-   private void HandleRoundStartedEvent(RoundStartedEvent e) => this.rounds.Add(e.Round);
-
-   private void HandleGameStartedEvent() => this.State = GameState.Started;
-
-   private void HandlePlayerReadyEvent(PlayerReadyEvent e)
-   {
-      var player = this.FindSinglePlayer(e.PlayerId);
-      this.ApplyToEntity(player, e);
-   }
+   private IEnumerable<TeamPlayer> GetTeamPlayers() => this.FindTeamPlayers().Select(g => new TeamPlayer(g.Id, g.TeamId));
 
    private void HandleTeamsFormedEvent() => this.State = GameState.TeamsFormed;
 
@@ -130,12 +117,11 @@ public partial class AGame : Game
 
    private void HandleJoin(PlayerJoinedEvent e)
    {
-      AGamePlayer teamPlayer = new (e.PlayerId, e.TeamId, this.Apply);
-      ApplyToEntity(teamPlayer, e);
-      this.teamPlayers.Add(teamPlayer);
+      var teamPlayer = AGamePlayer.FromStream(e, this.Apply);
+      this.gamePlayers.Add(teamPlayer);
    }
 
-   private bool TeamValid(TeamId team1) => this.FindTeamPlayers(team1).Count <= 2;
+   private bool TeamValid(TeamId team1) => this.FindGamePlayers(team1).Count <= 2;
 
-   private bool TeamComplete(TeamId team1) => this.FindTeamPlayers(team1).Count == 2;
+   private bool TeamComplete(TeamId team1) => this.FindGamePlayers(team1).Count == 2;
 }

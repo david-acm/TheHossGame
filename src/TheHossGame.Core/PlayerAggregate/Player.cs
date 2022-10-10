@@ -35,6 +35,8 @@ public class NoPlayer : Player
    {
    }
 
+   public override bool IsNull => true;
+
    public override void RequestJoinGame(GameId gameId)
    {
    }
@@ -61,6 +63,8 @@ public class APlayer : Player
       Playing,
       NotPlaying,
    }
+
+   public override bool IsNull => false;
 
    public PlayerState State { get; private set; } = PlayerState.NotPlaying;
 

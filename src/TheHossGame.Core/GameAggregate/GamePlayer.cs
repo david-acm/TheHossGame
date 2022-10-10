@@ -13,63 +13,22 @@ using static TheHossGame.Core.GameAggregate.Game;
 
 public abstract class GamePlayer : EntityBase<PlayerId>
 {
-   protected GamePlayer(PlayerId playerId, TeamId teamId, Action<DomainEventBase> applier)
+   protected GamePlayer(GameId gameId, PlayerId playerId, Action<DomainEventBase> applier)
       : base(playerId, applier)
    {
+      this.GameId = gameId;
       this.PlayerId = playerId;
-      this.TeamId = teamId;
    }
 
    public bool IsReady { get; protected set; }
 
+   public GameId GameId { get; }
+
    public PlayerId PlayerId { get; protected set; }
 
    public TeamId TeamId { get; protected set; }
-}
 
-public class AGamePlayer
-   : GamePlayer
-{
-   public AGamePlayer(PlayerId PlayerId, TeamId TeamId, Action<DomainEventBase> applier)
-      : base(PlayerId, TeamId, applier)
-   {
-   }
+   internal abstract void Join(TeamId teamId);
 
-   protected override void EnsureValidState()
-   {
-      throw new NotImplementedException();
-   }
-
-   protected override void When(DomainEventBase @event)
-   {
-      switch (@event)
-      {
-         case PlayerJoinedEvent e:
-            this.PlayerId = e.PlayerId;
-            this.TeamId = e.TeamId;
-            break;
-         case PlayerReadyEvent e:
-            this.IsReady = true;
-            break;
-         default:
-            break;
-      }
-   }
-}
-
-public class NoGamePlayer
-   : GamePlayer
-{
-   public NoGamePlayer()
-      : base(new NoPlayerId(), TeamId.NoTeamId, (o) => { })
-   {
-   }
-
-   protected override void EnsureValidState()
-   {
-   }
-
-   protected override void When(DomainEventBase @event)
-   {
-   }
+   internal abstract GamePlayer Ready();
 }

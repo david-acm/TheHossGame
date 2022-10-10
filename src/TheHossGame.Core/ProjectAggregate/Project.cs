@@ -21,6 +21,8 @@ public class Project : EntityBase, IAggregateRoot
       this.Priority = priority;
    }
 
+   public override bool IsNull => false;
+
    public string Name { get; private set; }
 
    public IEnumerable<ToDoItem> Items => this.items.AsReadOnly();

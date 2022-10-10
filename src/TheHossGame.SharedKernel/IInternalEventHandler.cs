@@ -12,6 +12,11 @@ namespace TheHossGame.SharedKernel;
 public interface IInternalEventHandler
 {
    /// <summary>
+   /// Gets a value indicating whether the entity is null.
+   /// </summary>
+   bool IsNull { get; }
+
+   /// <summary>
    /// Handles an event.
    /// </summary>
    /// <param name="event">The event to handler.</param>

@@ -43,3 +43,15 @@ internal class ReadyGameCustomization : ICustomization
       fixture.Customizations.Add(new ReadyGameGenerator());
    }
 }
+
+internal class ReadyBidFinishedGameCustomization : ICustomization
+{
+   public void Customize(IFixture fixture)
+   {
+      fixture.Customizations.Add(new PlayerNameGenerator());
+      fixture.Customizations.Add(new PlayerIdGenerator());
+      fixture.Customizations.Add(new PlayerGenerator());
+      fixture.Customizations.Add(new PlayerEnumerableGenerator());
+      fixture.Customizations.Add(new BidFinishedGameGenerator());
+   }
+}

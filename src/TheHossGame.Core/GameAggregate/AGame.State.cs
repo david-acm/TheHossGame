@@ -35,14 +35,15 @@ public partial class AGame : Game
       Started,
    }
 
-   public CurrentRound CurrentRound => new (this.LastRound);
+   public CurrentRound CurrentRound => new (this.NewestRound);
+
+   public PlayerId CurrentPlayerId => this.CurrentRound.CurrentPlayerId;
 
    public GameState State { get; private set; }
 
    public IReadOnlyList<RoundId> RoundIds => this.roundIds.AsReadOnly();
 
-   private Round LastRound => this.rounds
-      .FirstOrDefault(r => r.State == Round.RoundState.CardsDealt) ?? new NoRound();
+   private Round NewestRound => this.rounds.LastOrDefault() ?? new NoRound();
 
    public IReadOnlyCollection<GamePlayer> FindGamePlayers(TeamId teamId)
       => this.gamePlayers.Where(p => p.TeamId == teamId)

@@ -21,38 +21,58 @@ public class BidShould
 {
    [Theory]
    [AutoReadyGameData]
-   public void RaiseBidEvent(AGame game)
+   public void RaiseBidCompletedEvent(AGame game)
    {
-      var bidCommand = new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One);
-      game.Bid(bidCommand);
+      game.Bid(game.CurrentPlayerId, BidValue.One);
+      game.Bid(game.CurrentPlayerId, BidValue.Two);
+      var winnerPlayerId = game.CurrentPlayerId;
+      game.Bid(winnerPlayerId, BidValue.Four);
+      game.Bid(game.CurrentPlayerId, BidValue.Pass);
+
+      var @event = game.Events.ShouldContain()
+         .SingleEventOfType<BidCompleteEvent>();
+
+      @event.GameId.Should().Be(game.Id);
+      @event.RoundId.Should().Be(game.CurrentRound.Id);
+      @event.WinningBid.Value.Should().Be(BidValue.Four);
+      @event.WinningBid.PlayerId.Should().Be(winnerPlayerId);
+      game.CurrentPlayerId.Should().Be(winnerPlayerId);
+   }
+
+   [Theory]
+   [AutoReadyGameData]
+   public void RaiseBidEvent(AGame game, BidValue value)
+   {
+      var bidPlayerId = game.CurrentPlayerId;
+      game.Bid(bidPlayerId, value);
       var @event = game.Events.ShouldContain()
          .SingleEventOfType<BidEvent>();
 
       @event.GameId.Should().Be(game.Id);
       @event.RoundId.Should().Be(game.CurrentRound.Id);
-      @event.Bid.PlayerId.Should().Be(bidCommand.PlayerId);
-      @event.Bid.Value.Should().Be(bidCommand.Value);
+      @event.Bid.PlayerId.Should().Be(bidPlayerId);
+      @event.Bid.Value.Should().Be(value);
    }
 
    [Theory]
    [AutoReadyGameData]
-   public void AddBidToRound(AGame game)
+   public void AddBidToRound(AGame game, BidValue value)
    {
-      var bidCommand = new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One);
-      game.Bid(bidCommand);
+      var bidPlayerId = game.CurrentPlayerId;
+      game.Bid(bidPlayerId, value);
       game.CurrentRound.State.Should().Be(Round.RoundState.CardsDealt);
       var bid = game.CurrentRound.Bids.Should().ContainSingle().Subject;
-      bid.PlayerId.Should().Be(bidCommand.PlayerId);
-      bid.Value.Should().Be(bidCommand.Value);
+      bid.PlayerId.Should().Be(bidPlayerId);
+      bid.Value.Should().Be(value);
    }
 
    [Theory]
    [AutoReadyGameData]
    public void AllowPlayersToPass(AGame game)
    {
-      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
-      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.Two));
-      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.Pass));
+      game.Bid(game.CurrentPlayerId, BidValue.One);
+      game.Bid(game.CurrentPlayerId, BidValue.Two);
+      game.Bid(game.CurrentPlayerId, BidValue.Pass);
 
       game.CurrentRound.Bids.Should().HaveCount(3);
    }
@@ -61,10 +81,10 @@ public class BidShould
    [AutoReadyGameData]
    public void ThrowInvalidEntityExceptionWhenBidLowerThanOthers(AGame game)
    {
-      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
-      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.Two));
+      game.Bid(game.CurrentPlayerId, BidValue.One);
+      game.Bid(game.CurrentPlayerId, BidValue.Two);
 
-      var bidAction = () => game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
+      var bidAction = () => game.Bid(game.CurrentPlayerId, BidValue.One);
 
       bidAction.Should().Throw<InvalidEntityStateException>();
    }
@@ -84,9 +104,9 @@ public class BidShould
    [AutoReadyGameData]
    public void ThrowInvalidEntityExceptionWhenOutOfTurn(AGame game)
    {
-      game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
+      game.Bid(game.CurrentPlayerId, BidValue.One);
 
-      var bidAction = () => game.Bid(new BidCommand(game.CurrentRound.CurrentPlayerId, BidValue.One));
+      var bidAction = () => game.Bid(game.CurrentPlayerId, BidValue.One);
 
       bidAction.Should().Throw<InvalidEntityStateException>();
    }
@@ -97,7 +117,7 @@ public class BidShould
       PlayerId playerId,
       AGame game)
    {
-      var bidAction = () => game.Bid(new BidCommand(playerId, BidValue.One));
+      var bidAction = () => game.Bid(playerId, BidValue.One);
 
       bidAction.Should().Throw<InvalidEntityStateException>();
    }

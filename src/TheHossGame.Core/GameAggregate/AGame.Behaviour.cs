@@ -68,9 +68,14 @@ public partial class AGame : Game
       }
    }
 
-   public void Bid(BidCommand bidCommand)
+   public void Bid(PlayerId playerId, BidValue value)
    {
-      this.LastRound.Bid(bidCommand);
+      this.NewestRound.Bid(playerId, value);
+   }
+
+   public void SelectTrump(PlayerId currentPlayerId, CardSuit suit)
+   {
+      this.NewestRound.SelectTrump(currentPlayerId, suit);
    }
 
    protected override void EnsureValidState()
@@ -92,7 +97,7 @@ public partial class AGame : Game
    protected override void When(DomainEventBase @event) => (@event switch
    {
       PlayerJoinedEvent e => (Action)(() => HandleJoin(e)),
-      NewGameCreatedEvent e => () => HandleNameCreated(e),
+      NewGameCreatedEvent e => () => HandleGameCreated(e),
       TeamsFormedEvent e => () => HandleTeamsFormedEvent(),
       GameStartedEvent e => () => HandleGameStartedEvent(e),
       _ => () => { },
@@ -117,7 +122,7 @@ public partial class AGame : Game
 
    private void HandleTeamsFormedEvent() => this.State = GameState.TeamsFormed;
 
-   private void HandleNameCreated(NewGameCreatedEvent e) => this.Id = e.GameId;
+   private void HandleGameCreated(NewGameCreatedEvent e) => this.Id = e.GameId;
 
    private void HandleJoin(PlayerJoinedEvent e)
    {

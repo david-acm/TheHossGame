@@ -23,7 +23,7 @@ public record CurrentRound : ValueObject
 
    public IReadOnlyList<PlayerDeal> PlayerDeals => this.currentRound.PlayerDeals;
 
-   public PlayerId CurrentPlayerId => this.currentRound.CurrentPlayerId;
+   internal PlayerId CurrentPlayerId => this.currentRound.CurrentPlayerId;
 
    public RoundId Id => this.currentRound.Id;
 
@@ -32,4 +32,6 @@ public record CurrentRound : ValueObject
    public IReadOnlyList<Bid> Bids => this.currentRound.Bids;
 
    public IReadOnlyList<RoundPlayer> TeamPlayers => this.currentRound.TeamPlayers;
+
+   public CardSuit TrumpSelected => this.currentRound.SelectedTrump;
 }

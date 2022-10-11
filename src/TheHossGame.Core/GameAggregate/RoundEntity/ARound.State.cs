@@ -21,6 +21,7 @@ public partial class ARound : Round
    private List<PlayerDeal> deals = new ();
    private Queue<RoundPlayer> teamPlayers = new ();
    private RoundState state;
+   private (CardSuit, PlayerId) trumpSelection = (CardSuit.None, new NoPlayerId());
 
    private ARound(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Action<DomainEventBase> when)
       : this(gameId, new RoundId(), when)
@@ -47,6 +48,8 @@ public partial class ARound : Round
    internal override IReadOnlyList<Bid> Bids => this.bids.AsReadOnly();
 
    internal override PlayerId CurrentPlayerId => this.teamPlayers.Peek().PlayerId;
+
+   internal override CardSuit SelectedTrump => this.trumpSelection.Item1;
 
    private void HandleCardsDealtEvent() => this.state = RoundState.CardsDealt;
 }

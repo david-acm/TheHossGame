@@ -29,6 +29,14 @@ public class EventCollectionAssertions<TEvent> : GenericCollectionAssertions<IEn
       return @event;
    }
 
+   public void NoEventsOfType<TExpectedEvent>(string because = "", params object[] becauseArgs)
+      where TExpectedEvent : DomainEventBase
+   {
+      this.Subject
+         .Where(e => e is TExpectedEvent)
+         .Should().NotContain(e => e is TExpectedEvent, because, becauseArgs);
+   }
+
    public IEnumerable<TExpectedEvent> ManyEventsOfType<TExpectedEvent>(int count, string because = "", params object[] becauseArgs)
       where TExpectedEvent : DomainEventBase
    {

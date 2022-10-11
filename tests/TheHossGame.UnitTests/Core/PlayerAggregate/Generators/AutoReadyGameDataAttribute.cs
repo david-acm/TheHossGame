@@ -16,3 +16,12 @@ public sealed class AutoReadyGameDataAttribute : LazyDataAttribute
       AddCustomization(new AutoOrderedDeckCustomization());
    }
 }
+
+public sealed class AutoBidFinishedGameDataAttribute : LazyDataAttribute
+{
+   public AutoBidFinishedGameDataAttribute()
+   {
+      AddCustomization(new ReadyBidFinishedGameCustomization());
+      AddCustomization(new AutoOrderedDeckCustomization());
+   }
+}

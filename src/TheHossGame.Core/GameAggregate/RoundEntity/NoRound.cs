@@ -33,7 +33,13 @@ public class NoRound : Round
 
    internal override PlayerId CurrentPlayerId => new NoPlayerId();
 
-   internal override void Bid(BidCommand bid)
+   internal override CardSuit SelectedTrump => throw new NotImplementedException();
+
+   internal override void Bid(PlayerId playerId, BidValue value)
+   {
+   }
+
+   internal override void SelectTrump(PlayerId currentPlayerId, CardSuit suit)
    {
    }
 

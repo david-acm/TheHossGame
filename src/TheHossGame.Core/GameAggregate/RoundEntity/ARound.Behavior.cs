@@ -43,9 +43,19 @@ public partial class ARound : Round
          state = RoundState.CardsDealt,
       };
 
-   internal override void Bid(BidCommand bid)
+   internal override void Bid(PlayerId playerId, BidValue value)
    {
-      this.Apply(new BidEvent(this.GameId, this.Id, new Bid(bid.PlayerId, bid.Value)));
+      this.Apply(new BidEvent(this.GameId, this.Id, new Bid(playerId, value)));
+
+      if (this.bids.Count == 4)
+      {
+         this.Apply(new BidCompleteEvent(this.GameId, this.Id, this.WinningBid()));
+      }
+   }
+
+   internal override void SelectTrump(PlayerId playerId, CardSuit suit)
+   {
+      this.Apply(new TrumpSelectedEvent(this.GameId, this.Id, playerId, suit));
    }
 
    protected override void When(DomainEventBase @event)
@@ -55,6 +65,8 @@ public partial class ARound : Round
          PlayerCardsDealtEvent e => () => this.HandlePlayerCardsDealtEvent(e),
          AllCardsDealtEvent e => () => this.HandleCardsDealtEvent(),
          BidEvent e => () => this.HandleBidEvent(e),
+         BidCompleteEvent e => () => this.HandleBidCompleteEvent(e),
+         TrumpSelectedEvent e => () => this.HandleTrumpSelectedEvent(e),
          _ => () => { },
       }).Invoke();
 
@@ -66,6 +78,8 @@ public partial class ARound : Round
          RoundState.Started => this.ValidateStarted(),
          RoundState.CardsShuffled => this.ValidateCardsShuffled(),
          RoundState.CardsDealt => this.ValidateAllCardsDealt(),
+         RoundState.BidFinished => this.ValidateBidFinished(),
+         RoundState.TrumpSelected => this.ValidateTrumpSelected(),
          _ => throw new InvalidEntityStateException(),
       };
 
@@ -87,6 +101,11 @@ public partial class ARound : Round
       }
 
       return playerHand;
+   }
+
+   private Bid WinningBid()
+   {
+      return this.bids.OrderByDescending(b => b.Value).First();
    }
 
    private void OrderPlayers(IEnumerable<RoundPlayer> teamPlayers)
@@ -115,6 +134,27 @@ public partial class ARound : Round
    private void HandleBidEvent(BidEvent e)
    {
       this.bids.Add(e.Bid);
+      this.FinishTurn();
+   }
+
+   private void HandleBidCompleteEvent(BidCompleteEvent e)
+   {
+      while (this.CurrentPlayerId != e.WinningBid.PlayerId)
+      {
+         this.FinishTurn();
+      }
+
+      this.state = RoundState.BidFinished;
+   }
+
+   private void HandleTrumpSelectedEvent(TrumpSelectedEvent e)
+   {
+      this.trumpSelection = (e.Trump, e.playerId);
+      this.state = RoundState.TrumpSelected;
+   }
+
+   private void FinishTurn()
+   {
       this.teamPlayers.Enqueue(this.teamPlayers.Dequeue());
    }
 
@@ -138,10 +178,15 @@ public partial class ARound : Round
       return true;
    }
 
+   private bool ValidateBidFinished()
+   {
+      return this.ValidateStarted() && this.ValidateCardsShuffled() && this.CurrentPlayerId == this.WinningBid().PlayerId;
+   }
+
    private bool BidPerformedByPlayerInTurn()
    {
-      int lastPlayerIndex = this.TeamPlayers.Count - 1;
       int lastBidIndex = this.Bids.Count - 1;
+      int lastPlayerIndex = this.TeamPlayers.Count - 1;
 
       var lastTurnPlayerId = this.TeamPlayers[lastPlayerIndex].PlayerId;
       var lastBidPlayerId = this.Bids[lastBidIndex].PlayerId;
@@ -168,5 +213,11 @@ public partial class ARound : Round
 
          return isSameBid || bidIsBiggerThanLast || bidIsAPass;
       });
+   }
+
+   private bool ValidateTrumpSelected()
+   {
+      PlayerId playerSelectedTrump = this.trumpSelection.Item2;
+      return this.WinningBid().PlayerId == playerSelectedTrump;
    }
 }

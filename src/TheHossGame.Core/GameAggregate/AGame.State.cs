@@ -6,7 +6,6 @@
 
 namespace TheHossGame.Core.GameAggregate;
 
-using Ardalis.Specification;
 using System.Collections.Generic;
 using System.Linq;
 using TheHossGame.Core.GameAggregate.PlayerEntity;
@@ -33,6 +32,7 @@ public partial class AGame : Game
       Created,
       TeamsFormed,
       Started,
+      Finished,
    }
 
    public CurrentRound CurrentRound => new (this.NewestRound);
@@ -52,7 +52,7 @@ public partial class AGame : Game
    public IReadOnlyCollection<GamePlayer> FindTeamPlayers()
       => this.gamePlayers.ToList().AsReadOnly();
 
-   public GamePlayer FindPlayer(PlayerId playerId)
-      => this.FindTeamPlayers().FirstOrDefault(p => p.PlayerId == playerId)
-      ?? new NoGamePlayer(this.Id, playerId, this.Apply);
+   public GamePlayer FindPlayer(PlayerId playerId) =>
+      this.FindTeamPlayers().FirstOrDefault(p => p.PlayerId == playerId) ??
+      new NoGamePlayer(this.Id, playerId, this.Apply);
 }

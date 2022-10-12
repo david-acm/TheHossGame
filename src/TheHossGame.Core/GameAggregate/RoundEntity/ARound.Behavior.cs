@@ -20,12 +20,13 @@ using TheHossGame.SharedKernel;
 /// <summary>
 /// The behaviour side.
 /// </summary>
-public partial class ARound : Round
+public partial class ARound
 {
    internal static ARound StartNew(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Deck shuffledDeck, Action<DomainEventBase> when)
    {
-      var round = new ARound(gameId, teamPlayers, when);
-      List<PlayerDeal> playerDeals = DealCards(shuffledDeck, teamPlayers);
+      var roundPlayers = teamPlayers.ToList();
+      var round = new ARound(gameId, roundPlayers, when);
+      List<PlayerDeal> playerDeals = DealCards(shuffledDeck, roundPlayers);
       round.Apply(new RoundStartedEvent(gameId, round.Id, round.teamPlayers));
       playerDeals.ForEach(cards => round
          .Apply(new PlayerCardsDealtEvent(gameId, round.Id, cards)));
@@ -63,7 +64,7 @@ public partial class ARound : Round
       {
          RoundStartedEvent e => (Action)(() => this.HandleStartedEvent(e)),
          PlayerCardsDealtEvent e => () => this.HandlePlayerCardsDealtEvent(e),
-         AllCardsDealtEvent e => () => this.HandleCardsDealtEvent(),
+         AllCardsDealtEvent => this.HandleCardsDealtEvent,
          BidEvent e => () => this.HandleBidEvent(e),
          BidCompleteEvent e => () => this.HandleBidCompleteEvent(e),
          TrumpSelectedEvent e => () => this.HandleTrumpSelectedEvent(e),
@@ -74,7 +75,6 @@ public partial class ARound : Round
    {
       bool valid = this.State switch
       {
-         RoundState.None => false,
          RoundState.Started => this.ValidateStarted(),
          RoundState.CardsShuffled => this.ValidateCardsShuffled(),
          RoundState.CardsDealt => this.ValidateAllCardsDealt(),
@@ -108,9 +108,9 @@ public partial class ARound : Round
       return this.bids.OrderByDescending(b => b.Value).First();
    }
 
-   private void OrderPlayers(IEnumerable<RoundPlayer> teamPlayers)
+   private void OrderPlayers(IEnumerable<RoundPlayer> players)
    {
-      var teamPlayerList = teamPlayers.OrderBy(t => t.TeamId).ToList();
+      var teamPlayerList = players.OrderBy(t => t.TeamId).ToList();
       var secondPlayer = teamPlayerList.First(t => t.TeamId == TeamId.Team2);
       var thirdPlayer = teamPlayerList.Last(t => t.TeamId == TeamId.Team1);
       teamPlayerList[2] = thirdPlayer;

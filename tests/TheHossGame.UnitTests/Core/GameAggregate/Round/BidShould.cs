@@ -121,4 +121,13 @@ public class BidShould
 
       bidAction.Should().Throw<InvalidEntityStateException>();
    }
+
+   [Theory]
+   [AutoReadyGameData]
+   public void ThrowNotImplementedExceptionWhenGameStateIsNotValidated(AGame game)
+   {
+      var finishAction = () => game.Finish();
+
+      finishAction.Should().Throw<NotImplementedException>();
+   }
 }

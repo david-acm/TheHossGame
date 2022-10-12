@@ -31,8 +31,8 @@ public class PlayerRegistrationService
          return;
       }
 
-      bool playerNameIsUnique = await this.UserNameIsUniqueAsync(player);
-      if (playerNameIsUnique)
+      bool playerNameNotIsUnique = await this.UserNameIsNotUniqueAsync(player);
+      if (playerNameNotIsUnique)
       {
 #pragma warning disable S3626 // Jump statements should not be redundant
          return;
@@ -42,7 +42,7 @@ public class PlayerRegistrationService
       await this.store.PushEventsAsync(player.Events);
    }
 
-   private async Task<bool> UserNameIsUniqueAsync(APlayer player)
+   private async Task<bool> UserNameIsNotUniqueAsync(APlayer player)
    {
       var specification = new PlayerWithNameSpec(player);
       return await this.repository.AnyAsync(specification);

@@ -42,3 +42,8 @@ public record GameStartedEvent(
    : DomainEventBase(GameId)
 {
 }
+
+public record GameFinishedEvent(GameId GameId)
+   : DomainEventBase(GameId)
+{
+}

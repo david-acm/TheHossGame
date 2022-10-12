@@ -68,15 +68,11 @@ public partial class AGame : Game
       }
    }
 
-   public void Bid(PlayerId playerId, BidValue value)
-   {
-      this.NewestRound.Bid(playerId, value);
-   }
+   public void Bid(PlayerId playerId, BidValue value) => this.NewestRound.Bid(playerId, value);
 
-   public void SelectTrump(PlayerId currentPlayerId, CardSuit suit)
-   {
-      this.NewestRound.SelectTrump(currentPlayerId, suit);
-   }
+   public void SelectTrump(PlayerId currentPlayerId, CardSuit suit) => this.NewestRound.SelectTrump(currentPlayerId, suit);
+
+   public void Finish() => this.Apply(new GameFinishedEvent(this.Id));
 
    protected override void EnsureValidState()
    {
@@ -100,6 +96,7 @@ public partial class AGame : Game
       NewGameCreatedEvent e => () => HandleGameCreated(e),
       TeamsFormedEvent e => () => HandleTeamsFormedEvent(),
       GameStartedEvent e => () => HandleGameStartedEvent(e),
+      GameFinishedEvent e => () => this.State = GameState.Finished,
       _ => () => { },
    }).Invoke();
 

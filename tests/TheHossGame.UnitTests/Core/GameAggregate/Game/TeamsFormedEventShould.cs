@@ -1,5 +1,5 @@
-﻿// 🃏 The HossGame 🃏
-// <copyright file="StartedEventShould.cs" company="Reactive">
+// 🃏 The HossGame 🃏
+// <copyright file="TeamsFormedEventShould.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
@@ -12,10 +12,11 @@ using TheHossGame.SharedKernel;
 using TheHossGame.UnitTests.Core.Services;
 using Xunit;
 
-public class StartedEventShould
+public class TeamsFormedEventShould
 {
    [Theory]
    [AutoMoqData]
-   public void ShouldBeImmutable(NewGameCreatedEvent @event) =>
-      @event.Should().BeAssignableTo<DomainEventBase>();
+   public void ShouldBeImmutable(TeamsFormedEvent @event) =>
+      @event.Should().
+         BeAssignableTo<DomainEventBase>();
 }

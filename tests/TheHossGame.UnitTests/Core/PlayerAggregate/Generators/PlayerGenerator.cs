@@ -17,12 +17,7 @@ public class PlayerGenerator : ISpecimenBuilder
    public object Create(object request, ISpecimenContext context)
    {
       this.specimenContext = context;
-      if (!typeof(Player).Equals(request))
-      {
-         return new NoSpecimen();
-      }
-
-      return this.RandomPlayerEmail();
+      return typeof(Player).Equals(request) ? this.RandomPlayerEmail() : new NoSpecimen();
    }
 
    private APlayer RandomPlayerEmail()

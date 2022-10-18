@@ -12,33 +12,27 @@ using TheHossGame.Core.PlayerAggregate;
 
 public class PlayerEnumerableGenerator : ISpecimenBuilder
 {
+   private ISpecimenContext? specimenContext;
+
    public object Create(object request, ISpecimenContext context)
    {
-      if (!typeof(IEnumerable<Player>).Equals(request))
-      {
-         return new NoSpecimen();
-      }
-
-      return GeneratePlayerEnumerable(context);
+      this.specimenContext = context;
+      return typeof(IEnumerable<Player>).Equals(request) ? this.GeneratePlayerList() : new NoSpecimen();
    }
 
-   private static object GeneratePlayerEnumerable(ISpecimenContext context)
+   private List<Player> GeneratePlayerList()
    {
       var playerList = new List<Player>
       {
-         GeneratePLayer(context),
-         GeneratePLayer(context),
-         GeneratePLayer(context),
-         GeneratePLayer(context),
+         this.GeneratePLayer(),
+         this.GeneratePLayer(),
+         this.GeneratePLayer(),
+         this.GeneratePLayer(),
       };
 
       return playerList;
    }
 
-   private static Player GeneratePLayer(ISpecimenContext context)
-   {
-      var generator = new PlayerGenerator();
-      var request = typeof(Player);
-      return (Player)generator.Create(request, context);
-   }
+   private Player GeneratePLayer()
+      => (Player)new PlayerGenerator().Create(typeof(Player), this.specimenContext!);
 }

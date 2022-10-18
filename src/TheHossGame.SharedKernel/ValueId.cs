@@ -11,16 +11,13 @@ namespace TheHossGame.SharedKernel;
 /// </summary>
 public abstract record ValueId : ValueObject
 {
+   private readonly Guid id;
+
    /// <summary>
    /// Initializes a new instance of the <see cref="ValueId"/> class.
    /// </summary>
    protected ValueId()
    {
-      this.Id = Guid.NewGuid();
+      this.id = Guid.NewGuid();
    }
-
-   /// <summary>
-   /// Gets the id value.
-   /// </summary>
-   public Guid Id { get; }
 }

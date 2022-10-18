@@ -12,7 +12,4 @@ using TheHossGame.SharedKernel;
 public record AllCardsDealtEvent(
    GameId GameId,
    RoundId RoundId)
-   : DomainEventBase(GameId)
-{
-
-}
+   : DomainEventBase(GameId);

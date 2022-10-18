@@ -15,7 +15,7 @@ using TheHossGame.SharedKernel;
 /// <summary>
 /// The state side.
 /// </summary>
-public partial class ARound : Round
+public sealed partial class ARound : Round
 {
    private List<Bid> bids = new ();
    private List<PlayerDeal> deals = new ();
@@ -35,10 +35,6 @@ public partial class ARound : Round
       this.GameId = gameId;
    }
 
-   public override bool IsNull => false;
-
-   internal override GameId GameId { get; }
-
    internal override RoundState State => this.state;
 
    internal override IReadOnlyList<PlayerDeal> PlayerDeals => this.deals.AsReadOnly();
@@ -50,6 +46,10 @@ public partial class ARound : Round
    internal override PlayerId CurrentPlayerId => this.teamPlayers.Peek().PlayerId;
 
    internal override CardSuit SelectedTrump => this.trumpSelection.Item1;
+
+   protected override bool IsNull => false;
+
+   private GameId GameId { get; }
 
    private void HandleCardsDealtEvent() => this.state = RoundState.CardsDealt;
 }

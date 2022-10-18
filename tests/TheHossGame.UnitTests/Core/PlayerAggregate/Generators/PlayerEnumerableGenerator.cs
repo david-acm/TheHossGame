@@ -12,11 +12,8 @@ using TheHossGame.Core.PlayerAggregate;
 
 public class PlayerEnumerableGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? context;
-
    public object Create(object request, ISpecimenContext context)
    {
-      this.context = context;
       if (!typeof(IEnumerable<Player>).Equals(request))
       {
          return new NoSpecimen();

@@ -15,11 +15,11 @@ using Player = TheHossGame.Core.PlayerAggregate.Player;
 
 public class ReadyGameGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? context;
+   private ISpecimenContext? specimenContext;
 
    public object Create(object request, ISpecimenContext context)
    {
-      this.context = context;
+      this.specimenContext = context;
       if (!typeof(AGame).Equals(request))
       {
          return new NoSpecimen();
@@ -30,8 +30,8 @@ public class ReadyGameGenerator : ISpecimenBuilder
 
    private AGame GenerateReadyGame()
    {
-      var shufflingService = this.context!.Create<Mock<IShufflingService>>();
-      var players = this.context.Create<IEnumerable<Player>>().ToList();
+      var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
+      var players = this.specimenContext.Create<IEnumerable<Player>>().ToList();
 
       var readyGame = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
 

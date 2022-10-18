@@ -20,18 +20,19 @@ public record DomainEventBase : INotification
    /// Initializes a new instance of the <see cref="DomainEventBase"/> class.
    /// </summary>
    /// <param name="entityId">The entity id.</param>
-   public DomainEventBase(ValueObject entityId)
+   protected DomainEventBase(ValueObject entityId)
    {
+      this.EntityId = entityId;
       this.EntityId = entityId;
    }
 
    /// <summary>
    /// Gets the entity id.
    /// </summary>
-   public ValueObject EntityId { get; init; }
+   private ValueObject EntityId { get; }
 
    /// <summary>
-   /// Gets the date the event ocurred on in UTC.
+   /// Gets the date the event occurred on in UTC.
    /// </summary>
    public DateTime DateOccurred { get; init; }
 }

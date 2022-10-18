@@ -23,20 +23,21 @@ public class ShufflingServiceShould
       ADeck deck,
       RandomNumberProvider random)
    {
-      int attemps = 0;
-      int maxValue = 0;
+      int attempts = 0;
       randomProvider.Setup(r => r.NextInt(It.IsAny<int>()))
-         .Callback((int i) => maxValue = i)
+         .Callback((int _) =>
+         {
+         })
          .Returns((int i) => random.NextInt(i));
       var cards = deck.Cards.ToList();
       var originalCards = cards.ToList();
 
-      while (attemps < 1000)
+      while (attempts < 1000)
       {
-         attemps++;
+         attempts++;
 
          service.Shuffle(cards);
-         cards.Should().NotContainInOrder(originalCards, $"at: {attemps}");
+         cards.Should().NotContainInOrder(originalCards, $"at: {attempts}");
 
          cards.Should().HaveCount(24);
       }

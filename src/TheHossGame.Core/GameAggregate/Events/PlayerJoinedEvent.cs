@@ -13,25 +13,17 @@ using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using static TheHossGame.Core.GameAggregate.Game;
 
-public record PlayerJoinedEvent(GameId gameId, PlayerId PlayerId, TeamId TeamId)
-   : DomainEventBase(PlayerId)
-{
-}
+public record PlayerJoinedEvent(GameId GameId, PlayerId PlayerId, TeamId TeamId)
+   : DomainEventBase(PlayerId);
 
 public record PlayerAlreadyInGame(PlayerId PlayerId)
-   : DomainEventBase(PlayerId)
-{
-}
+   : DomainEventBase(PlayerId);
 
-public record TeamsFormedEvent(GameId gameId)
-   : DomainEventBase(gameId)
-{
-}
+public record TeamsFormedEvent(GameId GameId)
+   : DomainEventBase(GameId);
 
 public record PlayerReadyEvent(GameId GameId, PlayerId PlayerId)
-   : DomainEventBase(GameId)
-{
-}
+   : DomainEventBase(GameId);
 
 public record GameStartedEvent(
    GameId GameId,
@@ -39,11 +31,7 @@ public record GameStartedEvent(
    IEnumerable<RoundPlayer> TeamPlayers,
    IEnumerable<PlayerDeal> Deals,
    IEnumerable<Bid> Bids)
-   : DomainEventBase(GameId)
-{
-}
+   : DomainEventBase(GameId);
 
 public record GameFinishedEvent(GameId GameId)
-   : DomainEventBase(GameId)
-{
-}
+   : DomainEventBase(GameId);

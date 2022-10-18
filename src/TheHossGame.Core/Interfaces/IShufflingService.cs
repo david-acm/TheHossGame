@@ -15,11 +15,11 @@ public interface IShufflingService
    void Shuffle(IList<ACard> cards);
 }
 
-public class ShufflingService : IShufflingService
+public abstract class ShufflingService : IShufflingService
 {
    private readonly IRandomNumberProvider provider;
 
-   public ShufflingService(IRandomNumberProvider provider)
+   protected ShufflingService(IRandomNumberProvider provider)
    {
       this.provider = provider;
    }
@@ -43,7 +43,7 @@ public interface IRandomNumberProvider
    int NextInt(int maxValue);
 }
 
-public class RandomNumberProvider : IRandomNumberProvider
+public abstract class RandomNumberProvider : IRandomNumberProvider
 {
    public int NextInt(int maxValue) => RandomNumberGenerator.GetInt32(maxValue);
 }

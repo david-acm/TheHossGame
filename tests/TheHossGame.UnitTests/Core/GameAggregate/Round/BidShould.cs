@@ -29,13 +29,13 @@ public class BidShould
       game.Bid(winnerPlayerId, BidValue.Four);
       game.Bid(game.CurrentPlayerId, BidValue.Pass);
 
-      var @event = game.Events.ShouldContain()
+      (GameId? gameId, RoundId roundId, Bid winningBid) = game.Events.ShouldContain()
          .SingleEventOfType<BidCompleteEvent>();
 
-      @event.GameId.Should().Be(game.Id);
-      @event.RoundId.Should().Be(game.CurrentRound.Id);
-      @event.WinningBid.Value.Should().Be(BidValue.Four);
-      @event.WinningBid.PlayerId.Should().Be(winnerPlayerId);
+      gameId.Should().Be(game.Id);
+      roundId.Should().Be(game.CurrentRound.Id);
+      winningBid.Value.Should().Be(BidValue.Four);
+      winningBid.PlayerId.Should().Be(winnerPlayerId);
       game.CurrentPlayerId.Should().Be(winnerPlayerId);
    }
 
@@ -45,13 +45,13 @@ public class BidShould
    {
       var bidPlayerId = game.CurrentPlayerId;
       game.Bid(bidPlayerId, value);
-      var @event = game.Events.ShouldContain()
+      (GameId? gameId, RoundId? roundId, Bid? bid) = game.Events.ShouldContain()
          .SingleEventOfType<BidEvent>();
 
-      @event.GameId.Should().Be(game.Id);
-      @event.RoundId.Should().Be(game.CurrentRound.Id);
-      @event.Bid.PlayerId.Should().Be(bidPlayerId);
-      @event.Bid.Value.Should().Be(value);
+      gameId.Should().Be(game.Id);
+      roundId.Should().Be(game.CurrentRound.Id);
+      bid.PlayerId.Should().Be(bidPlayerId);
+      bid.Value.Should().Be(value);
    }
 
    [Theory]
@@ -114,7 +114,7 @@ public class BidShould
    [Theory]
    [AutoReadyGameData]
    public void ThrowInvalidEntityExceptionWhenPLayerNotInGame(
-      PlayerId playerId,
+      APlayerId playerId,
       AGame game)
    {
       var bidAction = () => game.Bid(playerId, BidValue.One);
@@ -126,7 +126,7 @@ public class BidShould
    [AutoReadyGameData]
    public void ThrowNotImplementedExceptionWhenGameStateIsNotValidated(AGame game)
    {
-      var finishAction = () => game.Finish();
+      var finishAction = game.Finish;
 
       finishAction.Should().Throw<NotImplementedException>();
    }

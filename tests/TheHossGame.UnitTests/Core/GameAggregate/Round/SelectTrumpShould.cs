@@ -8,7 +8,6 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
-using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
 using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.GameAggregate.RoundEntity.Events;
 using TheHossGame.Core.PlayerAggregate;

@@ -11,6 +11,4 @@ using TheHossGame.SharedKernel;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Doesn't apply to records.")]
 public record NewGameCreatedEvent(GameId GameId, PlayerId StartedBy)
-   : DomainEventBase(StartedBy)
-{
-}
+   : DomainEventBase(StartedBy);

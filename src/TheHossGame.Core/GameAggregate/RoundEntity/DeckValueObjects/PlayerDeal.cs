@@ -9,20 +9,15 @@ namespace TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 
-public record PlayerDeal
+public record PlayerDeal(PlayerId PlayerId)
    : ValueObject
 {
    private readonly List<Card> cards = new ();
 
-   public PlayerDeal(PlayerId PlayerId)
-   {
-      this.PlayerId = PlayerId;
-   }
-
-   public PlayerId PlayerId { get; }
+   private PlayerId PlayerId { get; } = PlayerId;
    public IReadOnlyList<Card> Cards => this.cards.AsReadOnly();
 
-   public void ReceibeCard(Card card)
+   public void ReceiveCard(Card card)
    {
       this.cards.Add(card);
    }

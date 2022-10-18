@@ -15,10 +15,9 @@ using TheHossGame.Core.PlayerAggregate;
 /// <summary>
 /// State side.
 /// </summary>
-public partial class AGame : Game
+public sealed partial class AGame : Game
 {
    private readonly List<GamePlayer> gamePlayers = new ();
-   private readonly List<RoundId> roundIds = new ();
    private readonly List<Round> rounds = new List<ARound>().Cast<Round>().ToList();
 
    private AGame(Interfaces.IShufflingService shufflingService)
@@ -40,8 +39,6 @@ public partial class AGame : Game
    public PlayerId CurrentPlayerId => this.CurrentRound.CurrentPlayerId;
 
    public GameState State { get; private set; }
-
-   public IReadOnlyList<RoundId> RoundIds => this.roundIds.AsReadOnly();
 
    private Round NewestRound => this.rounds.LastOrDefault() ?? new NoRound();
 

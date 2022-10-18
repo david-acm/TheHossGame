@@ -12,14 +12,10 @@ using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 
-public record CurrentRound : ValueObject
+public record CurrentRound(Round currentRound)
+   : ValueObject
 {
-   private readonly Round currentRound;
-
-   public CurrentRound(Round currentRound)
-   {
-      this.currentRound = currentRound;
-   }
+   private readonly Round currentRound = currentRound;
 
    public IReadOnlyList<PlayerDeal> PlayerDeals => this.currentRound.PlayerDeals;
 

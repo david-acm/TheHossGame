@@ -9,10 +9,6 @@ using TheHossGame.SharedKernel;
 
 public abstract record GameId : ValueId;
 
-public record AGameId : GameId
-{
-}
+public record AGameId : GameId;
 
-public record NoGameId : GameId
-{
-}
+public record NoGameId : GameId;

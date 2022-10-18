@@ -16,7 +16,7 @@ public abstract class LazyDataAttribute : AutoDataAttribute
       Customizations.Clear();
    }
 
-   public static Func<IFixture> ApplyCustomizations { get; private set; } = () =>
+   private static Func<IFixture> ApplyCustomizations { get; } = () =>
    {
       var fixture = new Fixture();
       Customizations!.ToList().ForEach(
@@ -24,9 +24,8 @@ public abstract class LazyDataAttribute : AutoDataAttribute
       return fixture;
    };
 
-   private static List<ICustomization> Customizations { get; } =
-      new List<ICustomization>();
+   private static List<ICustomization> Customizations { get; } = new ();
 
-   public static void AddCustomization(ICustomization customization) =>
+   protected static void AddCustomization(ICustomization customization) =>
       Customizations.Add(customization);
 }

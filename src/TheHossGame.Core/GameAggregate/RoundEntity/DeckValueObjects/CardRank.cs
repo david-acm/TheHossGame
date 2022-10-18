@@ -23,5 +23,5 @@ public sealed class CardRank : SmartEnum<CardRank, string>
    {
    }
 
-   public static new IReadOnlyCollection<CardRank> List => SmartEnum<CardRank, string>.List.Except(new List<CardRank>() { None }).ToList().AsReadOnly();
+   public static new IReadOnlyCollection<CardRank> List => SmartEnum<CardRank, string>.List.Except(new List<CardRank> { None }).ToList().AsReadOnly();
 }

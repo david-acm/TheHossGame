@@ -20,11 +20,11 @@ using static Game.TeamId;
 /// <summary>
 /// Behaviour side.
 /// </summary>
-public partial class AGame
+public sealed partial class AGame
 {
    private readonly IShufflingService shufflingService;
 
-   public override bool IsNull => false;
+   protected override bool IsNull => false;
 
    public static AGame CreateForPlayer(
       PlayerId playerId,
@@ -37,10 +37,7 @@ public partial class AGame
       return game;
    }
 
-   public override void CreateNewGame(PlayerId playerId)
-      => this.Apply(new NewGameCreatedEvent(this.Id, playerId));
-
-   public override void JoinPlayerToTeam(PlayerId playerId, TeamId teamId)
+   public void JoinPlayerToTeam(PlayerId playerId, TeamId teamId)
    {
       this.FindPlayer(playerId).Join(teamId);
 
@@ -50,7 +47,7 @@ public partial class AGame
       }
    }
 
-   public override void TeamPlayerReady(PlayerId playerId)
+   public void TeamPlayerReady(PlayerId playerId)
    {
       this.FindPlayer(playerId).Ready();
 
@@ -83,7 +80,8 @@ public partial class AGame
          GameState.Created => this.TeamValid(Team1) && this.TeamValid(Team2),
          GameState.TeamsFormed => this.TeamComplete(Team1) && this.TeamComplete(Team2),
          GameState.Started => this.FindTeamPlayers().All(t => t.IsReady),
-         _ => throw new NotImplementedException()
+         GameState.Finished => throw new NotImplementedException(),
+         _ => throw new NotImplementedException(),
       };
 
       if (!valid)
@@ -95,16 +93,19 @@ public partial class AGame
    protected override void When(DomainEventBase @event) => (@event switch
    {
       PlayerJoinedEvent e => (Action)(() => HandleJoin(e)),
-      NewGameCreatedEvent e => () => HandleGameCreated(e),
+      NewGameCreatedEvent => HandleGameCreated,
       TeamsFormedEvent => HandleTeamsFormedEvent,
       GameStartedEvent e => () => HandleGameStartedEvent(e),
       GameFinishedEvent => () => this.State = GameState.Finished,
       _ => () => { },
    }).Invoke();
 
-   private static void HandleGameCreated(NewGameCreatedEvent e)
+   private static void HandleGameCreated()
    {
    }
+
+   private void CreateNewGame(PlayerId playerId)
+      => this.Apply(new NewGameCreatedEvent(this.Id, playerId));
 
    private bool TeamsAreComplete() => this.TeamComplete(Team1) && this.TeamComplete(Team2);
 

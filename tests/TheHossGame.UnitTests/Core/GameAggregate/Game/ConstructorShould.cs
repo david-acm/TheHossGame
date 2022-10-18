@@ -14,10 +14,6 @@ using Xunit;
 
 public class ConstructorShould
 {
-   public ConstructorShould()
-   {
-   }
-
    [Theory]
    [AutoPlayerData]
    public void ReturnNewGameAggregate(AGame game)

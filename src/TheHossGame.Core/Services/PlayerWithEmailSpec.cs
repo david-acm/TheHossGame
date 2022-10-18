@@ -11,10 +11,4 @@ using TheHossGame.Core.PlayerAggregate;
 
 public class PlayerWithEmailSpec : Specification<APlayer>
 {
-   private readonly APlayer player;
-
-   public PlayerWithEmailSpec(APlayer player)
-   {
-      this.player = player;
-   }
 }

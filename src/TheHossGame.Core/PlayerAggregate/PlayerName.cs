@@ -14,10 +14,10 @@ public record PlayerName
    public PlayerName(string name)
    {
       Guard.Against.NullOrEmpty(name);
-      Guard.Against.InvalidLength(name, nameof(name), 1, 30);
+      GuardExtensions.InvalidLength(name, nameof(name), 1, 30);
 
       this.Name = name;
    }
 
-   public string Name { get; init; }
+   public string Name { get; }
 }

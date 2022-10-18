@@ -14,6 +14,4 @@ public record RoundStartedEvent(
    GameId GameId,
    RoundId RoundId,
    IEnumerable<RoundPlayer> TeamPlayers)
-   : DomainEventBase(GameId)
-{
-}
+   : DomainEventBase(GameId);

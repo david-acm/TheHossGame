@@ -8,6 +8,4 @@ namespace TheHossGame.Core.PlayerAggregate.Events;
 using TheHossGame.SharedKernel;
 
 public record CannotJoinGameEvent(PlayerId PlayerId, string Reason)
-   : DomainEventBase(PlayerId)
-{
-}
+   : DomainEventBase(PlayerId);

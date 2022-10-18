@@ -21,8 +21,6 @@ public class Project : EntityBase, IAggregateRoot
       this.Priority = priority;
    }
 
-   public override bool IsNull => false;
-
    public string Name { get; private set; }
 
    public IEnumerable<ToDoItem> Items => this.items.AsReadOnly();
@@ -30,6 +28,8 @@ public class Project : EntityBase, IAggregateRoot
    public ProjectStatus Status => this.items.All(i => i.IsDone) ? ProjectStatus.Complete : ProjectStatus.InProgress;
 
    public PriorityStatus Priority { get; }
+
+   protected override bool IsNull => false;
 
    public void AddItem(ToDoItem newItem)
    {

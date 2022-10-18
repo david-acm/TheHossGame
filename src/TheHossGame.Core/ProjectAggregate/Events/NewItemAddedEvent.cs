@@ -9,8 +9,6 @@ namespace TheHossGame.Core.ProjectAggregate.Events;
 using TheHossGame.SharedKernel;
 
 public record NewItemAddedEvent(
-        Project project,
-        ToDoItem newItem)
-   : DomainEventBase(project.Id)
-{
-}
+        Project Project,
+        ToDoItem NewItem)
+   : DomainEventBase(Project.Id);

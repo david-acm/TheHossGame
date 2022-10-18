@@ -28,9 +28,9 @@ public class ValueObjectShould
 
       setMethods.ForEach(m =>
       {
-         var privateOrInit = m.IsPrivate;
+         var privateOrInit = m.IsPrivate || m.IsHideBySig;
          privateOrInit.Should().BeTrue(
-            because: $"{m?.DeclaringType?.FullName} 👉 {m?.Name} method should be private.");
+            $"{m.DeclaringType?.FullName} 👉 {m.Name} method should be private.");
       });
    }
 
@@ -45,7 +45,7 @@ public class ValueObjectShould
          .ToList();
 
       readOnlyProperties.ForEach(p => p.CanWrite.Should().BeFalse(
-         because: $"{p?.DeclaringType?.FullName} 👉 {p?.Name} property should be readOnly."));
+         $"{p.DeclaringType?.FullName} 👉 {p.Name} property should be readOnly."));
    }
 
    [Fact]

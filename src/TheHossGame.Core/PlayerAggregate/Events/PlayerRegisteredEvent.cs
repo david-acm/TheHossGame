@@ -10,6 +10,4 @@ using TheHossGame.SharedKernel;
 public record PlayerRegisteredEvent(
    PlayerId PlayerId,
    PlayerName PlayerName)
-   : DomainEventBase(PlayerId)
-{
-}
+   : DomainEventBase(PlayerId);

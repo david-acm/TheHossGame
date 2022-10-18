@@ -35,22 +35,7 @@ public abstract class AggregateRoot<TId> : EntityBase<TId>
    }
 
    /// <summary>
-   /// Applies an event to an entity.
-   /// </summary>
-   /// <param name="entity">The entity to apply the event.</param>
-   /// <param name="event">The event to apply.</param>
-   protected void ApplyToEntity(IInternalEventHandler entity, DomainEventBase @event)
-   {
-      if (entity.IsNull)
-      {
-         return;
-      }
-
-      entity?.Handle(@event);
-   }
-
-   /// <summary>
-   /// Aplies an event to an aggregate root.
+   /// Applies an event to an aggregate root.
    /// </summary>
    /// <param name="event">The event to apply.</param>
    protected override void Apply(DomainEventBase @event)

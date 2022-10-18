@@ -33,6 +33,6 @@ public class DomainEventShould
 
       setMethods.ForEach(m =>
          m.IsPrivate.Should().BeTrue(
-            because: $"{m?.DeclaringType?.FullName} 👉 {m?.Name} method should be private."));
+            $"{m.DeclaringType?.FullName} 👉 {m.Name} method should be private."));
    }
 }

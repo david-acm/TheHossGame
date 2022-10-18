@@ -14,16 +14,10 @@ using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 
 public record BidEvent(GameId GameId, RoundId RoundId, Bid Bid)
-   : DomainEventBase(GameId)
-{
-}
+   : DomainEventBase(GameId);
 
 public record BidCompleteEvent(GameId GameId, RoundId RoundId, Bid WinningBid)
-   : DomainEventBase(GameId)
-{
-}
+   : DomainEventBase(GameId);
 
-public record TrumpSelectedEvent(GameId GameId, RoundId RoundId, PlayerId playerId, CardSuit Trump)
-   : DomainEventBase(GameId)
-{
-}
+public record TrumpSelectedEvent(GameId GameId, RoundId RoundId, PlayerId PlayerId, CardSuit Trump)
+   : DomainEventBase(GameId);

@@ -23,13 +23,13 @@ public abstract class GamePlayer : EntityBase<PlayerId>
 
    public bool IsReady { get; protected set; }
 
-   public GameId GameId { get; }
-
    public PlayerId PlayerId { get; protected set; }
 
    public TeamId TeamId { get; protected set; }
 
+   protected GameId GameId { get; }
+
    internal abstract void Join(TeamId teamId);
 
-   internal abstract GamePlayer Ready();
+   internal abstract void Ready();
 }

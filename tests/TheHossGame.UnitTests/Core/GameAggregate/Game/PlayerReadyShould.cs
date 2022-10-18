@@ -6,6 +6,7 @@
 
 namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 
+using TheHossGame.Core.GameAggregate.RoundEntity;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
@@ -24,11 +25,11 @@ public class PlayerReadyShould
    public void RaiseStartEvent(
       [Frozen] AGame game)
    {
-      var startedEvent = game.Events.ShouldContain()
+      (GameId gameId, RoundId roundId, _) = game.Events.ShouldContain()
          .SingleEventOfType<RoundStartedEvent>();
 
-      startedEvent.GameId.Should().Be(game.Id);
-      startedEvent.RoundId.Should().NotBeNull();
+      gameId.Should().Be(game.Id);
+      roundId.Should().NotBeNull();
    }
 
    [Theory]

@@ -20,7 +20,7 @@ public class NoGamePlayer
    {
    }
 
-   public override bool IsNull => true;
+   protected override bool IsNull => true;
 
    internal override void Join(TeamId teamId)
    {
@@ -28,9 +28,8 @@ public class NoGamePlayer
       player.Join(teamId);
    }
 
-   internal override GamePlayer Ready()
+   internal override void Ready()
    {
-      return this;
    }
 
    protected override void EnsureValidState()

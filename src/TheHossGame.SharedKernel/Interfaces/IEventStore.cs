@@ -9,7 +9,7 @@
 namespace TheHossGame.SharedKernel.Interfaces;
 
 /// <summary>
-/// Provides methods to retrieve aggregate roots from an eventstore.
+/// Provides methods to retrieve aggregate roots from an event-store.
 /// </summary>
 /// <typeparam name="TAggregate">The type of the aggregate.</typeparam>
 public interface IEventStore<TAggregate>

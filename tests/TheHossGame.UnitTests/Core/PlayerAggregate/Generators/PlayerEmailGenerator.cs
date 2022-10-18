@@ -13,11 +13,11 @@ using TheHossGame.Core.PlayerAggregate;
 
 internal class PlayerEmailGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? context;
+   private ISpecimenContext? specimenContext;
 
    public object Create(object request, ISpecimenContext context)
    {
-      this.context = context;
+      this.specimenContext = context;
       if (!typeof(PlayerEmail).Equals(request))
       {
          return new NoSpecimen();
@@ -28,7 +28,7 @@ internal class PlayerEmailGenerator : ISpecimenBuilder
 
    private object RandomPlayerEmail()
    {
-      string address = this.context.Create<MailAddress>().Address;
+      string address = this.specimenContext.Create<MailAddress>().Address;
       return PlayerEmail.FromString(address);
    }
 }

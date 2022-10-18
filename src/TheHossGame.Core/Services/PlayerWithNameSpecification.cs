@@ -11,10 +11,4 @@ using TheHossGame.Core.PlayerAggregate;
 
 public class PlayerWithNameSpec : Specification<APlayer>
 {
-   private readonly APlayer player;
-
-   public PlayerWithNameSpec(APlayer player)
-   {
-      this.player = player;
-   }
 }

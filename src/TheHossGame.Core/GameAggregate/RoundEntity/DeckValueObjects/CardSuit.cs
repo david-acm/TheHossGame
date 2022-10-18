@@ -23,10 +23,7 @@ public sealed class CardSuit : SmartEnum<CardSuit, char>
    private CardSuit(string name, char id)
       : base(name, id)
    {
-      this.Id = id;
    }
 
-   public static new IReadOnlyCollection<CardSuit> List => SmartEnum<CardSuit, char>.List.Except(new List<CardSuit>() { None }).ToList().AsReadOnly();
-
-   public char Id { get; }
+   public static new IReadOnlyCollection<CardSuit> List => SmartEnum<CardSuit, char>.List.Except(new List<CardSuit> { None }).ToList().AsReadOnly();
 }

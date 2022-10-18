@@ -10,7 +10,7 @@ public record NoDeck : Deck
 {
    public static NoDeck New => new ();
 
-   public override IReadOnlyList<ACard> Cards => new List<ACard>();
+   public virtual IReadOnlyList<ACard> Cards => new List<ACard>();
 
    public override bool HasCards => false;
 

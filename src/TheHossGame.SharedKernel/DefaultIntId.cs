@@ -25,32 +25,22 @@ public record DefaultIntId : ValueObject
    }
 
    /// <summary>
-   /// Initializes a new instance of the <see cref="DefaultIntId"/> class.
+   /// Gets the id.
    /// </summary>
-   public DefaultIntId()
-   {
-   }
-
-   /// <summary>
-   /// Gets or sets the id.
-   /// </summary>
-   public int Value { get; set; }
+   public int Value { get; }
 
    /// <summary>
    /// To int implicit conversion.
    /// </summary>
-   /// <param name="value">The entity.</param>
+   /// <param name="value">The entity Id.</param>
    public static implicit operator int(DefaultIntId value)
    {
       return value.Value;
    }
 
    /// <summary>
-   /// Converts the entity to int.
+   /// To int implicit conversion.
    /// </summary>
-   /// <returns>The value object value.</returns>
-   public int ToInt32()
-   {
-      return this.Value;
-   }
+   /// <returns>The entity Id.</returns>
+   public int ToInt32() => this;
 }

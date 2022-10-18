@@ -21,65 +21,38 @@ public abstract class Player : EntityBase<PlayerId>, IAggregateRoot
       this.JoiningGameId = new NoGameId();
    }
 
-   public bool IsJoiningGame => this.JoiningGameId is AGameId;
+   protected bool IsJoiningGame => this.JoiningGameId is AGameId;
 
-   public GameId JoiningGameId { get; protected set; }
-
-   public abstract void RequestJoinGame(GameId gameId);
+   protected GameId JoiningGameId { get; set; }
 }
 
-public class NoPlayer : Player
+public sealed class APlayer : Player
 {
-   public NoPlayer()
-      : base(new APlayerId())
-   {
-   }
-
-   public override bool IsNull => true;
-
-   public override void RequestJoinGame(GameId gameId)
-   {
-   }
-
-   protected override void EnsureValidState()
-   {
-   }
-
-   protected override void When(DomainEventBase @event)
-   {
-   }
-}
-
-public class APlayer : Player
-{
-   private APlayer(PlayerId id, PlayerName name)
+   private APlayer(PlayerId id)
       : base(id)
    {
-      this.Name = name;
    }
 
-   public enum PlayerState
+   private enum PlayerState
    {
       Playing,
       NotPlaying,
    }
 
-   public override bool IsNull => false;
+   protected override bool IsNull => false;
 
-   public PlayerState State { get; private set; } = PlayerState.NotPlaying;
-
-   public PlayerName Name { get; }
+   private PlayerState State { get; set; } = PlayerState.NotPlaying;
 
    public static APlayer FromRegister(PlayerId playerId, PlayerName playerName)
    {
-      var player = new APlayer(playerId, playerName);
+      var player = new APlayer(playerId);
       var @event = new PlayerRegisteredEvent(playerId, playerName);
       player.RaiseDomainEvent(@event);
 
       return player;
    }
 
-   public override void RequestJoinGame(GameId gameId)
+   public void RequestJoinGame(GameId gameId)
    {
       /*This should be checked both by the client before sending the command and by a domain service after hydrating the player aggregate and before calling this method. There is a race condition where a player can join a game and tries to join another game after the condition is checked. Allowing a player to briefly join two games. This edge and rare case could be solved by:
       - Defining an SLA (?)
@@ -91,7 +64,7 @@ public class APlayer : Player
       {
          this.RaiseDomainEvent(new CannotJoinGameEvent(
             this.Id,
-            $"APlayer already in a game"));
+            "APlayer already in a game"));
       }
 
       // Post conditions
@@ -126,9 +99,6 @@ public class APlayer : Player
 [Serializable]
 public class InvalidEntityStateException : Exception
 {
-   private readonly APlayer? player;
-   private readonly string? message;
-
    public InvalidEntityStateException()
    {
    }
@@ -141,8 +111,6 @@ public class InvalidEntityStateException : Exception
    public InvalidEntityStateException(APlayer player, string message)
       : this(message)
    {
-      this.player = player;
-      this.message = message;
    }
 
    public InvalidEntityStateException(string? message, Exception? innerException)

@@ -52,7 +52,7 @@ public class ToDoItemSearchService : IToDoItemSearchService
         catch (InvalidOperationException ex)
         {
             // TO DO: Log details here
-            return Result<List<ToDoItem>>.Error(new[] { ex.Message });
+            return Result<List<ToDoItem>>.Error(ex.Message);
         }
     }
 
@@ -67,11 +67,11 @@ public class ToDoItemSearchService : IToDoItemSearchService
 
         var incompleteSpec = new IncompleteItemsSpec();
         var items = incompleteSpec.Evaluate(project.Items).ToList();
-        if (!items.Any())
+        if (items.Any())
         {
-            return Result<ToDoItem>.NotFound();
+           return new Result<ToDoItem>(items.First());
         }
 
-        return new Result<ToDoItem>(items.First());
+        return Result<ToDoItem>.NotFound();
     }
 }

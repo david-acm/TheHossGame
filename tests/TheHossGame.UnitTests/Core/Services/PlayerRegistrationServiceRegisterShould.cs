@@ -6,7 +6,6 @@
 
 namespace TheHossGame.UnitTests.Core.Services;
 
-using Ardalis.Specification;
 using AutoFixture.Xunit2;
 using Moq;
 using TheHossGame.Core.PlayerAggregate;

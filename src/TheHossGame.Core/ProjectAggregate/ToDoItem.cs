@@ -20,22 +20,24 @@ public class ToDoItem : EntityBase
    {
    }
 
-   public override bool IsNull => false;
-
    public string Title { get; set; } = string.Empty;
 
    public string Description { get; set; } = string.Empty;
 
    public bool IsDone { get; private set; }
 
+   protected override bool IsNull => false;
+
    public void MarkComplete()
    {
-      if (!this.IsDone)
+      if (this.IsDone)
       {
-         this.IsDone = true;
-
-         this.RaiseDomainEvent(new ToDoItemCompletedEvent(this));
+         return;
       }
+
+      this.IsDone = true;
+
+      this.RaiseDomainEvent(new ToDoItemCompletedEvent(this));
    }
 
    public override string ToString()

@@ -13,11 +13,8 @@ using TheHossGame.Core.Interfaces;
 
 public class AutoOrderedDeckGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? context;
-
    public object Create(object request, ISpecimenContext context)
    {
-      this.context = context;
       if (!typeof(ADeck).Equals(request))
       {
          return new NoSpecimen();
@@ -29,10 +26,11 @@ public class AutoOrderedDeckGenerator : ISpecimenBuilder
    private static ADeck GenerateShuffledDeck()
    {
       var shufflingService = new Mock<IShufflingService>();
-      var cards = new List<ACard>();
       shufflingService
          .Setup(s => s.Shuffle(It.IsAny<IList<ACard>>()))
-         .Callback((IList<ACard> a) => cards = a.ToList());
+         .Callback((IList<ACard> _) =>
+         {
+         });
       return ADeck.ShuffleNew(shufflingService.Object);
    }
 }

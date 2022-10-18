@@ -13,6 +13,4 @@ namespace TheHossGame.SharedKernel;
 /// <summary>
 /// A base class to implement member wise equality in value objects.
 /// </summary>
-public abstract record ValueObject
-{
-}
+public abstract record ValueObject;

@@ -20,7 +20,7 @@ using TheHossGame.SharedKernel;
 /// <summary>
 /// The behaviour side.
 /// </summary>
-public partial class ARound
+public sealed partial class ARound
 {
    internal static ARound StartNew(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Deck shuffledDeck, Action<DomainEventBase> when)
    {
@@ -80,6 +80,7 @@ public partial class ARound
          RoundState.CardsDealt => this.ValidateAllCardsDealt(),
          RoundState.BidFinished => this.ValidateBidFinished(),
          RoundState.TrumpSelected => this.ValidateTrumpSelected(),
+         RoundState.None => false,
          _ => throw new InvalidEntityStateException(),
       };
 
@@ -97,7 +98,7 @@ public partial class ARound
 
       while (deck.HasCards)
       {
-         playerHand.ForEach(p => p.ReceibeCard(deck.Deal()));
+         playerHand.ForEach(p => p.ReceiveCard(deck.Deal()));
       }
 
       return playerHand;
@@ -128,7 +129,7 @@ public partial class ARound
    private void HandlePlayerCardsDealtEvent(PlayerCardsDealtEvent e)
    {
       this.state = RoundState.CardsShuffled;
-      this.deals.Add(e.playerCards);
+      this.deals.Add(e.PlayerCards);
    }
 
    private void HandleBidEvent(BidEvent e)
@@ -149,7 +150,7 @@ public partial class ARound
 
    private void HandleTrumpSelectedEvent(TrumpSelectedEvent e)
    {
-      this.trumpSelection = (e.Trump, e.playerId);
+      this.trumpSelection = (e.Trump, e.PlayerId);
       this.state = RoundState.TrumpSelected;
    }
 

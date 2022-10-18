@@ -9,11 +9,11 @@ namespace TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using System.Linq;
 using TheHossGame.Core.Interfaces;
 
-public record ADeck : Deck
+public sealed record ADeck : Deck
 {
    private readonly Stack<ACard> cards = new ();
 
-   internal ADeck(IShufflingService shufflingService)
+   private ADeck(IShufflingService shufflingService)
    {
       var cardList = new List<ACard>();
       cardList.AddRange(
@@ -27,7 +27,7 @@ public record ADeck : Deck
    public static ADeck ShuffleNew(IShufflingService shufflingService)
       => new (shufflingService);
 
-   public override IReadOnlyList<ACard> Cards => this.cards.ToList().AsReadOnly();
+   public IReadOnlyList<ACard> Cards => this.cards.ToList().AsReadOnly();
 
    public override bool HasCards => this.cards.Any();
 

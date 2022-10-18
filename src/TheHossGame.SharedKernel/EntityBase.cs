@@ -82,7 +82,7 @@ public abstract class EntityBase<T> : IInternalEventHandler
    /// <summary>
    /// Gets a value indicating whether the entity is null.
    /// </summary>
-   public abstract bool IsNull { get; }
+   protected abstract bool IsNull { get; }
 
    /// <summary>
    /// Gets the event applier.
@@ -121,16 +121,6 @@ public abstract class EntityBase<T> : IInternalEventHandler
    public override int GetHashCode()
    {
       return (this.GetType().ToString() + this.Id).GetHashCode(StringComparison.InvariantCulture);
-   }
-
-   /// <summary>
-   /// Handles a domain event.
-   /// </summary>
-   /// <param name="event">The event to handle.</param>
-   public void Handle(DomainEventBase @event)
-   {
-      this.When(@event);
-      this.EnsureValidState();
    }
 
    /// <summary>

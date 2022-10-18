@@ -7,14 +7,8 @@
 namespace TheHossGame.Core.PlayerAggregate;
 
 using TheHossGame.SharedKernel;
-public record APlayerId : PlayerId
-{
-}
+public record APlayerId : PlayerId;
 
-public record NoPlayerId : PlayerId
-{
-}
+public record NoPlayerId : PlayerId;
 
-public abstract record PlayerId : ValueId
-{
-}
+public abstract record PlayerId : ValueId;

@@ -6,8 +6,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Minor Code Smell", "S2219:Runtime type checking should be simplified", Justification = "Not null here. Property in initializedn in constructor.", Scope = "member", Target = "~P:TheHossGame.Core.PlayerAggregate.APlayer.IsJoiningGame")]
+[assembly: SuppressMessage("Minor Code Smell", "S2219:Runtime type checking should be simplified", Justification = "Not null here. Property in initialized in constructor.", Scope = "member", Target = "~P:TheHossGame.Core.PlayerAggregate.APlayer.IsJoiningGame")]
 [assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Doesn't apply to record types.", Scope = "module")]
 [assembly: SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1101:Prefix local calls with this", Justification = "Not needed for records", Scope = "member", Target = "~M:TheHossGame.Core.GameAggregate.AGame.When(TheHossGame.SharedKernel.DomainEventBase)")]
 [assembly: SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1119:Statement should not use unnecessary parenthesis", Justification = "Doesn't apply to action methods.", Scope = "member", Target = "~M:TheHossGame.Core.GameAggregate.AGame.When(TheHossGame.SharedKernel.DomainEventBase)")]
-[assembly: SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1119:Statement should not use unnecessary parenthesis", Justification = "Necesary for swith expressions returning actions.", Scope = "module")]
+[assembly: SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1119:Statement should not use unnecessary parenthesis", Justification = "Necessary for switch expressions returning actions.", Scope = "module")]

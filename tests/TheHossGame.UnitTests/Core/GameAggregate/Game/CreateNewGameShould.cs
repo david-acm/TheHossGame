@@ -25,7 +25,7 @@ public class CreateNewGameShould
    {
       var game = AGame.CreateForPlayer(playerId, shuffleService);
 
-      var startEvent = game.Events.Should()
+      (_, PlayerId? startedBy) = game.Events.Should()
          .ContainSingle(e => e is NewGameCreatedEvent)
          .Subject.As<NewGameCreatedEvent>();
 
@@ -33,8 +33,8 @@ public class CreateNewGameShould
          .ContainSingle(e => e is PlayerJoinedEvent)
          .Subject.As<PlayerJoinedEvent>();
 
-      startEvent.StartedBy.Should().Be(playerId);
-      startEvent.StartedBy.Should().BeOfType<APlayerId>();
+      startedBy.Should().Be(playerId);
+      startedBy.Should().BeOfType<APlayerId>();
       joinedEvent.PlayerId.Should().Be(playerId);
       joinedEvent.TeamId.Should().Be(Team1);
    }

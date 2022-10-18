@@ -16,20 +16,21 @@ using static TheHossGame.Core.GameAggregate.Game;
 public class AGamePlayer
    : GamePlayer
 {
-   internal AGamePlayer(GameId GameId, PlayerId PlayerId, Action<DomainEventBase> applier)
-      : base(GameId, PlayerId, applier)
+   internal AGamePlayer(GameId gameId, PlayerId playerId, Action<DomainEventBase> applier)
+      : base(gameId, playerId, applier)
    {
    }
 
-   public override bool IsNull => false;
+   protected override bool IsNull => false;
 
-   public bool HasJoinedGame => this.TeamId != TeamId.NoTeamId;
+   private bool HasJoinedGame => this.TeamId != TeamId.NoTeamId;
 
    internal static AGamePlayer FromStream(PlayerJoinedEvent @event, Action<DomainEventBase> applier)
    {
-      return new AGamePlayer(@event.gameId, @event.PlayerId, applier)
+      (GameId gameId, PlayerId playerId, TeamId teamId) = @event;
+      return new AGamePlayer(gameId, playerId, applier)
       {
-         TeamId = @event.TeamId,
+         TeamId = teamId,
       };
    }
 
@@ -45,12 +46,10 @@ public class AGamePlayer
       this.Apply(@event);
    }
 
-   internal override GamePlayer Ready()
+   internal override void Ready()
    {
       var @event = new PlayerReadyEvent(this.GameId, this.Id);
       this.Apply(@event);
-
-      return this;
    }
 
    protected override void EnsureValidState()
@@ -61,14 +60,12 @@ public class AGamePlayer
    {
       switch (@event)
       {
-         case PlayerJoinedEvent e:
-            this.PlayerId = e.PlayerId;
-            this.TeamId = e.TeamId;
+         case PlayerJoinedEvent(_, var playerId, var teamId):
+            this.PlayerId = playerId;
+            this.TeamId = teamId;
             break;
-         case PlayerReadyEvent e:
+         case PlayerReadyEvent:
             this.IsReady = true;
-            break;
-         default:
             break;
       }
    }

@@ -38,13 +38,14 @@ public sealed class StartNewShould
    {
       var @event = game.Events.ShouldContain()
          .ManyEventsOfType<PlayerCardsDealtEvent>(4);
-      @event.Should().NotBeNull();
+      var events = @event.ToList();
+      events.Should().NotBeNull();
 
-      @event.Should().HaveCount(4);
-      @event.Should().AllSatisfy(
-         p => p.playerCards.Cards.Should().HaveCount(6));
+      events.Should().HaveCount(4);
+      events.Should().AllSatisfy(
+         p => p.PlayerCards.Cards.Should().HaveCount(6));
 
-      var allCards = @event.SelectMany(e => e.playerCards.Cards);
+      var allCards = events.SelectMany(e => e.PlayerCards.Cards).ToList();
       allCards.Should().HaveCount(24);
       allCards.GroupBy(c => c.Suit).Should().HaveCount(4);
       allCards.GroupBy(c => c.Rank).Should().HaveCount(6);
@@ -54,11 +55,11 @@ public sealed class StartNewShould
    [AutoReadyGameData]
    public void RaiseAllCardsDealtEvent([Frozen] AGame game)
    {
-      var startedEvent = game.Events.ShouldContain()
+      (GameId? gameId, RoundId? roundId) = game.Events.ShouldContain()
          .SingleEventOfType<AllCardsDealtEvent>();
 
-      startedEvent.GameId.Should().Be(game.Id);
-      startedEvent.RoundId.Should().NotBeNull();
+      gameId.Should().Be(game.Id);
+      roundId.Should().NotBeNull();
 
       game.CurrentRound.State.Should().Be(Round.RoundState.CardsDealt);
    }

@@ -18,10 +18,10 @@ public record PlayerEmail : ValueObject
    private PlayerEmail(string address)
    {
       Guard.Against.NullOrEmpty(address);
-      Guard.Against.InvalidInput(address, nameof(address), a => new EmailAddressAttribute().IsValid(address));
+      Guard.Against.InvalidInput(address, nameof(address), _ => new EmailAddressAttribute().IsValid(address));
 
       this.Address = address;
    }
 
-   public string Address { get; private set; }
+   public string Address { get; }
 }

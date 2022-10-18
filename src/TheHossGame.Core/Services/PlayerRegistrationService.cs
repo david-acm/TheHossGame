@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel.Interfaces;
 
-public class PlayerRegistrationService
+public abstract class PlayerRegistrationService
 {
    private readonly IRepository<APlayer> repository;
    private readonly IEventStore<APlayer> store;
 
-   public PlayerRegistrationService(
+   protected PlayerRegistrationService(
       IRepository<APlayer> repository,
       IEventStore<APlayer> store)
    {
@@ -25,13 +25,13 @@ public class PlayerRegistrationService
 
    public async Task RegisterAsync(APlayer player)
    {
-      bool playerIsRegistered = await this.PlayerIsRegistered(player);
+      bool playerIsRegistered = await this.PlayerIsRegistered();
       if (playerIsRegistered)
       {
          return;
       }
 
-      bool playerNameNotIsUnique = await this.UserNameIsNotUniqueAsync(player);
+      bool playerNameNotIsUnique = await this.UserNameIsNotUniqueAsync();
       if (playerNameNotIsUnique)
       {
 #pragma warning disable S3626 // Jump statements should not be redundant
@@ -42,15 +42,15 @@ public class PlayerRegistrationService
       await this.store.PushEventsAsync(player.Events);
    }
 
-   private async Task<bool> UserNameIsNotUniqueAsync(APlayer player)
+   private async Task<bool> UserNameIsNotUniqueAsync()
    {
-      var specification = new PlayerWithNameSpec(player);
+      var specification = new PlayerWithNameSpec();
       return await this.repository.AnyAsync(specification);
    }
 
-   private async Task<bool> PlayerIsRegistered(APlayer player)
+   private async Task<bool> PlayerIsRegistered()
    {
-      var specification = new PlayerWithEmailSpec(player);
+      var specification = new PlayerWithEmailSpec();
       return await this.repository.AnyAsync(specification);
    }
 }

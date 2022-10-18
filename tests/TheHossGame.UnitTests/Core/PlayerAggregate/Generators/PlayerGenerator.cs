@@ -12,11 +12,11 @@ using TheHossGame.Core.PlayerAggregate;
 
 public class PlayerGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? context;
+   private ISpecimenContext? specimenContext;
 
    public object Create(object request, ISpecimenContext context)
    {
-      this.context = context;
+      this.specimenContext = context;
       if (!typeof(Player).Equals(request))
       {
          return new NoSpecimen();
@@ -25,10 +25,10 @@ public class PlayerGenerator : ISpecimenBuilder
       return this.RandomPlayerEmail();
    }
 
-   private object RandomPlayerEmail()
+   private APlayer RandomPlayerEmail()
    {
-      var playerId = this.context.Create<APlayerId>();
-      var playerName = this.context.Create<PlayerName>();
+      var playerId = this.specimenContext.Create<APlayerId>();
+      var playerName = this.specimenContext.Create<PlayerName>();
       return APlayer.FromRegister(playerId, playerName);
    }
 }

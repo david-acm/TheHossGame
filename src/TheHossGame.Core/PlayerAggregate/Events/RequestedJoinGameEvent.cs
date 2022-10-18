@@ -10,6 +10,4 @@ using TheHossGame.Core.GameAggregate;
 using TheHossGame.SharedKernel;
 
 public record RequestedJoinGameEvent(GameId GameId)
-   : DomainEventBase(GameId)
-{
-}
+   : DomainEventBase(GameId);

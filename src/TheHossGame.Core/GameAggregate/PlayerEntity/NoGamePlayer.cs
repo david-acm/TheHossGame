@@ -28,7 +28,7 @@ public class NoGamePlayer
       player.Join(teamId);
    }
 
-   internal override NoGamePlayer Ready()
+   internal override GamePlayer Ready()
    {
       return this;
    }

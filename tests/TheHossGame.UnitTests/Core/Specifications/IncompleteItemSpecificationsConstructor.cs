@@ -14,10 +14,12 @@ using Xunit;
 
 public class IncompleteItemsSpecificationConstructor
 {
-   [Theory]
-   [AutoData]
-   public void FilterCollectionToOnlyReturnItemsWithIsDoneFalse(ToDoItem item1, ToDoItem item2, ToDoItem item3)
+   [Fact]
+   public void FilterCollectionToOnlyReturnItemsWithIsDoneFalse()
    {
+      var item1 = new ToDoItem(1);
+      var item2 = new ToDoItem(2);
+      var item3 = new ToDoItem(3);
       item3.MarkComplete();
 
       var items = new List<ToDoItem>() { item1, item2, item3 };

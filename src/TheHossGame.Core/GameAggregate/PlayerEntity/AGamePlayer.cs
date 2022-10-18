@@ -45,7 +45,7 @@ public class AGamePlayer
       this.Apply(@event);
    }
 
-   internal override AGamePlayer Ready()
+   internal override GamePlayer Ready()
    {
       var @event = new PlayerReadyEvent(this.GameId, this.Id);
       this.Apply(@event);

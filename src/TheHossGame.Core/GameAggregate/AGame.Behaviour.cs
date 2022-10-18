@@ -20,7 +20,7 @@ using static Game.TeamId;
 /// <summary>
 /// Behaviour side.
 /// </summary>
-public partial class AGame : Game
+public partial class AGame
 {
    private readonly IShufflingService shufflingService;
 
@@ -54,18 +54,20 @@ public partial class AGame : Game
    {
       this.FindPlayer(playerId).Ready();
 
-      if (this.AreAllPlayersReady())
+      if (this.PlayersNotReady())
       {
-         var shuffledDeck = ADeck.ShuffleNew(this.shufflingService);
-         var round = ARound.StartNew(this.Id, this.GetTeamPlayers(), shuffledDeck, this.Apply);
-
-         this.Apply(new GameStartedEvent(
-            this.Id,
-            round.Id,
-            round.TeamPlayers,
-            round.PlayerDeals,
-            round.Bids));
+         return;
       }
+
+      var shuffledDeck = ADeck.ShuffleNew(this.shufflingService);
+      var round = ARound.StartNew(this.Id, this.GetTeamPlayers(), shuffledDeck, this.Apply);
+
+      this.Apply(new GameStartedEvent(
+         this.Id,
+         round.Id,
+         round.TeamPlayers,
+         round.PlayerDeals,
+         round.Bids));
    }
 
    public void Bid(PlayerId playerId, BidValue value) => this.NewestRound.Bid(playerId, value);
@@ -94,18 +96,22 @@ public partial class AGame : Game
    {
       PlayerJoinedEvent e => (Action)(() => HandleJoin(e)),
       NewGameCreatedEvent e => () => HandleGameCreated(e),
-      TeamsFormedEvent e => () => HandleTeamsFormedEvent(),
+      TeamsFormedEvent => HandleTeamsFormedEvent,
       GameStartedEvent e => () => HandleGameStartedEvent(e),
-      GameFinishedEvent e => () => this.State = GameState.Finished,
+      GameFinishedEvent => () => this.State = GameState.Finished,
       _ => () => { },
    }).Invoke();
 
+   private static void HandleGameCreated(NewGameCreatedEvent e)
+   {
+   }
+
    private bool TeamsAreComplete() => this.TeamComplete(Team1) && this.TeamComplete(Team2);
 
-   private bool AreAllPlayersReady()
-      => this.FindTeamPlayers().All(p => p.IsReady) &&
-         this.TeamComplete(Team1) &&
-         this.TeamComplete(Team2);
+   private bool PlayersNotReady()
+      => !this.FindTeamPlayers().All(p => p.IsReady) ||
+         !this.TeamComplete(Team1) ||
+         !this.TeamComplete(Team2);
 
    private void HandleGameStartedEvent(GameStartedEvent @event)
    {
@@ -118,8 +124,6 @@ public partial class AGame : Game
    private IEnumerable<RoundPlayer> GetTeamPlayers() => this.FindTeamPlayers().Select(g => new RoundPlayer(g.Id, g.TeamId));
 
    private void HandleTeamsFormedEvent() => this.State = GameState.TeamsFormed;
-
-   private void HandleGameCreated(NewGameCreatedEvent e) => this.Id = e.GameId;
 
    private void HandleJoin(PlayerJoinedEvent e)
    {

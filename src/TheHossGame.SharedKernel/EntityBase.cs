@@ -33,20 +33,9 @@ public abstract class EntityBase : EntityBase<DefaultIntId>
    }
 
    /// <summary>
-   /// Gets or sets the id value.
+   /// Gets the id value.
    /// </summary>
-   public int IdValue
-   {
-      get
-      {
-         return this.Id.Value;
-      }
-
-      set
-      {
-         this.Id.Value = value;
-      }
-   }
+   public int IdValue => this.Id.Value;
 }
 
 /// <summary>
@@ -65,10 +54,7 @@ public abstract class EntityBase<T> : IInternalEventHandler
    protected EntityBase(T id)
    {
       this.Id = id;
-      this.Applier = (DomainEventBase @event) =>
-      {
-         this.RaiseDomainEvent(@event);
-      };
+      this.Applier = this.RaiseDomainEvent;
    }
 
    /// <summary>
@@ -83,9 +69,9 @@ public abstract class EntityBase<T> : IInternalEventHandler
    }
 
    /// <summary>
-   /// Gets or sets the id.
+   /// Gets the id.
    /// </summary>
-   public T Id { get; protected set; }
+   public T Id { get; }
 
    /// <summary>
    /// Gets a readonly collection of domain events.
@@ -94,14 +80,14 @@ public abstract class EntityBase<T> : IInternalEventHandler
    public IEnumerable<DomainEventBase> Events => this.domainEvents.AsReadOnly();
 
    /// <summary>
-   /// Gets the event applier.
-   /// </summary>
-   public Action<DomainEventBase> Applier { get; }
-
-   /// <summary>
    /// Gets a value indicating whether the entity is null.
    /// </summary>
    public abstract bool IsNull { get; }
+
+   /// <summary>
+   /// Gets the event applier.
+   /// </summary>
+   protected Action<DomainEventBase> Applier { get; }
 
    /// <summary>
    /// Performs identity based comparison.
@@ -169,7 +155,7 @@ public abstract class EntityBase<T> : IInternalEventHandler
    }
 
    /// <summary>
-   /// Applies concrete event to enentity.
+   /// Applies concrete event to entity.
    /// </summary>
    /// <param name="event">The event to apply.</param>
    protected abstract void When(DomainEventBase @event);

@@ -6,13 +6,11 @@
 
 namespace TheHossGame.Core.GameAggregate.RoundEntity.Events;
 
-using TheHossGame.Core.GameAggregate;
-using TheHossGame.Core.GameAggregate.RoundEntity;
 using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.SharedKernel;
 
 public record PlayerCardsDealtEvent(
-   GameId GameId,
-   RoundId RoundId,
-   PlayerDeal PlayerCards)
+      GameId GameId,
+      RoundId RoundId,
+      PlayerDeal PlayerCards)
    : DomainEventBase(GameId);

@@ -6,18 +6,19 @@
 
 namespace TheHossGame.Core.GameAggregate.PlayerEntity;
 
-using System;
-using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.GameAggregate.Events;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
-using static TheHossGame.Core.GameAggregate.Game;
+using static Game;
 
 public class AGamePlayer
    : GamePlayer
 {
    internal AGamePlayer(GameId gameId, PlayerId playerId, Action<DomainEventBase> applier)
-      : base(gameId, playerId, applier)
+      : base(
+         gameId,
+         playerId,
+         applier)
    {
    }
 
@@ -27,8 +28,11 @@ public class AGamePlayer
 
    internal static AGamePlayer FromStream(PlayerJoinedEvent @event, Action<DomainEventBase> applier)
    {
-      (GameId gameId, PlayerId playerId, TeamId teamId) = @event;
-      return new AGamePlayer(gameId, playerId, applier)
+      var (gameId, playerId, teamId) = @event;
+      return new AGamePlayer(
+         gameId,
+         playerId,
+         applier)
       {
          TeamId = teamId,
       };
@@ -38,17 +42,22 @@ public class AGamePlayer
    {
       if (this.HasJoinedGame)
       {
-         this.Apply(new PlayerAlreadyInGame(this.Id));
+         this.Apply(new PlayerAlreadyInGameEvent(this.Id));
          return;
       }
 
-      var @event = new PlayerJoinedEvent(this.GameId, this.Id, teamId);
+      var @event = new PlayerJoinedEvent(
+         this.GameId,
+         this.Id,
+         teamId);
       this.Apply(@event);
    }
 
    internal override void Ready()
    {
-      var @event = new PlayerReadyEvent(this.GameId, this.Id);
+      var @event = new PlayerReadyEvent(
+         this.GameId,
+         this.Id);
       this.Apply(@event);
    }
 

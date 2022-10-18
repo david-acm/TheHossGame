@@ -20,7 +20,10 @@ public record ACard : Card
 
    public override CardRank Rank { get; }
 
-   public override string ToString() => $"{this.Rank.Value} \t {this.Suit.Value}";
+   public override string ToString()
+   {
+      return $"{this.Rank.Value} \t {this.Suit.Value}";
+   }
 }
 
 public abstract record Card : ValueObject

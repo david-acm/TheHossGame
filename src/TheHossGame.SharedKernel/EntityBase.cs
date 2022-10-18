@@ -11,12 +11,12 @@ namespace TheHossGame.SharedKernel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 /// <summary>
-/// Base class for entities.
+///    Base class for entities.
 /// </summary>
 public abstract class EntityBase : EntityBase<DefaultIntId>
 {
    /// <summary>
-   /// Initializes a new instance of the <see cref="EntityBase"/> class.
+   ///    Initializes a new instance of the <see cref="EntityBase" /> class.
    /// </summary>
    /// <param name="id">The entity id.</param>
    protected EntityBase(int id)
@@ -25,7 +25,7 @@ public abstract class EntityBase : EntityBase<DefaultIntId>
    }
 
    /// <summary>
-   /// Initializes a new instance of the <see cref="EntityBase"/> class.
+   ///    Initializes a new instance of the <see cref="EntityBase" /> class.
    /// </summary>
    protected EntityBase()
       : base(new DefaultIntId(0))
@@ -33,13 +33,13 @@ public abstract class EntityBase : EntityBase<DefaultIntId>
    }
 
    /// <summary>
-   /// Gets the id value.
+   ///    Gets the id value.
    /// </summary>
    public int IdValue => this.Id.Value;
 }
 
 /// <summary>
-/// Base class for entities.
+///    Base class for entities.
 /// </summary>
 /// <typeparam name="T">The id type.</typeparam>
 public abstract class EntityBase<T> : IInternalEventHandler
@@ -48,7 +48,7 @@ public abstract class EntityBase<T> : IInternalEventHandler
    private readonly List<DomainEventBase> domainEvents = new ();
 
    /// <summary>
-   /// Initializes a new instance of the <see cref="EntityBase{T}"/> class.
+   ///    Initializes a new instance of the <see cref="EntityBase{T}" /> class.
    /// </summary>
    /// <param name="id">The entity id.</param>
    protected EntityBase(T id)
@@ -58,7 +58,7 @@ public abstract class EntityBase<T> : IInternalEventHandler
    }
 
    /// <summary>
-   /// Initializes a new instance of the <see cref="EntityBase{T}"/> class.
+   ///    Initializes a new instance of the <see cref="EntityBase{T}" /> class.
    /// </summary>
    /// <param name="id">The entity id.</param>
    /// <param name="applier">The event applier.</param>
@@ -69,28 +69,28 @@ public abstract class EntityBase<T> : IInternalEventHandler
    }
 
    /// <summary>
-   /// Gets the id.
+   ///    Gets the id.
    /// </summary>
    public T Id { get; }
 
    /// <summary>
-   /// Gets a readonly collection of domain events.
+   ///    Gets a readonly collection of domain events.
    /// </summary>
    [NotMapped]
    public IEnumerable<DomainEventBase> Events => this.domainEvents.AsReadOnly();
 
    /// <summary>
-   /// Gets a value indicating whether the entity is null.
+   ///    Gets a value indicating whether the entity is null.
    /// </summary>
    protected abstract bool IsNull { get; }
 
    /// <summary>
-   /// Gets the event applier.
+   ///    Gets the event applier.
    /// </summary>
    protected Action<DomainEventBase> Applier { get; }
 
    /// <summary>
-   /// Performs identity based comparison.
+   ///    Performs identity based comparison.
    /// </summary>
    /// <param name="obj">The object to compare.</param>
    /// <returns>Whether the two objects are equal.</returns>
@@ -115,7 +115,7 @@ public abstract class EntityBase<T> : IInternalEventHandler
    }
 
    /// <summary>
-   /// Gets the hash code of other entity.
+   ///    Gets the hash code of other entity.
    /// </summary>
    /// <returns>The hash code of the entity.</returns>
    public override int GetHashCode()
@@ -124,12 +124,15 @@ public abstract class EntityBase<T> : IInternalEventHandler
    }
 
    /// <summary>
-   /// Clears the collection of domain events.
+   ///    Clears the collection of domain events.
    /// </summary>
-   internal void ClearDomainEvents() => this.domainEvents.Clear();
+   internal void ClearDomainEvents()
+   {
+      this.domainEvents.Clear();
+   }
 
    /// <summary>
-   /// Applies an event to an entity.
+   ///    Applies an event to an entity.
    /// </summary>
    /// <param name="event">The event to apply.</param>
    protected virtual void Apply(DomainEventBase @event)
@@ -145,19 +148,24 @@ public abstract class EntityBase<T> : IInternalEventHandler
    }
 
    /// <summary>
-   /// Applies concrete event to entity.
+   ///    Applies concrete event to entity.
    /// </summary>
    /// <param name="event">The event to apply.</param>
    protected abstract void When(DomainEventBase @event);
 
    /// <summary>
-   /// Ensures the entity is in a valid state.
+   ///    Ensures the entity is in a valid state.
    /// </summary>
    protected abstract void EnsureValidState();
 
    /// <summary>
-   /// Adds a new domain event to the collection.
+   ///    Adds a new domain event to the collection.
    /// </summary>
    /// <param name="domainEvent">The domain event to be added.</param>
-   protected void RaiseDomainEvent(DomainEventBase domainEvent) => this.domainEvents.Add(domainEvent);
+#pragma warning disable CA1030
+   protected void RaiseDomainEvent(DomainEventBase domainEvent)
+#pragma warning restore CA1030
+   {
+      this.domainEvents.Add(domainEvent);
+   }
 }

@@ -1,29 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <CodeAnalysisRuleSet />
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <None Include="..\..\.editorconfig" Link=".editorconfig" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Ardalis.Specification" />
-		<PackageReference Include="Ardalis.GuardClauses" />
-		<PackageReference Include="MediatR" />
-		<PackageReference Include="StyleCop.Analyzers">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Ardalis.Specification"/>
+        <PackageReference Include="Ardalis.GuardClauses"/>
+        <PackageReference Include="MediatR"/>
+    </ItemGroup>
 
 </Project>

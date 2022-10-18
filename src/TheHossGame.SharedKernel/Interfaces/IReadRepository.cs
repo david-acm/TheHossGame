@@ -11,10 +11,10 @@ namespace TheHossGame.SharedKernel.Interfaces;
 using Ardalis.Specification;
 
 /// <summary>
-/// A readonly repository for AggregateRoots.
+///    A readonly repository for AggregateRoots.
 /// </summary>
 /// <typeparam name="T">The type of the aggregate root.</typeparam>
 public interface IReadRepository<T> : IReadRepositoryBase<T>
-    where T : class, IAggregateRoot
+   where T : class, IAggregateRoot
 {
 }

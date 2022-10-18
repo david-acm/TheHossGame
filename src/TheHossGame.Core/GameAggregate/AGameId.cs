@@ -5,6 +5,7 @@
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.Core.GameAggregate;
+
 using TheHossGame.SharedKernel;
 
 public abstract record GameId : ValueId;

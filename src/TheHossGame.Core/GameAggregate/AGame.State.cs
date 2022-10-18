@@ -6,25 +6,17 @@
 
 namespace TheHossGame.Core.GameAggregate;
 
-using System.Collections.Generic;
-using System.Linq;
 using TheHossGame.Core.GameAggregate.PlayerEntity;
 using TheHossGame.Core.GameAggregate.RoundEntity;
+using TheHossGame.Core.Interfaces;
 using TheHossGame.Core.PlayerAggregate;
 
 /// <summary>
-/// State side.
+///    State side.
 /// </summary>
 public sealed partial class AGame : Game
 {
-   private readonly List<GamePlayer> gamePlayers = new ();
-   private readonly List<Round> rounds = new List<ARound>().Cast<Round>().ToList();
-
-   private AGame(Interfaces.IShufflingService shufflingService)
-      : base(new AGameId())
-   {
-      this.shufflingService = shufflingService;
-   }
+   #region GameState enum
 
    public enum GameState
    {
@@ -32,6 +24,18 @@ public sealed partial class AGame : Game
       TeamsFormed,
       Started,
       Finished,
+   }
+
+   #endregion
+
+   private readonly List<GamePlayer> gamePlayers = new ();
+
+   private readonly List<Round> rounds = new List<ARound>().Cast<Round>().ToList();
+
+   private AGame(IShufflingService shufflingService)
+      : base(new AGameId())
+   {
+      this.shufflingService = shufflingService;
    }
 
    public CurrentRound CurrentRound => new (this.NewestRound);
@@ -43,13 +47,22 @@ public sealed partial class AGame : Game
    private Round NewestRound => this.rounds.LastOrDefault() ?? new NoRound();
 
    public IReadOnlyCollection<GamePlayer> FindGamePlayers(TeamId teamId)
-      => this.gamePlayers.Where(p => p.TeamId == teamId)
-         .ToList().AsReadOnly();
+   {
+      return this.gamePlayers.Where(p => p.TeamId == teamId)
+                 .ToList().AsReadOnly();
+   }
 
    public IReadOnlyCollection<GamePlayer> FindTeamPlayers()
-      => this.gamePlayers.ToList().AsReadOnly();
+   {
+      return this.gamePlayers.ToList().AsReadOnly();
+   }
 
-   public GamePlayer FindPlayer(PlayerId playerId) =>
-      this.FindTeamPlayers().FirstOrDefault(p => p.PlayerId == playerId) ??
-      new NoGamePlayer(this.Id, playerId, this.Apply);
+   public GamePlayer FindPlayer(PlayerId playerId)
+   {
+      return this.FindTeamPlayers().FirstOrDefault(p => p.PlayerId == playerId) ??
+         new NoGamePlayer(
+            this.Id,
+            playerId,
+            this.Apply);
+   }
 }

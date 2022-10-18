@@ -9,14 +9,13 @@
 namespace TheHossGame.SharedKernel;
 
 // This can be modified to EntityBase<TId> to support multiple key types (e.g. Guid)
-
 /// <summary>
-/// A default value object that uses int for entity id.
+///    A default value object that uses int for entity id.
 /// </summary>
 public record DefaultIntId : ValueObject
 {
    /// <summary>
-   /// Initializes a new instance of the <see cref="DefaultIntId"/> class.
+   ///    Initializes a new instance of the <see cref="DefaultIntId" /> class.
    /// </summary>
    /// <param name="id">The id.</param>
    public DefaultIntId(int id)
@@ -25,12 +24,12 @@ public record DefaultIntId : ValueObject
    }
 
    /// <summary>
-   /// Gets the id.
+   ///    Gets the id.
    /// </summary>
    public int Value { get; }
 
    /// <summary>
-   /// To int implicit conversion.
+   ///    To int implicit conversion.
    /// </summary>
    /// <param name="value">The entity Id.</param>
    public static implicit operator int(DefaultIntId value)
@@ -39,8 +38,11 @@ public record DefaultIntId : ValueObject
    }
 
    /// <summary>
-   /// To int implicit conversion.
+   ///    To int implicit conversion.
    /// </summary>
    /// <returns>The entity Id.</returns>
-   public int ToInt32() => this;
+   public int ToInt32()
+   {
+      return this;
+   }
 }

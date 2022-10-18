@@ -11,8 +11,14 @@ using TheHossGame.Core.PlayerAggregate;
 
 internal class PlayerIdGenerator : ISpecimenBuilder
 {
+   #region ISpecimenBuilder Members
+
    public object Create(object request, ISpecimenContext context)
-      => request is PlayerId ? RandomPlayerName() : new NoSpecimen();
+   {
+      return request is PlayerId ? RandomPlayerName() : new NoSpecimen();
+   }
+
+   #endregion
 
    private static object RandomPlayerName()
    {

@@ -6,8 +6,6 @@
 
 namespace TheHossGame.UnitTests.Core;
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Types;
@@ -21,18 +19,20 @@ public class DomainEventShould
    public void SetMethodsShouldBePrivate()
    {
       var eventsAssembly = typeof(PlayerRegisteredEvent).Assembly;
-      IEnumerable<PropertyInfo> properties =
+      var properties =
          AllTypes.From(eventsAssembly)
                  .ThatDeriveFrom<DomainEventBase>()
                  .SelectMany(v => v.GetProperties());
       var setMethods = properties.Select(p => p.SetMethod).OfType<MethodInfo>()
-          .Where(p =>
-            p.DeclaringType != typeof(DomainEventBase) &&
-            !p.CustomAttributes.Any())
-         .ToList();
+                                 .Where(
+                                    p =>
+                                       p.DeclaringType != typeof(DomainEventBase) &&
+                                       !p.CustomAttributes.Any())
+                                 .ToList();
 
-      setMethods.ForEach(m =>
-         m.IsPrivate.Should().BeTrue(
-            $"{m.DeclaringType?.FullName} 👉 {m.Name} method should be private."));
+      setMethods.ForEach(
+         m =>
+            m.IsPrivate.Should().BeTrue(
+               $"{m.DeclaringType?.FullName} 👉 {m.Name} method should be private."));
    }
 }

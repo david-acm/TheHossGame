@@ -16,6 +16,8 @@ public class StartedEventShould
 {
    [Theory]
    [AutoMoqData]
-   public void ShouldBeImmutable(NewGameCreatedEvent @event) =>
+   public void ShouldBeImmutable(NewGameCreatedEvent @event)
+   {
       @event.Should().BeAssignableTo<DomainEventBase>();
+   }
 }

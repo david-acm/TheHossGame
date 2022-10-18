@@ -6,7 +6,6 @@
 
 namespace TheHossGame.Core.PlayerAggregate;
 
-using System;
 using System.Runtime.Serialization;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate.Events;
@@ -33,12 +32,6 @@ public sealed class APlayer : Player
    {
    }
 
-   private enum PlayerState
-   {
-      Playing,
-      NotPlaying,
-   }
-
    protected override bool IsNull => false;
 
    private PlayerState State { get; set; } = PlayerState.NotPlaying;
@@ -62,9 +55,10 @@ public sealed class APlayer : Player
       // Preconditions
       if (this.IsJoiningGame)
       {
-         this.RaiseDomainEvent(new CannotJoinGameEvent(
-            this.Id,
-            "APlayer already in a game"));
+         this.RaiseDomainEvent(
+            new CannotJoinGameEvent(
+               this.Id,
+               "APlayer already in a game"));
       }
 
       // Post conditions
@@ -86,7 +80,7 @@ public sealed class APlayer : Player
 
       if (!valid)
       {
-         throw new InvalidEntityStateException(this, $"Failed to validate entity {nameof(APlayer)}");
+         throw new InvalidEntityStateException($"Failed to validate entity {nameof(APlayer)}");
       }
    }
 
@@ -94,6 +88,16 @@ public sealed class APlayer : Player
    {
       throw new NotImplementedException();
    }
+
+   #region Nested type: PlayerState
+
+   private enum PlayerState
+   {
+      Playing,
+      NotPlaying,
+   }
+
+   #endregion
 }
 
 [Serializable]
@@ -105,11 +109,6 @@ public class InvalidEntityStateException : Exception
 
    public InvalidEntityStateException(string? message)
       : base(message)
-   {
-   }
-
-   public InvalidEntityStateException(APlayer player, string message)
-      : this(message)
    {
    }
 

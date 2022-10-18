@@ -6,11 +6,10 @@
 
 namespace TheHossGame.UnitTests.Core.PlayerAggregate;
 
-using AutoFixture.Xunit2;
-using FluentAssertions;
-using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using AutoFixture.Xunit2;
+using FluentAssertions;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
@@ -31,7 +30,7 @@ public class PlayerEmailShould
    public void BeImmutable()
    {
       var customAttributes = typeof(PlayerEmail).GetTypeInfo().DeclaredProperties
-         .SelectMany(p => p.GetCustomAttributes(true));
+                                                .SelectMany(p => p.GetCustomAttributes(true));
       var isRecord = customAttributes.FirstOrDefault() is CompilerGeneratedAttribute;
 
       isRecord.Should().BeTrue();
@@ -40,7 +39,10 @@ public class PlayerEmailShould
 
    [Theory]
    [AutoPlayerData]
-   public void NotBeNull(PlayerEmail email) => email.Should().NotBeNull();
+   public void NotBeNull(PlayerEmail email)
+   {
+      email.Should().NotBeNull();
+   }
 
    [Theory]
    [AutoData]

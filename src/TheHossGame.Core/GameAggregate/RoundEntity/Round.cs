@@ -13,10 +13,7 @@ using TheHossGame.SharedKernel;
 
 public abstract class Round : EntityBase<RoundId>
 {
-   protected Round(RoundId id, Action<DomainEventBase> when)
-      : base(id, when)
-   {
-   }
+   #region RoundState enum
 
    public enum RoundState
    {
@@ -26,6 +23,15 @@ public abstract class Round : EntityBase<RoundId>
       CardsDealt,
       BidFinished,
       TrumpSelected,
+   }
+
+   #endregion
+
+   protected Round(RoundId id, Action<DomainEventBase> when)
+      : base(
+         id,
+         when)
+   {
    }
 
    internal abstract RoundState State { get; }

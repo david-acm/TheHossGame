@@ -11,11 +11,13 @@ using AutoFixture.Kernel;
 using Moq;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.Interfaces;
-using Player = TheHossGame.Core.PlayerAggregate.Player;
+using TheHossGame.Core.PlayerAggregate;
 
 public class ReadyGameGenerator : ISpecimenBuilder
 {
    private ISpecimenContext? specimenContext;
+
+   #region ISpecimenBuilder Members
 
    public object Create(object request, ISpecimenContext context)
    {
@@ -27,6 +29,8 @@ public class ReadyGameGenerator : ISpecimenBuilder
 
       return this.GenerateReadyGame();
    }
+
+   #endregion
 
    private AGame GenerateReadyGame()
    {

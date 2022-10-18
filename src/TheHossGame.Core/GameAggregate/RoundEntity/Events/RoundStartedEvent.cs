@@ -6,12 +6,10 @@
 
 namespace TheHossGame.Core.GameAggregate.RoundEntity.Events;
 
-using TheHossGame.Core.GameAggregate;
-using TheHossGame.Core.GameAggregate.RoundEntity;
 using TheHossGame.SharedKernel;
 
 public record RoundStartedEvent(
-   GameId GameId,
-   RoundId RoundId,
-   IEnumerable<RoundPlayer> TeamPlayers)
+      GameId GameId,
+      RoundId RoundId,
+      IEnumerable<RoundPlayer> TeamPlayers)
    : DomainEventBase(GameId);

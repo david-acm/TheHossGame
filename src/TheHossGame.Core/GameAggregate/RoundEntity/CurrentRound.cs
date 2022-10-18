@@ -6,7 +6,6 @@
 
 namespace TheHossGame.Core.GameAggregate.RoundEntity;
 
-using System.Collections.Generic;
 using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
 using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.PlayerAggregate;

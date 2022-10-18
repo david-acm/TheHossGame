@@ -11,7 +11,10 @@ using AutoFixture.AutoMoq;
 [AttributeUsage(AttributeTargets.Method)]
 public sealed class AutoMoqDataAttribute : LazyDataAttribute
 {
-   public AutoMoqDataAttribute() => AddCustomization(new AutoMoqCustomization());
+   public AutoMoqDataAttribute()
+   {
+      AddCustomization(new AutoMoqCustomization());
+   }
 }
 
 [AttributeUsage(AttributeTargets.Method)]

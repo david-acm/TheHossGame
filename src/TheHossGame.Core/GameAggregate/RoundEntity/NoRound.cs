@@ -14,7 +14,9 @@ using TheHossGame.SharedKernel;
 public sealed class NoRound : Round
 {
    public NoRound()
-      : base(new RoundId(), _ => { })
+      : base(
+         new RoundId(),
+         _ => { })
    {
    }
 

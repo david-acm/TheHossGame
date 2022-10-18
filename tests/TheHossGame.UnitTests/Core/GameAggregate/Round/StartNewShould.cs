@@ -9,7 +9,6 @@ namespace TheHossGame.UnitTests.Core.RoundAggregate.Round;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using Moq;
-using System.Collections.Generic;
 using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.GameAggregate.RoundEntity;
 using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
@@ -25,7 +24,8 @@ public sealed class StartNewShould
    [AutoReadyGameData]
    public void HaveValidState([Frozen] AGame sut)
    {
-      var teamPlayers = sut.FindTeamPlayers().Select(g => new RoundPlayer(g.PlayerId, g.TeamId));
+      var teamPlayers =
+         sut.FindTeamPlayers().Select(g => new RoundPlayer(g.PlayerId, g.TeamId));
       sut.CurrentRound.Id.Should().NotBeNull();
       sut.CurrentRound.TeamPlayers.Should().Contain(teamPlayers);
       sut.CurrentRound.State.Should().Be(Round.RoundState.CardsDealt);
@@ -37,7 +37,7 @@ public sealed class StartNewShould
    public void RaiseCardsDealtPerPlayer(AGame game)
    {
       var @event = game.Events.ShouldContain()
-         .ManyEventsOfType<PlayerCardsDealtEvent>(4);
+                       .ManyEventsOfType<PlayerCardsDealtEvent>(4);
       var events = @event.ToList();
       events.Should().NotBeNull();
 
@@ -55,8 +55,8 @@ public sealed class StartNewShould
    [AutoReadyGameData]
    public void RaiseAllCardsDealtEvent([Frozen] AGame game)
    {
-      (GameId? gameId, RoundId? roundId) = game.Events.ShouldContain()
-         .SingleEventOfType<AllCardsDealtEvent>();
+      var (gameId, roundId) = game.Events.ShouldContain()
+                                  .SingleEventOfType<AllCardsDealtEvent>();
 
       gameId.Should().Be(game.Id);
       roundId.Should().NotBeNull();
@@ -72,7 +72,7 @@ public sealed class StartNewShould
    {
       sut.CurrentRound.PlayerDeals.Should().HaveCount(4);
       shuffleService.Verify(
-      s => s.Shuffle(It.IsAny<IList<ACard>>()),
-      Times.Once);
+         s => s.Shuffle(It.IsAny<IList<ACard>>()),
+         Times.Once);
    }
 }

@@ -11,6 +11,8 @@ using TheHossGame.Core.PlayerAggregate;
 
 internal class PlayerNameGenerator : ISpecimenBuilder
 {
+   #region ISpecimenBuilder Members
+
    public object Create(object request, ISpecimenContext context)
    {
       if (!typeof(PlayerName).Equals(request))
@@ -20,6 +22,8 @@ internal class PlayerNameGenerator : ISpecimenBuilder
 
       return RandomPlayerName();
    }
+
+   #endregion
 
    private static object RandomPlayerName()
    {

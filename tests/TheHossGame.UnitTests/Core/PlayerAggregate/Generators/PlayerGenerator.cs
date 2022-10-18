@@ -14,11 +14,15 @@ public class PlayerGenerator : ISpecimenBuilder
 {
    private ISpecimenContext? specimenContext;
 
+   #region ISpecimenBuilder Members
+
    public object Create(object request, ISpecimenContext context)
    {
       this.specimenContext = context;
       return typeof(Player).Equals(request) ? this.RandomPlayerEmail() : new NoSpecimen();
    }
+
+   #endregion
 
    private APlayer RandomPlayerEmail()
    {

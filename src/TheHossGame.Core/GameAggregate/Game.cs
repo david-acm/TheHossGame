@@ -11,15 +11,19 @@ using TheHossGame.SharedKernel.Interfaces;
 
 public abstract class Game : AggregateRoot<GameId>, IAggregateRoot
 {
-   protected Game(GameId id)
-      : base(id)
-   {
-   }
+   #region TeamId enum
 
    public enum TeamId
    {
       NoTeamId,
       Team1,
       Team2,
+   }
+
+   #endregion
+
+   protected Game(GameId id)
+      : base(id)
+   {
    }
 }

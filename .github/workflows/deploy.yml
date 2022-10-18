@@ -1,7 +1,7 @@
 name: Deploy Pulumi
 on:
   release:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   deployment:

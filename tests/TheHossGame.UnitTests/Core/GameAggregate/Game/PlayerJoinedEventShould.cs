@@ -16,6 +16,8 @@ public class PlayerJoinedEventShould
 {
    [Theory]
    [AutoMoqData]
-   public void ShouldBeImmutable(PlayerJoinedEvent @event) =>
+   public void ShouldBeImmutable(PlayerJoinedEvent @event)
+   {
       @event.Should().BeAssignableTo<DomainEventBase>();
+   }
 }

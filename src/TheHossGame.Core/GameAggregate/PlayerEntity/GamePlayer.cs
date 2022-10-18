@@ -6,16 +6,16 @@
 
 namespace TheHossGame.Core.GameAggregate.PlayerEntity;
 
-using System;
-using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
-using static TheHossGame.Core.GameAggregate.Game;
+using static Game;
 
 public abstract class GamePlayer : EntityBase<PlayerId>
 {
    protected GamePlayer(GameId gameId, PlayerId playerId, Action<DomainEventBase> applier)
-      : base(playerId, applier)
+      : base(
+         playerId,
+         applier)
    {
       this.GameId = gameId;
       this.PlayerId = playerId;

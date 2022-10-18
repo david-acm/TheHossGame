@@ -6,7 +6,6 @@
 
 namespace TheHossGame.Core.Interfaces;
 
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
@@ -24,18 +23,22 @@ public abstract class ShufflingService : IShufflingService
       this.provider = provider;
    }
 
+   #region IShufflingService Members
+
    public void Shuffle(IList<ACard> cards)
    {
-      int swap = cards.Count;
+      var swap = cards.Count;
 
       while (swap > 1)
       {
          swap--;
-         int roll = this.provider.NextInt(swap + 1);
+         var roll = this.provider.NextInt(swap + 1);
          (cards[swap], cards[roll]) =
-         (cards[roll], cards[swap]);
+            (cards[roll], cards[swap]);
       }
    }
+
+   #endregion
 }
 
 public interface IRandomNumberProvider
@@ -45,5 +48,12 @@ public interface IRandomNumberProvider
 
 public abstract class RandomNumberProvider : IRandomNumberProvider
 {
-   public int NextInt(int maxValue) => RandomNumberGenerator.GetInt32(maxValue);
+   #region IRandomNumberProvider Members
+
+   public int NextInt(int maxValue)
+   {
+      return RandomNumberGenerator.GetInt32(maxValue);
+   }
+
+   #endregion
 }

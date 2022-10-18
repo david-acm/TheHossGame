@@ -5,9 +5,10 @@
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.Core.PlayerAggregate.Events;
+
 using TheHossGame.SharedKernel;
 
 public record PlayerRegisteredEvent(
-   PlayerId PlayerId,
-   PlayerName PlayerName)
+      PlayerId PlayerId,
+      PlayerName PlayerName)
    : DomainEventBase(PlayerId);

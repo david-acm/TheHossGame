@@ -7,4 +7,5 @@
 namespace TheHossGame.Core.GameAggregate.RoundEntity;
 
 using TheHossGame.SharedKernel;
+
 public record RoundId : ValueId;

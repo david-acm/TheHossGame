@@ -8,6 +8,7 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 using FluentAssertions;
 using TheHossGame.Core.GameAggregate;
+using TheHossGame.Core.GameAggregate.Events;
 using TheHossGame.Core.GameAggregate.RoundEntity;
 using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
 using TheHossGame.Core.GameAggregate.RoundEntity.Events;
@@ -29,8 +30,8 @@ public class BidShould
       game.Bid(winnerPlayerId, BidValue.Four);
       game.Bid(game.CurrentPlayerId, BidValue.Pass);
 
-      (GameId? gameId, RoundId roundId, Bid winningBid) = game.Events.ShouldContain()
-         .SingleEventOfType<BidCompleteEvent>();
+      var (gameId, roundId, winningBid) = game.Events.ShouldContain()
+                                              .SingleEventOfType<BidCompleteEvent>();
 
       gameId.Should().Be(game.Id);
       roundId.Should().Be(game.CurrentRound.Id);
@@ -45,8 +46,8 @@ public class BidShould
    {
       var bidPlayerId = game.CurrentPlayerId;
       game.Bid(bidPlayerId, value);
-      (GameId? gameId, RoundId? roundId, Bid? bid) = game.Events.ShouldContain()
-         .SingleEventOfType<BidEvent>();
+      var (gameId, roundId, bid) = game.Events.ShouldContain()
+                                       .SingleEventOfType<BidEvent>();
 
       gameId.Should().Be(game.Id);
       roundId.Should().Be(game.CurrentRound.Id);
@@ -121,13 +122,18 @@ public class BidShould
 
       bidAction.Should().Throw<InvalidEntityStateException>();
    }
+}
 
+public class FinishShould
+{
    [Theory]
    [AutoReadyGameData]
-   public void ThrowNotImplementedExceptionWhenGameStateIsNotValidated(AGame game)
+   public void RaiseGameFinishEvent(AGame game)
    {
-      var finishAction = game.Finish;
+      game.Finish();
 
-      finishAction.Should().Throw<NotImplementedException>();
+      var @event = game.Events.ShouldContain().SingleEventOfType<GameFinishedEvent>();
+
+      @event.GameId.Should().Be(game.Id);
    }
 }

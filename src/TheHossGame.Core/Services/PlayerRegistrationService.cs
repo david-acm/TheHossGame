@@ -6,7 +6,6 @@
 
 namespace TheHossGame.Core.Services;
 
-using System.Threading.Tasks;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel.Interfaces;
 
@@ -25,13 +24,13 @@ public abstract class PlayerRegistrationService
 
    public async Task RegisterAsync(APlayer player)
    {
-      bool playerIsRegistered = await this.PlayerIsRegistered();
+      var playerIsRegistered = await this.PlayerIsRegistered();
       if (playerIsRegistered)
       {
          return;
       }
 
-      bool playerNameNotIsUnique = await this.UserNameIsNotUniqueAsync();
+      var playerNameNotIsUnique = await this.UserNameIsNotUniqueAsync();
       if (playerNameNotIsUnique)
       {
 #pragma warning disable S3626 // Jump statements should not be redundant

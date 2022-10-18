@@ -22,6 +22,8 @@ public sealed class AutoPlayerDataAttribute : LazyDataAttribute
 
 internal class PlayerDataCustomization : ICustomization
 {
+   #region ICustomization Members
+
    public void Customize(IFixture fixture)
    {
       fixture.Customizations.Add(new PlayerNameGenerator());
@@ -30,10 +32,14 @@ internal class PlayerDataCustomization : ICustomization
       fixture.Customizations.Add(new PlayerGenerator());
       fixture.Customizations.Add(new PlayerEnumerableGenerator());
    }
+
+   #endregion
 }
 
 internal class ReadyGameCustomization : ICustomization
 {
+   #region ICustomization Members
+
    public void Customize(IFixture fixture)
    {
       fixture.Customizations.Add(new PlayerNameGenerator());
@@ -42,10 +48,14 @@ internal class ReadyGameCustomization : ICustomization
       fixture.Customizations.Add(new PlayerEnumerableGenerator());
       fixture.Customizations.Add(new ReadyGameGenerator());
    }
+
+   #endregion
 }
 
 internal class ReadyBidFinishedGameCustomization : ICustomization
 {
+   #region ICustomization Members
+
    public void Customize(IFixture fixture)
    {
       fixture.Customizations.Add(new PlayerNameGenerator());
@@ -54,4 +64,6 @@ internal class ReadyBidFinishedGameCustomization : ICustomization
       fixture.Customizations.Add(new PlayerEnumerableGenerator());
       fixture.Customizations.Add(new BidFinishedGameGenerator());
    }
+
+   #endregion
 }

@@ -17,13 +17,13 @@ public class RegisterShould
    [Theory]
    [AutoPlayerData]
    public void RaisePlayerRegisteredEvent(
-       APlayerId playerId,
-       PlayerName playerName)
+      APlayerId playerId,
+      PlayerName playerName)
    {
       var player = APlayer.FromRegister(playerId, playerName);
 
       var @event = player.Events.Should().ContainSingle()
-         .Subject.As<PlayerRegisteredEvent>();
+                         .Subject.As<PlayerRegisteredEvent>();
       @event = @event.Should().BeOfType<PlayerRegisteredEvent>().Subject;
       @event.PlayerId.Should().NotBeNull();
       @event.PlayerName.Should().NotBeNull();

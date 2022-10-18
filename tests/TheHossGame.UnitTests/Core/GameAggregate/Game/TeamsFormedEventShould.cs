@@ -16,7 +16,8 @@ public class TeamsFormedEventShould
 {
    [Theory]
    [AutoMoqData]
-   public void ShouldBeImmutable(TeamsFormedEvent @event) =>
-      @event.Should().
-         BeAssignableTo<DomainEventBase>();
+   public void ShouldBeImmutable(TeamsFormedEvent @event)
+   {
+      @event.Should().BeAssignableTo<DomainEventBase>();
+   }
 }

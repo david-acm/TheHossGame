@@ -5,6 +5,7 @@
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.UnitTests.Extensions;
+
 using TheHossGame.SharedKernel;
 
 public static class EventCollectionAssertionsExtensions

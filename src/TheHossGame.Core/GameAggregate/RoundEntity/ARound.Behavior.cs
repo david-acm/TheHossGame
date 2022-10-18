@@ -6,61 +6,97 @@
 
 namespace TheHossGame.Core.GameAggregate.RoundEntity;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using static TheHossGame.Core.GameAggregate.Game;
 using TheHossGame.Core.GameAggregate.Events;
 using TheHossGame.Core.GameAggregate.RoundEntity.BidEntity;
 using TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using TheHossGame.Core.GameAggregate.RoundEntity.Events;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
+using static Game;
 
 /// <summary>
-/// The behaviour side.
+///    The behaviour side.
 /// </summary>
 public sealed partial class ARound
 {
-   internal static ARound StartNew(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Deck shuffledDeck, Action<DomainEventBase> when)
+   internal static ARound StartNew(
+      GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Deck shuffledDeck, Action<DomainEventBase> when)
    {
       var roundPlayers = teamPlayers.ToList();
-      var round = new ARound(gameId, roundPlayers, when);
-      List<PlayerDeal> playerDeals = DealCards(shuffledDeck, roundPlayers);
-      round.Apply(new RoundStartedEvent(gameId, round.Id, round.teamPlayers));
-      playerDeals.ForEach(cards => round
-         .Apply(new PlayerCardsDealtEvent(gameId, round.Id, cards)));
-      round.Apply(new AllCardsDealtEvent(gameId, round.Id));
+      var round = new ARound(
+         gameId,
+         roundPlayers,
+         when);
+      var playerDeals = DealCards(
+         shuffledDeck,
+         roundPlayers);
+      round.Apply(
+         new RoundStartedEvent(
+            gameId,
+            round.Id,
+            round.teamPlayers));
+      playerDeals.ForEach(
+         cards => round
+            .Apply(
+               new PlayerCardsDealtEvent(
+                  gameId,
+                  round.Id,
+                  cards)));
+      round.Apply(
+         new AllCardsDealtEvent(
+            gameId,
+            round.Id));
 
       return round;
    }
 
    internal static ARound FromStream(GameStartedEvent @event, Action<DomainEventBase> when)
-      => new (@event.GameId, @event.RoundId, when)
+   {
+      return new ARound(
+         @event.GameId,
+         @event.RoundId,
+         when)
       {
          teamPlayers = new Queue<RoundPlayer>(@event.TeamPlayers),
          deals = @event.Deals.ToList(),
          bids = @event.Bids.ToList(),
          state = RoundState.CardsDealt,
       };
+   }
 
    internal override void Bid(PlayerId playerId, BidValue value)
    {
-      this.Apply(new BidEvent(this.GameId, this.Id, new Bid(playerId, value)));
+      this.Apply(
+         new BidEvent(
+            this.GameId,
+            this.Id,
+            new Bid(
+               playerId,
+               value)));
 
       if (this.bids.Count == 4)
       {
-         this.Apply(new BidCompleteEvent(this.GameId, this.Id, this.WinningBid()));
+         this.Apply(
+            new BidCompleteEvent(
+               this.GameId,
+               this.Id,
+               this.WinningBid()));
       }
    }
 
    internal override void SelectTrump(PlayerId playerId, CardSuit suit)
    {
-      this.Apply(new TrumpSelectedEvent(this.GameId, this.Id, playerId, suit));
+      this.Apply(
+         new TrumpSelectedEvent(
+            this.GameId,
+            this.Id,
+            playerId,
+            suit));
    }
 
    protected override void When(DomainEventBase @event)
-      => (@event switch
+   {
+      (@event switch
       {
          RoundStartedEvent e => (Action)(() => this.HandleStartedEvent(e)),
          PlayerCardsDealtEvent e => () => this.HandlePlayerCardsDealtEvent(e),
@@ -70,10 +106,11 @@ public sealed partial class ARound
          TrumpSelectedEvent e => () => this.HandleTrumpSelectedEvent(e),
          _ => () => { },
       }).Invoke();
+   }
 
    protected override void EnsureValidState()
    {
-      bool valid = this.State switch
+      var valid = this.State switch
       {
          RoundState.Started => this.ValidateStarted(),
          RoundState.CardsShuffled => this.ValidateCardsShuffled(),
@@ -96,10 +133,7 @@ public sealed partial class ARound
    {
       var playerHand = teamPlayers.Select(p => new PlayerDeal(p.PlayerId)).ToList();
 
-      while (deck.HasCards)
-      {
-         playerHand.ForEach(p => p.ReceiveCard(deck.Deal()));
-      }
+      while (deck.HasCards) playerHand.ForEach(p => p.ReceiveCard(deck.Deal()));
 
       return playerHand;
    }
@@ -140,10 +174,7 @@ public sealed partial class ARound
 
    private void HandleBidCompleteEvent(BidCompleteEvent e)
    {
-      while (this.CurrentPlayerId != e.WinningBid.PlayerId)
-      {
-         this.FinishTurn();
-      }
+      while (this.CurrentPlayerId != e.WinningBid.PlayerId) this.FinishTurn();
 
       this.state = RoundState.BidFinished;
    }
@@ -159,15 +190,23 @@ public sealed partial class ARound
       this.teamPlayers.Enqueue(this.teamPlayers.Dequeue());
    }
 
-   private bool ValidateStarted() => this.TeamPlayers.Count == 4;
+   private bool ValidateStarted()
+   {
+      return this.TeamPlayers.Count == 4;
+   }
 
    private bool ValidateCardsShuffled()
-      => this.ValidateStarted() && this.PlayerDeals.All(p => p.Cards.Count == 6);
+   {
+      return this.ValidateStarted() && this.PlayerDeals.All(p => p.Cards.Count == 6);
+   }
 
-   private bool ValidateAllCardsDealt() => this.ValidateCardsShuffled() &&
+   private bool ValidateAllCardsDealt()
+   {
+      return this.ValidateCardsShuffled() &&
          this.PlayerDeals.Count == 4 &&
          this.ValidateBids() &&
          this.ValidatePlayerOrder();
+   }
 
    private bool ValidatePlayerOrder()
    {
@@ -181,44 +220,52 @@ public sealed partial class ARound
 
    private bool ValidateBidFinished()
    {
-      return this.ValidateStarted() && this.ValidateCardsShuffled() && this.CurrentPlayerId == this.WinningBid().PlayerId;
+      return this.ValidateStarted() &&
+         this.ValidateCardsShuffled() &&
+         this.CurrentPlayerId == this.WinningBid().PlayerId;
    }
 
    private bool BidPerformedByPlayerInTurn()
    {
-      int lastBidIndex = this.Bids.Count - 1;
-      int lastPlayerIndex = this.TeamPlayers.Count - 1;
+      var lastBidIndex = this.Bids.Count - 1;
+      var lastPlayerIndex = this.TeamPlayers.Count - 1;
 
       var lastTurnPlayerId = this.TeamPlayers[lastPlayerIndex].PlayerId;
       var lastBidPlayerId = this.Bids[lastBidIndex].PlayerId;
 
-      bool lastBidPlayerWasPlayerInTurn = lastTurnPlayerId == lastBidPlayerId;
+      var lastBidPlayerWasPlayerInTurn = lastTurnPlayerId == lastBidPlayerId;
       return lastBidPlayerWasPlayerInTurn;
    }
 
    private bool ValidateBids()
    {
       var orderedBids = this.Bids
-         .Select((b, i) => new { Bid = b, Index = i })
-         .OrderBy(p => p.Index)
-         .ToList();
+                            .Select(
+                               (b, i) => new
+                               {
+                                  Bid = b,
+                                  Index = i,
+                               })
+                            .OrderBy(p => p.Index)
+                            .ToList();
 
-      return orderedBids.TrueForAll(c =>
-      {
-         int indexOfPreviousBid = c.Index - 1 > 0 ? c.Index - 1 : 0;
-         var lastBid = this.Bids[indexOfPreviousBid].Value;
+      return orderedBids.TrueForAll(
+         c =>
+         {
+            var indexOfPreviousBid = c.Index - 1 > 0 ? c.Index - 1 : 0;
+            var lastBid = this.Bids[indexOfPreviousBid].Value;
 
-         bool isSameBid = c.Index == indexOfPreviousBid;
-         bool bidIsBiggerThanLast = c.Bid.Value > lastBid;
-         bool bidIsAPass = c.Bid.Value == BidValue.Pass;
+            var isSameBid = c.Index == indexOfPreviousBid;
+            var bidIsBiggerThanLast = c.Bid.Value > lastBid;
+            var bidIsAPass = c.Bid.Value == BidValue.Pass;
 
-         return isSameBid || bidIsBiggerThanLast || bidIsAPass;
-      });
+            return isSameBid || bidIsBiggerThanLast || bidIsAPass;
+         });
    }
 
    private bool ValidateTrumpSelected()
    {
-      PlayerId playerSelectedTrump = this.trumpSelection.Item2;
+      var playerSelectedTrump = this.trumpSelection.Item2;
       return this.WinningBid().PlayerId == playerSelectedTrump;
    }
 }

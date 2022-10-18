@@ -7,18 +7,21 @@
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 using AutoFixture.Kernel;
-using System.Collections.Generic;
 using TheHossGame.Core.PlayerAggregate;
 
 public class PlayerEnumerableGenerator : ISpecimenBuilder
 {
    private ISpecimenContext? specimenContext;
 
+   #region ISpecimenBuilder Members
+
    public object Create(object request, ISpecimenContext context)
    {
       this.specimenContext = context;
       return typeof(IEnumerable<Player>).Equals(request) ? this.GeneratePlayerList() : new NoSpecimen();
    }
+
+   #endregion
 
    private List<Player> GeneratePlayerList()
    {
@@ -34,5 +37,7 @@ public class PlayerEnumerableGenerator : ISpecimenBuilder
    }
 
    private Player GeneratePLayer()
-      => (Player)new PlayerGenerator().Create(typeof(Player), this.specimenContext!);
+   {
+      return (Player)new PlayerGenerator().Create(typeof(Player), this.specimenContext!);
+   }
 }

@@ -7,14 +7,14 @@
 namespace TheHossGame.SharedKernel;
 
 /// <summary>
-/// The aggregate root base class.
+///    The aggregate root base class.
 /// </summary>
 /// <typeparam name="TId">The identity value.</typeparam>
 public abstract class AggregateRoot<TId> : EntityBase<TId>
    where TId : ValueId
 {
    /// <summary>
-   /// Initializes a new instance of the <see cref="AggregateRoot{TId}"/> class.
+   ///    Initializes a new instance of the <see cref="AggregateRoot{TId}" /> class.
    /// </summary>
    /// <param name="id">The identity value.</param>
    protected AggregateRoot(TId id)
@@ -22,20 +22,20 @@ public abstract class AggregateRoot<TId> : EntityBase<TId>
    {
    }
 
-   /// <inheritdoc/>
+   /// <inheritdoc />
    protected override void EnsureValidState()
    {
       throw new NotImplementedException();
    }
 
-   /// <inheritdoc/>
+   /// <inheritdoc />
    protected override void When(DomainEventBase @event)
    {
       throw new NotImplementedException();
    }
 
    /// <summary>
-   /// Applies an event to an aggregate root.
+   ///    Applies an event to an aggregate root.
    /// </summary>
    /// <param name="event">The event to apply.</param>
    protected override void Apply(DomainEventBase @event)

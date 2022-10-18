@@ -14,7 +14,6 @@ public record PlayerDeal(PlayerId PlayerId)
 {
    private readonly List<Card> cards = new ();
 
-   private PlayerId PlayerId { get; } = PlayerId;
    public IReadOnlyList<Card> Cards => this.cards.AsReadOnly();
 
    public void ReceiveCard(Card card)

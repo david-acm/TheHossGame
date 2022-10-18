@@ -6,11 +6,10 @@
 
 namespace TheHossGame.UnitTests.Core.PlayerAggregate;
 
-using AutoFixture.Xunit2;
-using FluentAssertions;
-using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using AutoFixture.Xunit2;
+using FluentAssertions;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using Xunit;
@@ -50,7 +49,7 @@ public class PlayerNameShould
    public void BeAnImmutableObject()
    {
       var customAttributes = typeof(PlayerName).GetTypeInfo().DeclaredProperties
-         .SelectMany(p => p.GetCustomAttributes(true));
+                                               .SelectMany(p => p.GetCustomAttributes(true));
       var isRecord = customAttributes.FirstOrDefault() is CompilerGeneratedAttribute;
 
       isRecord.Should().BeTrue();

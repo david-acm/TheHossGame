@@ -6,15 +6,12 @@
 
 namespace TheHossGame.Core.PlayerAggregate;
 
-using Ardalis.GuardClauses;
 using System.ComponentModel.DataAnnotations;
+using Ardalis.GuardClauses;
 using TheHossGame.SharedKernel;
 
 public record PlayerEmail : ValueObject
 {
-   public static PlayerEmail FromString(string email) =>
-      new (email);
-
    private PlayerEmail(string address)
    {
       Guard.Against.NullOrEmpty(address);
@@ -24,4 +21,9 @@ public record PlayerEmail : ValueObject
    }
 
    public string Address { get; }
+
+   public static PlayerEmail FromString(string email)
+   {
+      return new PlayerEmail(email);
+   }
 }

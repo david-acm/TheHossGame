@@ -12,6 +12,7 @@ using TheHossGame.Core.GameAggregate;
 using TheHossGame.Core.GameAggregate.Events;
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using TheHossGame.UnitTests.Extensions;
 using Xunit;
 using static TheHossGame.Core.GameAggregate.Game.TeamId;
 
@@ -26,8 +27,9 @@ public class JoinGameShould
       game.JoinPlayerToTeam(playerId, Team1);
 
       game.Events
-         .Where(e => e is PlayerAlreadyInGame)
-         .Should().HaveCount(1);
+          .ShouldContain()
+          .SingleEventOfType<PlayerAlreadyInGameEvent>()
+          .PlayerId.Should().Be(playerId);
    }
 
    [Theory]
@@ -39,9 +41,9 @@ public class JoinGameShould
       game.JoinPlayerToTeam(playerList[1].Id, Team2);
       game.JoinPlayerToTeam(playerList[2].Id, Team2);
 
-      game.Events
-         .Where(e => e is TeamsFormedEvent)
-         .Should().HaveCount(1);
+      var @event = game.Events
+                       .ShouldContain().SingleEventOfType<TeamsFormedEvent>();
+      @event.GameId.Should().Be(game.Id);
    }
 
    [Theory]
@@ -51,8 +53,8 @@ public class JoinGameShould
       game.JoinPlayerToTeam(player.Id, Team1);
 
       game.Events
-         .Where(e => e is PlayerJoinedEvent)
-         .Should().HaveCount(2);
+          .Where(e => e is PlayerJoinedEvent)
+          .Should().HaveCount(2);
    }
 
    [Theory]

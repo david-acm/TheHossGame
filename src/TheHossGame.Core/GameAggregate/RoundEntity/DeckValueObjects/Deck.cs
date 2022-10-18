@@ -5,6 +5,7 @@
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.Core.GameAggregate.RoundEntity.DeckValueObjects;
+
 using TheHossGame.SharedKernel;
 
 public abstract record Deck : ValueObject

@@ -14,6 +14,8 @@ public class PlayerRegistrationServiceConstructorShould
 {
    [Theory]
    [AutoMoqData]
-   public void CreateNewService(PlayerRegistrationService service) =>
+   public void CreateNewService(PlayerRegistrationService service)
+   {
       service.Should().NotBeNull();
+   }
 }

@@ -3,18 +3,19 @@
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace TheHossGame.Core;
 
+#region
+
 using Autofac;
-using TheHossGame.Core.Interfaces;
-using TheHossGame.Core.Services;
+
+#endregion
 
 public class DefaultCoreModule : Module
 {
-    protected override void Load(ContainerBuilder builder)
-    {
-        builder.RegisterType<ToDoItemSearchService>()
-            .As<IToDoItemSearchService>().InstancePerLifetimeScope();
-    }
+   protected override void Load(ContainerBuilder builder)
+   {
+   }
 }

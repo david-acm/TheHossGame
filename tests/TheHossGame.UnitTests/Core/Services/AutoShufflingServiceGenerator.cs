@@ -13,6 +13,8 @@ using TheHossGame.Core.Interfaces;
 
 public class AutoShufflingServiceGenerator : ISpecimenBuilder
 {
+   #region ISpecimenBuilder Members
+
    public object Create(object request, ISpecimenContext context)
    {
       if (!typeof(Mock<IShufflingService>).Equals(request))
@@ -23,14 +25,17 @@ public class AutoShufflingServiceGenerator : ISpecimenBuilder
       return GeneratePlayerEnumerable();
    }
 
+   #endregion
+
    private static Mock<IShufflingService> GeneratePlayerEnumerable()
    {
       var shufflingService = new Mock<IShufflingService>();
       shufflingService
          .Setup(s => s.Shuffle(It.IsAny<IList<ACard>>()))
-         .Callback((IList<ACard> _) =>
-         {
-         });
+         .Callback(
+            (IList<ACard> _) =>
+            {
+            });
       return shufflingService;
    }
 }

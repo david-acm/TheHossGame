@@ -8,6 +8,7 @@ namespace TheHossGame.UnitTests.Core.Services;
 
 using AutoFixture;
 using AutoFixture.Xunit2;
+
 public abstract class LazyDataAttribute : AutoDataAttribute
 {
    protected LazyDataAttribute()
@@ -20,12 +21,14 @@ public abstract class LazyDataAttribute : AutoDataAttribute
    {
       var fixture = new Fixture();
       Customizations!.ToList().ForEach(
-               c => fixture.Customize(c));
+         c => fixture.Customize(c));
       return fixture;
    };
 
    private static List<ICustomization> Customizations { get; } = new ();
 
-   protected static void AddCustomization(ICustomization customization) =>
+   protected static void AddCustomization(ICustomization customization)
+   {
       Customizations.Add(customization);
+   }
 }

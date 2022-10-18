@@ -23,12 +23,13 @@ public class ShufflingServiceShould
       ADeck deck,
       RandomNumberProvider random)
    {
-      int attempts = 0;
+      var attempts = 0;
       randomProvider.Setup(r => r.NextInt(It.IsAny<int>()))
-         .Callback((int _) =>
-         {
-         })
-         .Returns((int i) => random.NextInt(i));
+                    .Callback(
+                       (int _) =>
+                       {
+                       })
+                    .Returns((int i) => random.NextInt(i));
       var cards = deck.Cards.ToList();
       var originalCards = cards.ToList();
 

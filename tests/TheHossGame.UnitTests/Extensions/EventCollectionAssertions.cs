@@ -14,7 +14,7 @@ public class EventCollectionAssertions<TEvent> : GenericCollectionAssertions<IEn
    where TEvent : DomainEventBase
 {
    public EventCollectionAssertions(IEnumerable<TEvent> instance)
-       : base(instance)
+      : base(instance)
    {
    }
 
@@ -22,9 +22,9 @@ public class EventCollectionAssertions<TEvent> : GenericCollectionAssertions<IEn
       where TExpectedEvent : DomainEventBase
    {
       var @event = this.Subject
-         .Where(e => e is TExpectedEvent)
-         .Should().ContainSingle(because, becauseArgs)
-         .Subject.As<TExpectedEvent>();
+                       .Where(e => e is TExpectedEvent)
+                       .Should().ContainSingle(because, becauseArgs)
+                       .Subject.As<TExpectedEvent>();
 
       return @event;
    }
@@ -33,17 +33,19 @@ public class EventCollectionAssertions<TEvent> : GenericCollectionAssertions<IEn
       where TExpectedEvent : DomainEventBase
    {
       this.Subject
-         .Where(e => e is TExpectedEvent)
-         .Should().NotContain(e => e is TExpectedEvent, because, becauseArgs);
+          .Where(e => e is TExpectedEvent)
+          .Should().NotContain(e => e is TExpectedEvent, because, becauseArgs);
    }
 
-   public IEnumerable<TExpectedEvent> ManyEventsOfType<TExpectedEvent>(int count, string because = "", params object[] becauseArgs)
+   public IEnumerable<TExpectedEvent> ManyEventsOfType<TExpectedEvent>(
+      int count, string because = "", params object[] becauseArgs)
       where TExpectedEvent : DomainEventBase
    {
       var @event = this.Subject
-         .Where(e => e is TExpectedEvent)
-         .Should().HaveCount(count, because, becauseArgs)
-         .And.Subject.Cast<TExpectedEvent>().As<IEnumerable<TExpectedEvent>>();
+                       .Where(e => e is TExpectedEvent)
+                       .Should().HaveCount(count, because, becauseArgs)
+                       .And.Subject.Cast<TExpectedEvent>()
+                       .As<IEnumerable<TExpectedEvent>>();
 
       return @event;
    }

@@ -5,9 +5,10 @@
 // 🃏 The HossGame 🃏
 
 namespace TheHossGame.Core.GameAggregate.RoundEntity;
+
 using TheHossGame.Core.PlayerAggregate;
 using TheHossGame.SharedKernel;
-using static TheHossGame.Core.GameAggregate.Game;
+using static Game;
 
 public record RoundPlayer(PlayerId PlayerId, TeamId TeamId)
    : ValueObject;

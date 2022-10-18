@@ -6,9 +6,7 @@
 
 namespace TheHossGame.Core.Interfaces;
 
-using System.Threading.Tasks;
-
 public interface IEmailSender
 {
-    Task SendEmailAsync(string addressee, string from, string subject, string body);
+   Task SendEmailAsync(string addressee, string from, string subject, string body);
 }

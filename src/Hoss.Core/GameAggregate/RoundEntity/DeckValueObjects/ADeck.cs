@@ -7,7 +7,7 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
-#region
+   #region
 
 using Hoss.Core.Interfaces;
 
@@ -20,7 +20,7 @@ public sealed record ADeck : Deck
    private ADeck(IShufflingService shufflingService)
    {
       var cardList = new List<ACard>();
-      cardList.AddRange(CardSuit.List.SelectMany(suit => CardRank.List.Select(rank => new ACard(suit, rank))));
+      cardList.AddRange(Suit.List.SelectMany(suit => Rank.List.Select(rank => new ACard(suit, rank))));
       shufflingService.Shuffle(cardList);
       this.cards = new Stack<ACard>(cardList);
    }

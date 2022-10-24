@@ -7,11 +7,11 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity.Events;
 
-#region
+   #region
 
 using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
 #endregion
 
-public record PlayerCardsDealtEvent(GameId GameId, RoundId RoundId, PlayerDeal PlayerCards) : RoundEventBase(GameId, RoundId);
+public record PlayerCardsDealtEvent(GameId GameId, RoundId RoundId, ADeal Cards) : RoundEventBase(GameId, RoundId);

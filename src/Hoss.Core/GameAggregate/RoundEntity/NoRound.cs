@@ -7,7 +7,7 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
-#region
+   #region
 
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
@@ -26,13 +26,16 @@ public sealed class NoRound : Round
 
    internal override RoundState State => RoundState.None;
 
-   internal override IReadOnlyList<PlayerDeal> PlayerDeals => new List<PlayerDeal>();
+   internal override IReadOnlyList<ADeal> Deals => new List<ADeal>();
 
    internal override IReadOnlyList<RoundPlayer> RoundPlayers => new List<RoundPlayer>();
 
    internal override IReadOnlyList<Bid> Bids => new List<Bid>();
 
+   /// <inheritdoc />
+   internal override IReadOnlyList<CardPlay> CardsPlayed => new List<CardPlay>();
+
    internal override PlayerId CurrentPlayerId => new NoPlayerId();
 
-   internal override CardSuit SelectedTrump => CardSuit.None;
+   internal override Suit SelectedTrump => Suit.None;
 }

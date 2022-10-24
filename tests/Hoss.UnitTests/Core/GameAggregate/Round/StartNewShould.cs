@@ -7,7 +7,7 @@
 
 namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
-#region
+   #region
 
 using AutoFixture.Xunit2;
 using FluentAssertions;
@@ -33,7 +33,7 @@ public sealed class StartNewShould
       var teamPlayers = sut.FindGamePlayers().Select(g => new RoundPlayer(g.PlayerId, g.TeamId));
       sut.CurrentRoundState.Id.Should().NotBeNull();
       sut.CurrentRoundState.RoundPlayers.Should().Contain(teamPlayers);
-      sut.CurrentRoundState.State.Should().Be(Round.RoundState.CardsDealt);
+      sut.CurrentRoundState.State.Should().Be(Round.RoundState.Bidding);
       sut.CurrentRoundState.PlayerDeals.Should().HaveCount(4);
    }
 
@@ -46,10 +46,10 @@ public sealed class StartNewShould
       events.Should().NotBeNull();
 
       events.Should().HaveCount(4);
-      events.Should().AllSatisfy(p => p.PlayerCards.Cards.Should().HaveCount(6));
+      events.Should().AllSatisfy(p => p.Cards.Cards.Should().HaveCount(6));
       events.Should().AllSatisfy(p => p.Should().BeAssignableTo<RoundEventBase>());
 
-      var allCards = events.SelectMany(e => e.PlayerCards.Cards).ToList();
+      var allCards = events.SelectMany(e => e.Cards.Cards).ToList();
       allCards.Should().HaveCount(24);
       allCards.GroupBy(c => c.Suit).Should().HaveCount(4);
       allCards.GroupBy(c => c.Rank).Should().HaveCount(6);
@@ -64,7 +64,7 @@ public sealed class StartNewShould
       gameId.Should().Be(game.Id);
       roundId.Should().NotBeNull();
 
-      game.CurrentRoundState.State.Should().Be(Round.RoundState.CardsDealt);
+      game.CurrentRoundState.State.Should().Be(Round.RoundState.Bidding);
    }
 
    [Theory]

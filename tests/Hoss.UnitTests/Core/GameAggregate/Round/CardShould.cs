@@ -16,8 +16,8 @@ public class CardShould
    [Fact]
    public void ShouldSerializeWithRankAndSuitInformation()
    {
-      var rank = CardRank.Ace;
-      var suit = CardSuit.Clubs;
+      var rank = Rank.Ace;
+      var suit = Suit.Clubs;
       var card = new ACard(suit, rank);
       card.ToString().Should().ContainAll(suit.Value.ToString(), rank.Value);
    }

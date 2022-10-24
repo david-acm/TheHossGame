@@ -7,17 +7,17 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
-#region
+   #region
 
 using Hoss.SharedKernel;
 
 #endregion
 
-public record ACard(CardSuit Suit, CardRank Rank) : Card
+public record ACard(Suit Suit, Rank Rank) : Card
 {
-   public override CardSuit Suit { get; } = Suit;
+   public override Suit Suit { get; } = Suit;
 
-   public override CardRank Rank { get; } = Rank;
+   public override Rank Rank { get; } = Rank;
 
    public override string ToString()
    {
@@ -27,7 +27,7 @@ public record ACard(CardSuit Suit, CardRank Rank) : Card
 
 public abstract record Card : ValueObject
 {
-   public abstract CardSuit Suit { get; }
+   public abstract Suit Suit { get; }
 
-   public abstract CardRank Rank { get; }
+   public abstract Rank Rank { get; }
 }

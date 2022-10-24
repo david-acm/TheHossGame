@@ -7,7 +7,7 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
-#region
+   #region
 
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
@@ -21,12 +21,12 @@ using Hoss.SharedKernel;
 /// </summary>
 public sealed partial class ARound : Round
 {
+   private readonly List<CardPlay> tableCenter = new ();
    private List<Bid> bids = new ();
-   private List<PlayerDeal> deals = new ();
+   private List<ADeal> deals = new ();
    private RoundState state;
    private Queue<RoundPlayer> teamPlayers = new ();
-   private (CardSuit, PlayerId) trumpSelection = (CardSuit.None, new NoPlayerId());
-   private List<Play> plays { get; } = new ();
+   private TrumpSelection trumpSelection = new (new NoPlayerId(), Suit.None);
 
    private ARound(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Action<DomainEventBase> when)
       : this(gameId, new RoundId(), when)
@@ -42,17 +42,23 @@ public sealed partial class ARound : Round
 
    internal override RoundState State => this.state;
 
-   internal override IReadOnlyList<PlayerDeal> PlayerDeals => this.deals.AsReadOnly();
+   internal override IReadOnlyList<ADeal> Deals => this.deals.AsReadOnly();
 
    internal override IReadOnlyList<RoundPlayer> RoundPlayers => this.teamPlayers.ToList().AsReadOnly();
 
    internal override IReadOnlyList<Bid> Bids => this.bids.AsReadOnly();
 
+   /// <inheritdoc />
+   internal override IReadOnlyList<CardPlay> CardsPlayed => this.tableCenter.AsReadOnly();
+
    internal override PlayerId CurrentPlayerId => this.teamPlayers.Peek().PlayerId;
 
-   internal override CardSuit SelectedTrump => this.trumpSelection.Item1;
+   internal override Suit SelectedTrump => this.trumpSelection.Suit;
 
    private GameId GameId { get; }
-}
 
-public record Play(PlayerId PlayerId, Card Card);
+   internal override ADeal DealForPlayer(PlayerId playerId)
+   {
+      return this.deals.First(d => d.PlayerId == playerId);
+   }
+}

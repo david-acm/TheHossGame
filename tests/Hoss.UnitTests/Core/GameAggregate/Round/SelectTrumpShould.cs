@@ -27,7 +27,7 @@ public class SelectTrumpShould
    [AutoBidFinishedGameData]
    public void RaiseTrumpSelectedEvent(AGame game)
    {
-      var cardSuit = CardSuit.Diamonds;
+      var cardSuit = Suit.Diamonds;
       game.SelectTrump(game.CurrentPlayerId, cardSuit);
 
       game.Events.ShouldContain().SingleEventOfType<TrumpSelectedEvent>().Should().BeAssignableTo<RoundEventBase>();
@@ -39,11 +39,11 @@ public class SelectTrumpShould
    [AutoPlayerData]
    public void NotRaiseTrumpSelectedEventWhenGameNotReady(AGame game)
    {
-      game.SelectTrump(game.CurrentPlayerId, CardSuit.Hearts);
+      game.SelectTrump(game.CurrentPlayerId, Suit.Hearts);
 
       game.Events.ShouldContain().NoEventsOfType<TrumpSelectedEvent>();
 
-      game.CurrentRoundState.TrumpSelected.Should().Be(CardSuit.None);
+      game.CurrentRoundState.TrumpSelected.Should().Be(Suit.None);
    }
 
    [Theory]
@@ -51,12 +51,12 @@ public class SelectTrumpShould
    public void ThrowInvalidOperationExceptionWhenPlayerIsNotBidWinner(AGame game)
    {
       var outOfTurnPlayer = game.FindGamePlayers(Game.TeamId.Team2).First().PlayerId;
-      var selectTrumpAction = () => game.SelectTrump(outOfTurnPlayer, CardSuit.Hearts);
+      var selectTrumpAction = () => game.SelectTrump(outOfTurnPlayer, Suit.Hearts);
 
       selectTrumpAction.Should().Throw<InvalidEntityStateException>();
 
       game.Events.ShouldContain().NoEventsOfType<TrumpSelectedEvent>();
 
-      game.CurrentRoundState.TrumpSelected.Should().Be(CardSuit.Hearts);
+      game.CurrentRoundState.TrumpSelected.Should().Be(Suit.Hearts);
    }
 }

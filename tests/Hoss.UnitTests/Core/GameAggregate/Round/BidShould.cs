@@ -7,7 +7,7 @@
 
 namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
-#region
+   #region
 
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
@@ -72,7 +72,7 @@ public class BidShould
    {
       var bidPlayerId = game.CurrentPlayerId;
       game.Bid(bidPlayerId, value);
-      game.CurrentRoundState.State.Should().Be(Round.RoundState.CardsDealt);
+      game.CurrentRoundState.State.Should().Be(Round.RoundState.Bidding);
       var bid = game.CurrentRoundState.Bids.Should().ContainSingle().Subject;
       bid.PlayerId.Should().Be(bidPlayerId);
       bid.Value.Should().Be(value);

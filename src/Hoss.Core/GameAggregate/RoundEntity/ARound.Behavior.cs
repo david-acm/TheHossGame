@@ -44,7 +44,7 @@ public sealed partial class ARound
          teamPlayers = new Queue<RoundPlayer>(@event.TeamPlayers),
          deals = @event.Deals.ToList(),
          bids = @event.Bids.ToList(),
-         state = RoundState.CardsDealt,
+         state = RoundState.Bidding,
       };
    }
 
@@ -58,7 +58,7 @@ public sealed partial class ARound
       }
    }
 
-   internal override void SelectTrump(PlayerId playerId, CardSuit suit)
+   internal override void SelectTrump(PlayerId playerId, Suit suit)
    {
       this.Apply(new TrumpSelectedEvent(this.GameId, this.Id, playerId, suit));
    }
@@ -84,9 +84,9 @@ public sealed partial class ARound
       }).Invoke();
    }
 
-   private static List<PlayerDeal> DealCards(Deck deck, IEnumerable<RoundPlayer> teamPlayers)
+   private static List<ADeal> DealCards(Deck deck, IEnumerable<RoundPlayer> teamPlayers)
    {
-      var playerHand = teamPlayers.Select(p => new PlayerDeal(p.PlayerId)).ToList();
+      var playerHand = teamPlayers.Select(p => new ADeal(p.PlayerId)).ToList();
 
       while (deck.HasCards) playerHand.ForEach(p => p.ReceiveCard(deck.Deal()));
 
@@ -111,43 +111,53 @@ public sealed partial class ARound
 
    private void HandleStartedEvent(RoundStartedEvent e)
    {
-      this.state = RoundState.Started;
+      this.state = RoundState.ShufflingCards;
       this.teamPlayers = new Queue<RoundPlayer>(e.TeamPlayers.ToList());
    }
 
    private void HandlePlayerCardsDealtEvent(PlayerCardsDealtEvent e)
    {
-      this.state = RoundState.CardsShuffled;
-      this.deals.Add(e.PlayerCards);
+      this.state = RoundState.DealingCards;
+      this.deals.Add(e.Cards);
    }
 
    private void HandleCardsDealtEvent()
    {
-      this.state = RoundState.CardsDealt;
+      this.state = RoundState.Bidding;
    }
 
    private void HandleBidEvent(BidEvent e)
    {
-      this.bids.Add(e.Bid);
-      this.FinishTurn();
+      this.Play(() => this.bids.Add(e.Bid));
    }
 
    private void HandleBidCompleteEvent(BidCompleteEvent e)
    {
       while (this.CurrentPlayerId != e.WinningBid.PlayerId) this.FinishTurn();
 
-      this.state = RoundState.BidFinished;
+      this.state = RoundState.SelectingTrump;
    }
 
    private void HandleTrumpSelectedEvent(TrumpSelectedEvent e)
    {
-      this.trumpSelection = (e.Trump, e.PlayerId);
-      this.state = RoundState.TrumpSelected;
+      this.trumpSelection = new TrumpSelection(e.PlayerId, e.Trump);
+      this.state = RoundState.PlayingCards;
    }
 
-   private void HandleCardPlayedEvent(CardPlayedEvent cardPlayedEvent)
+   private void HandleCardPlayedEvent(CardPlayedEvent @event)
    {
-      this.plays.Add(new Play(cardPlayedEvent.PlayerId, cardPlayedEvent.Card));
+      this.Play
+         (() =>
+         {
+            var cardPlay = new CardPlay(@event.PlayerId, @event.Card);
+            this.tableCenter.Add(cardPlay);
+            this.deals.First(d => d.PlayerId == @event.PlayerId).PlayCard(@event.Card);
+         });
+   }
+
+   private void Play(Action action)
+   {
+      action();
       this.FinishTurn();
    }
 

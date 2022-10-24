@@ -1,16 +1,13 @@
-﻿// 🃏 The HossGame 🃏
-// <copyright file="Bid.cs" company="Reactive">
+// 🃏 The HossGame 🃏
+// <copyright file="Play.cs" company="Reactive">
 // Copyright (c) Reactive. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-
-   #region
+namespace Hoss.Core.GameAggregate.RoundEntity;
 
 using Hoss.Core.PlayerAggregate;
+using Hoss.SharedKernel;
 
-#endregion
-
-public record Bid(PlayerId PlayerId, BidValue Value) : Play(PlayerId);
+public abstract record Play(PlayerId PlayerId) : ValueObject;

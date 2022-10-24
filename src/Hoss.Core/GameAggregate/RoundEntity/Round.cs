@@ -7,7 +7,7 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
-#region
+   #region
 
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
@@ -23,11 +23,11 @@ public abstract class Round : EntityBase<RoundId>
    public enum RoundState
    {
       None,
-      Started,
-      CardsShuffled,
-      CardsDealt,
-      BidFinished,
-      TrumpSelected,
+      ShufflingCards,
+      DealingCards,
+      Bidding,
+      SelectingTrump,
+      PlayingCards,
    }
 
    #endregion
@@ -39,21 +39,23 @@ public abstract class Round : EntityBase<RoundId>
 
    internal abstract RoundState State { get; }
 
-   internal abstract IReadOnlyList<PlayerDeal> PlayerDeals { get; }
+   internal abstract IReadOnlyList<ADeal> Deals { get; }
 
    internal abstract IReadOnlyList<RoundPlayer> RoundPlayers { get; }
 
    internal abstract IReadOnlyList<Bid> Bids { get; }
 
+   internal abstract IReadOnlyList<CardPlay> CardsPlayed { get; }
+
    internal abstract PlayerId CurrentPlayerId { get; }
 
-   internal abstract CardSuit SelectedTrump { get; }
+   internal abstract Suit SelectedTrump { get; }
 
    internal virtual void Bid(PlayerId playerId, BidValue value)
    {
    }
 
-   internal virtual void SelectTrump(PlayerId playerId, CardSuit suit)
+   internal virtual void SelectTrump(PlayerId playerId, Suit suit)
    {
    }
 
@@ -67,5 +69,10 @@ public abstract class Round : EntityBase<RoundId>
 
    protected override void When(DomainEventBase @event)
    {
+   }
+
+   internal virtual Deal DealForPlayer(PlayerId playerId)
+   {
+      return new Deal(new NoPlayerId());
    }
 }

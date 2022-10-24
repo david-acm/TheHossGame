@@ -7,7 +7,7 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
-#region
+   #region
 
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
@@ -20,7 +20,7 @@ public record RoundState(Round currentRound) : ValueObject
 {
    private readonly Round currentRound = currentRound;
 
-   public IReadOnlyList<PlayerDeal> PlayerDeals => this.currentRound.PlayerDeals;
+   public IReadOnlyList<ADeal> PlayerDeals => this.currentRound.Deals;
 
    internal PlayerId CurrentPlayerId => this.currentRound.CurrentPlayerId;
 
@@ -32,5 +32,12 @@ public record RoundState(Round currentRound) : ValueObject
 
    public IReadOnlyList<RoundPlayer> RoundPlayers => this.currentRound.RoundPlayers;
 
-   public CardSuit TrumpSelected => this.currentRound.SelectedTrump;
+   public Suit TrumpSelected => this.currentRound.SelectedTrump;
+
+   public IReadOnlyList<CardPlay> TableCenter => this.currentRound.CardsPlayed;
+
+   public Deal DealForPlayer(PlayerId playerId)
+   {
+      return this.currentRound.DealForPlayer(playerId);
+   }
 }

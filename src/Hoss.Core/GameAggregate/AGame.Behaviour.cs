@@ -59,7 +59,7 @@ public sealed partial class AGame
       var shuffledDeck = ADeck.ShuffleNew(this.shufflingService);
       var round = ARound.StartNew(this.Id, this.GetTeamPlayers(), shuffledDeck, this.Apply);
 
-      this.Apply(new GameStartedEvent(this.Id, round.Id, round.RoundPlayers, round.PlayerDeals, round.Bids));
+      this.Apply(new GameStartedEvent(this.Id, round.Id, round.RoundPlayers, round.Deals, round.Bids));
    }
 
    public void Bid(PlayerId playerId, BidValue value)
@@ -67,7 +67,7 @@ public sealed partial class AGame
       this.CurrentRound.Bid(playerId, value);
    }
 
-   public void SelectTrump(PlayerId currentPlayerId, CardSuit suit)
+   public void SelectTrump(PlayerId currentPlayerId, Suit suit)
    {
       this.CurrentRound.SelectTrump(currentPlayerId, suit);
    }

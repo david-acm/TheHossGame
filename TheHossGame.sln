@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheHossGame.Core", "src\TheHossGame.Core\TheHossGame.Core.csproj", "{D8122218-2AE1-486C-ABA6-79F4E35D8289}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hoss.Core", "src\Hoss.Core\Hoss.Core.csproj", "{D8122218-2AE1-486C-ABA6-79F4E35D8289}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C655C2AE-FB46-47D4-9E03-4E8B22E5C572}"
 EndProject
@@ -21,13 +21,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Sln Items", ".Sln Items", 
 		.Sln Items\SharedAssemblyInfo.cs = .Sln Items\SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheHossGame.SharedKernel", "src\TheHossGame.SharedKernel\TheHossGame.SharedKernel.csproj", "{42F006F1-6076-4128-A7B2-30E4DEB4A7D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hoss.SharedKernel", "src\Hoss.SharedKernel\Hoss.SharedKernel.csproj", "{42F006F1-6076-4128-A7B2-30E4DEB4A7D2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheHossGame.Infrastructure", "src\TheHossGame.Infrastructure\TheHossGame.Infrastructure.csproj", "{E0672A51-D86C-4BC7-8595-BC34D860E2C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheHossGame.Web", "src\TheHossGame.Web\TheHossGame.Web.csproj", "{382C2A25-4585-4A3C-9E8B-CEDCEC9BCFC2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheHossGame.UnitTests", "tests\TheHossGame.UnitTests\TheHossGame.UnitTests.csproj", "{06ABFE70-6295-405F-8FD7-A7989CB803E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hoss.UnitTests", "tests\Hoss.UnitTests\Hoss.UnitTests.csproj", "{06ABFE70-6295-405F-8FD7-A7989CB803E3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheHossGame.IntegrationTests", "tests\TheHossGame.IntegrationTests\TheHossGame.IntegrationTests.csproj", "{2A11EB5E-B51B-4125-87F0-9CB4CC715E8C}"
 EndProject

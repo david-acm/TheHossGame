@@ -1,0 +1,24 @@
+﻿// 🃏 The HossGame 🃏
+// <copyright file="BidEvent.cs" company="Reactive">
+// Copyright (c) Reactive. All rights reserved.
+// </copyright>
+// 🃏 The HossGame 🃏
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Hoss.Core.GameAggregate.RoundEntity.Events;
+
+#region
+
+using Hoss.Core.GameAggregate.Events;
+using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
+using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
+using Hoss.Core.PlayerAggregate;
+using Hoss.SharedKernel;
+
+#endregion
+
+public record BidEvent(GameId GameId, RoundId RoundId, Bid Bid) : RoundEventBase(GameId, RoundId);
+
+public record BidCompleteEvent(GameId GameId, RoundId RoundId, Bid WinningBid) : RoundEventBase(GameId, RoundId);
+
+public record TrumpSelectedEvent(GameId GameId, RoundId RoundId, PlayerId PlayerId, CardSuit Trump) : RoundEventBase(GameId, RoundId);

@@ -2,9 +2,9 @@
   "solution": {
     "path": "TheHossGame.sln",
     "projects": [
-      "src\\TheHossGame.Core\\TheHossGame.Core.csproj",
-      "src\\TheHossGame.SharedKernel\\TheHossGame.SharedKernel.csproj",
-      "tests\\TheHossGame.UnitTests\\TheHossGame.UnitTests.csproj"
+      "src\\Hoss.Core\\Hoss.Core.csproj",
+      "tests\\Hoss.UnitTests\\Hoss.UnitTests.csproj",
+      "src\\Hoss.SharedKernel\\Hoss.SharedKernel.csproj"
     ]
   }
 }

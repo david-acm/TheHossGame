@@ -7,7 +7,7 @@
 
 namespace TheHossGame.UnitTests.Core.Services;
 
-#region
+   #region
 
 using AutoFixture.Kernel;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
@@ -35,9 +35,36 @@ public class AutoOrderedDeckGenerator : ISpecimenBuilder
    private static ADeck GenerateShuffledDeck()
    {
       var shufflingService = new Mock<IShufflingService>();
+      shufflingService.Setup(s => s.Shuffle(It.IsAny<IList<ACard>>())).Callback((IList<ACard> _) => { });
+      return ADeck.ShuffleNew(shufflingService.Object);
+   }
+}
+
+public class AutoPlayerWithNoTrumpDeckGenerator : ISpecimenBuilder
+{
+   #region ISpecimenBuilder Members
+
+   public object Create(object request, ISpecimenContext context)
+   {
+      if (!typeof(ADeck).Equals(request))
+      {
+         return new NoSpecimen();
+      }
+
+      return GenerateShuffledDeck();
+   }
+
+   #endregion
+
+   private static ADeck GenerateShuffledDeck()
+   {
+      var shufflingService = new Mock<IShufflingService>();
       shufflingService.Setup(s => s.Shuffle(It.IsAny<IList<ACard>>())).Callback
-         ((IList<ACard> _) =>
+         ((List<ACard> cards) =>
          {
+            var ordererdCards = cards.OrderBy(c => c.Rank).ToList();
+            cards.Clear();
+            cards.AddRange(ordererdCards);
          });
       return ADeck.ShuffleNew(shufflingService.Object);
    }

@@ -7,7 +7,7 @@
 
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
-#region
+   #region
 
 using TheHossGame.UnitTests.Core.Services;
 
@@ -28,5 +28,14 @@ public sealed class AutoBidFinishedGameDataAttribute : LazyDataAttribute
    {
       AddCustomization(new ReadyBidFinishedGameCustomization());
       AddCustomization(new AutoOrderedDeckCustomization());
+   }
+}
+
+public sealed class HossRoundDataAttribute : LazyDataAttribute
+{
+   public HossRoundDataAttribute()
+   {
+      AddCustomization(new ReadyBidFinishedGameCustomization());
+      AddCustomization(new AutoPlayerWithNoTrumpCustomization());
    }
 }

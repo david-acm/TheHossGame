@@ -13,7 +13,6 @@ using Hoss.Core.GameAggregate;
 using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.PlayerAggregate.Events;
 using Hoss.SharedKernel;
-using JetBrains.Annotations;
 
 #endregion
 
@@ -56,11 +55,11 @@ public sealed class APlayer : Player
 
    protected override void EnsureValidState()
    {
+#pragma warning disable CS8509
       var valid = this.State switch
+#pragma warning restore CS8509
       {
-         PlayerState.NotPlaying => this.JoiningGameId is NoGameId,
          PlayerState.Playing => this.JoiningGameId is not NoGameId,
-         _ => true,
       };
 
       if (!valid)
@@ -71,15 +70,16 @@ public sealed class APlayer : Player
 
    protected override void When(DomainEventBase @event)
    {
+#pragma warning disable CS8509
       (@event switch
+#pragma warning restore CS8509
       {
-         CannotJoinGameEvent e => (Action)(() => { }),
-         RequestedJoinGameEvent e => () => 
+         CannotJoinGameEvent => (Action)(() => { }),
+         RequestedJoinGameEvent e => () =>
          {
             this.State = PlayerState.Playing;
             this.JoiningGameId = e.GameId;
          },
-         _ => throw new ArgumentOutOfRangeException(nameof(@event)),
       }).Invoke();
    }
 

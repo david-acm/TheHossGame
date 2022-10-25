@@ -84,13 +84,14 @@ public sealed partial class AGame
 
    protected override void EnsureValidState()
    {
+#pragma warning disable CS8524
       var valid = this.State switch
+#pragma warning restore CS8524
       {
          GameState.Created => this.TeamValid(Team1) && this.TeamValid(Team2),
          GameState.TeamsFormed => this.TeamComplete(Team1) && this.TeamComplete(Team2),
          GameState.Started => this.FindGamePlayers().All(t => t.IsReady),
          GameState.Finished => this.State == GameState.Finished,
-         _ => throw new NotImplementedException(),
       };
 
       if (!valid)

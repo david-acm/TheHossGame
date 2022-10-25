@@ -57,6 +57,6 @@ public class SelectTrumpShould
 
       game.Events.ShouldContain().NoEventsOfType<TrumpSelectedEvent>();
 
-      game.CurrentRoundState.TrumpSelected.Should().Be(Suit.Hearts);
+      game.CurrentRoundState.TrumpSelected.Should().Be(Suit.None);
    }
 }

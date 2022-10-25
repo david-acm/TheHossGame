@@ -10,4 +10,7 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 using Hoss.Core.PlayerAggregate;
 using Hoss.SharedKernel;
 
-public abstract record Play(PlayerId PlayerId) : ValueObject;
+public abstract record Play(PlayerId PlayerId) : ValueObject
+{
+   public PlayerId PlayerId { get; } = PlayerId;
+}

@@ -9,25 +9,29 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
    #region
 
+using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
+using Hoss.Core.GameAggregate.RoundEntity.Events;
 using Hoss.Core.PlayerAggregate;
+using static Hoss.Core.GameAggregate.RoundEntity.BidEntity.BidValue;
 
 #endregion
 
 public sealed partial class ARound
 {
-   protected override void EnsureValidState()
+   private void EnsurePreconditions(RoundEventBase @event)
    {
-      var valid = this.State switch
+#pragma warning disable CS8509
+      var valid = @event switch
+#pragma warning restore CS8509
       {
-         RoundState.ShufflingCards => this.ValidateGameStarted(),
-         RoundState.DealingCards => this.ValidateCardsShuffled(),
-         RoundState.Bidding => this.ValidateCardsDealt(),
-         RoundState.SelectingTrump => this.ValidateBiddingFinished(),
-         RoundState.PlayingCards => this.ValidateTrumpSelected() && this.ValidateOrderOfPlay(this.tableCenter) && this.ValidateCardPlayed(),
-         RoundState.None => false,
-         _ => false,
+         CardPlayedEvent e => this.ValidateCardPlayed(e),
+         TrumpSelectedEvent e => this.ValidateTrumpSelected(e),
+         BidEvent e => this.ValidateBid(e),
+         PlayerCardsDealtEvent e => ValidateCardsDealt(e),
+         RoundStartedEvent e => ValidateRoundStarted(e),
+         _ => true,
       };
 
       if (!valid)
@@ -36,114 +40,34 @@ public sealed partial class ARound
       }
    }
 
-   private bool ValidateGameStarted()
+   private static bool ValidateCardsDealt(PlayerCardsDealtEvent e) => e.Deal.Cards.Count == 6;
+
+   private static bool ValidateRoundStarted(RoundStartedEvent e) => e.TeamPlayers.Count() == 4;
+
+   private bool ValidateTrumpSelected(TrumpSelectedEvent @event) => this.BidWinner == @event.PlayerId;
+
+   private bool ValidateCardPlayed(CardPlayedEvent e) => this.IsThePlayersTurn(e.PlayerId) && this.PlayerHasThatCard(e) && (this.IsOpeningCard() || this.CardFollowsSuit(e) || this.PlayerHasNoCardsOfAskedSuit(e));
+
+   private bool IsOpeningCard() => this.tableCenter.Count == 0;
+
+   private bool CardFollowsSuit(CardPlayedEvent e) => e.Card.Suit == this.AskedSuit();
+
+   private Suit AskedSuit() => this.tableCenter.Last().Card.Suit;
+
+   private bool PlayerHasNoCardsOfAskedSuit(CardPlayedEvent e) => this.CardsForPlayer(e.PlayerId).All(c => c.Suit != this.AskedSuit());
+
+   private bool PlayerHasThatCard(CardPlayedEvent e) => this.CardsForPlayer(e.PlayerId).Contains(e.Card);
+
+   private bool IsThePlayersTurn(PlayerId playerId) => playerId == this.CurrentPlayerId;
+
+   private bool ValidateBid(BidEvent e) => this.ValidateBid(e.Bid) && this.IsThePlayersTurn(e.Bid.PlayerId);
+
+   private bool ValidateBid(Bid bid) => this.ValidateBidValue(bid);
+
+   private bool ValidateBidValue(Bid newBid)
    {
-      return this.RoundPlayers.Count == 4;
-   }
+      bool BiggerThanPrevious() => this.bids.TrueForAll(bid => newBid > bid);
 
-   private bool ValidateCardsShuffled()
-   {
-      return this.ValidateGameStarted() && this.Deals.All(p => p.Cards.Count == 6);
-   }
-
-   private bool ValidateCardsDealt()
-   {
-      return this.ValidateCardsShuffled() && this.Deals.Count == 4 && this.ValidateBidValue() && this.ValidateOrderOfPlay(this.Bids);
-   }
-
-   private bool ValidateBiddingFinished()
-   {
-      return this.ValidateGameStarted() && this.ValidateCardsShuffled() && this.CurrentPlayerId == this.WinningBid().PlayerId;
-   }
-
-   private bool ValidateOrderOfPlay(IReadOnlyList<Play> plays)
-   {
-      bool AnyPlay()
-      {
-         return plays.Any();
-      }
-
-      PlayerId PlayerThatPlayed()
-      {
-         return plays[^1].PlayerId;
-      }
-
-      PlayerId PlayerInTurn() => this.RoundPlayers[^1].PlayerId;
-
-      return !AnyPlay() || (PlayerInTurn() == PlayerThatPlayed());
-   }
-
-   private bool ValidateCardPlayed()
-   {
-      bool NoCardsPlayedYet()
-      {
-         return !this.tableCenter.Any();
-      }
-
-      bool IsFirstCard()
-      {
-         return this.tableCenter.Count == 1;
-      }
-
-      bool PlayerOwnsCard()
-      {
-         return NoCardsPlayedYet() || !OtherPlayerCards().Union(PreviousTableCenterCards()).Contains(CardPlayed());
-      }
-
-      bool PlayedCardFollowsSuit()
-      {
-         return NoCardsPlayedYet() || IsFirstCard() || this.tableCenter[^2].Card.Suit == CardPlay().Card.Suit;
-      }
-
-      CardPlay CardPlay()
-      {
-         return this.tableCenter[^1];
-      }
-
-      Card CardPlayed()
-      {
-         return CardPlay().Card;
-      }
-
-      IEnumerable<Card> OtherPlayerCards()
-      {
-         return this.Deals.Where(p => p.PlayerId != CardPlay().PlayerId).SelectMany(d => d.Cards);
-      }
-
-      IEnumerable<Card> PreviousTableCenterCards()
-      {
-         return this.tableCenter.Select(t => t.Card).Take(this.tableCenter.Count - 1);
-      }
-
-      return PlayerOwnsCard() && PlayedCardFollowsSuit();
-   }
-
-   private bool ValidateBidValue()
-   {
-      var orderedBids = this.Bids.Select
-         ((b, i) => new
-         {
-            Bid = b,
-            Index = i,
-         }).OrderBy(p => p.Index).ToList();
-
-      return orderedBids.TrueForAll
-         (c =>
-         {
-            var indexOfPreviousBid = c.Index - 1 > 0 ? c.Index - 1 : 0;
-            var lastBid = this.Bids[indexOfPreviousBid].Value;
-
-            var isSameBid = c.Index == indexOfPreviousBid;
-            var bidIsBiggerThanLast = c.Bid.Value > lastBid;
-            var bidIsAPass = c.Bid.Value == BidValue.Pass;
-
-            return isSameBid || bidIsBiggerThanLast || bidIsAPass;
-         });
-   }
-
-   private bool ValidateTrumpSelected()
-   {
-      var playerSelectedTrump = this.trumpSelection.PlayerId;
-      return this.WinningBid().PlayerId == playerSelectedTrump;
+      return newBid == Pass || BiggerThanPrevious();
    }
 }

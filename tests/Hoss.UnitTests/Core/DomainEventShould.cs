@@ -7,9 +7,10 @@
 
 namespace TheHossGame.UnitTests.Core;
 
-#region
+   #region
 
 using System.Reflection;
+using FluentAssertions;
 using FluentAssertions.Types;
 using Hoss.Core.PlayerAggregate.Events;
 using Hoss.SharedKernel;
@@ -25,5 +26,6 @@ public class DomainEventShould
       var eventsAssembly = typeof(PlayerRegisteredEvent).Assembly;
       var properties = AllTypes.From(eventsAssembly).ThatDeriveFrom<DomainEventBase>().SelectMany(v => v.GetProperties());
       var setMethods = properties.Select(p => p.SetMethod).OfType<MethodInfo>().Where(p => p.DeclaringType != typeof(DomainEventBase) && !p.CustomAttributes.Any()).ToList();
+      setMethods.Should().BeEmpty();
    }
 }

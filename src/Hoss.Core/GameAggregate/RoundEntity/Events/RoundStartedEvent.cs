@@ -7,10 +7,9 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity.Events;
 
-#region
+   #region
 
 using Hoss.Core.GameAggregate.Events;
-using Hoss.SharedKernel;
 
 #endregion
 

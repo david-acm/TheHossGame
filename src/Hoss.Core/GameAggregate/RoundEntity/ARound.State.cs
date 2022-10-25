@@ -9,6 +9,7 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
    #region
 
+using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using Hoss.Core.PlayerAggregate;
@@ -21,7 +22,7 @@ using Hoss.SharedKernel;
 /// </summary>
 public sealed partial class ARound : Round
 {
-   private readonly List<CardPlay> tableCenter = new ();
+   private readonly Stack<CardPlay> tableCenter = new ();
    private List<Bid> bids = new ();
    private List<ADeal> deals = new ();
    private RoundState state;
@@ -49,7 +50,7 @@ public sealed partial class ARound : Round
    internal override IReadOnlyList<Bid> Bids => this.bids.AsReadOnly();
 
    /// <inheritdoc />
-   internal override IReadOnlyList<CardPlay> CardsPlayed => this.tableCenter.AsReadOnly();
+   internal override IReadOnlyList<CardPlay> CardsPlayed => this.tableCenter.ToList().AsReadOnly();
 
    internal override PlayerId CurrentPlayerId => this.teamPlayers.Peek().PlayerId;
 
@@ -60,5 +61,15 @@ public sealed partial class ARound : Round
    internal override ADeal DealForPlayer(PlayerId playerId)
    {
       return this.deals.First(d => d.PlayerId == playerId);
+   }
+
+   internal override IEnumerable<Card> CardsForPlayer(PlayerId playerId) => this.deals.First(d => d.PlayerId == playerId).Cards;
+
+   /// <inheritdoc />
+   protected override void Apply(DomainEventBase @event)
+   {
+      var roundEvent = @event as RoundEventBase;
+      this.EnsurePreconditions(roundEvent!);
+      base.Apply(@event);
    }
 }

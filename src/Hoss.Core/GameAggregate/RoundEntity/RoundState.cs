@@ -36,8 +36,5 @@ public record RoundState(Round currentRound) : ValueObject
 
    public IReadOnlyList<CardPlay> TableCenter => this.currentRound.CardsPlayed;
 
-   public Deal DealForPlayer(PlayerId playerId)
-   {
-      return this.currentRound.DealForPlayer(playerId);
-   }
+   public Deal DealForPlayer(PlayerId playerId) => this.currentRound.DealForPlayer(playerId);
 }

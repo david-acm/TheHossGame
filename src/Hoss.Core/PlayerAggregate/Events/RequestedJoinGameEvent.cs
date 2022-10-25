@@ -7,10 +7,9 @@
 
 namespace Hoss.Core.PlayerAggregate.Events;
 
-#region
+   #region
 
 using Hoss.Core.GameAggregate;
-using Hoss.SharedKernel;
 
 #endregion
 

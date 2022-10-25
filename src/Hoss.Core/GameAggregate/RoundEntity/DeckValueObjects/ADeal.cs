@@ -17,11 +17,11 @@ public record Deal(PlayerId PlayerId) : Play(PlayerId)
 {
    public virtual IReadOnlyList<Card> Cards => new List<Card>();
 
-   public virtual void ReceiveCard(Card card)
+   internal virtual void ReceiveCard(Card card)
    {
    }
 
-   public virtual void PlayCard(Card card)
+   internal virtual void PlayCard(Card card)
    {
    }
 }
@@ -32,13 +32,15 @@ public record ADeal(PlayerId PlayerId) : Deal(PlayerId)
 
    public override IReadOnlyList<Card> Cards => this.cards.AsReadOnly();
 
-   public override void ReceiveCard(Card card)
+   internal override void ReceiveCard(Card card)
    {
       this.cards.Add(card);
+      base.ReceiveCard(card);
    }
 
-   public override void PlayCard(Card card)
+   internal override void PlayCard(Card card)
    {
       this.cards.Remove(card);
+      base.PlayCard(card);
    }
 }

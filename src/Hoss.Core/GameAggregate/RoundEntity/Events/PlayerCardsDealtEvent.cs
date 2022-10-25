@@ -14,4 +14,4 @@ using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
 #endregion
 
-public record PlayerCardsDealtEvent(GameId GameId, RoundId RoundId, ADeal Cards) : RoundEventBase(GameId, RoundId);
+public record PlayerCardsDealtEvent(GameId GameId, RoundId RoundId, ADeal Deal) : RoundEventBase(GameId, RoundId);

@@ -7,9 +7,8 @@
 
 namespace Hoss.Core.PlayerAggregate;
 
-#region
+   #region
 
-using System.Runtime.Serialization;
 using Hoss.Core.GameAggregate;
 using Hoss.SharedKernel;
 using Hoss.SharedKernel.Interfaces;

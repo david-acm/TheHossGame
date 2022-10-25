@@ -24,6 +24,8 @@ using static Game;
 /// </summary>
 public sealed partial class ARound
 {
+   private PlayerId BidWinner => this.WinningBid().PlayerId;
+
    internal static ARound StartNew(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Deck shuffledDeck, Action<DomainEventBase> when)
    {
       var roundPlayers = teamPlayers.ToList();
@@ -71,7 +73,9 @@ public sealed partial class ARound
    protected override void When(DomainEventBase @event)
    {
       var roundEvent = (RoundEventBase)@event;
+#pragma warning disable CS8509
       (roundEvent switch
+#pragma warning restore CS8509
       {
          RoundStartedEvent e => (Action)(() => this.HandleStartedEvent(e)),
          PlayerCardsDealtEvent e => () => this.HandlePlayerCardsDealtEvent(e),
@@ -80,7 +84,6 @@ public sealed partial class ARound
          BidCompleteEvent e => () => this.HandleBidCompleteEvent(e),
          TrumpSelectedEvent e => () => this.HandleTrumpSelectedEvent(e),
          CardPlayedEvent e => () => this.HandleCardPlayedEvent(e),
-         _ => default!,
       }).Invoke();
    }
 
@@ -118,7 +121,7 @@ public sealed partial class ARound
    private void HandlePlayerCardsDealtEvent(PlayerCardsDealtEvent e)
    {
       this.state = RoundState.DealingCards;
-      this.deals.Add(e.Cards);
+      this.deals.Add(e.Deal);
    }
 
    private void HandleCardsDealtEvent()
@@ -150,7 +153,7 @@ public sealed partial class ARound
          (() =>
          {
             var cardPlay = new CardPlay(@event.PlayerId, @event.Card);
-            this.tableCenter.Add(cardPlay);
+            this.tableCenter.Push(cardPlay);
             this.deals.First(d => d.PlayerId == @event.PlayerId).PlayCard(@event.Card);
          });
    }

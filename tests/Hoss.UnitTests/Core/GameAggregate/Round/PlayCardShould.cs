@@ -15,6 +15,7 @@ using Hoss.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
+using static Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects.Suit;
 
 public class PlayCardShould
 {
@@ -23,7 +24,7 @@ public class PlayCardShould
    public void RaiseEventWhenRoundActive(AGame game)
    {
       var currentPlayerId = game.CurrentPlayerId;
-      game.SelectTrump(currentPlayerId, Suit.Hearts);
+      game.SelectTrump(currentPlayerId, Hearts);
       var playedCard = game.CurrentRoundState.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
       game.PlayCard(currentPlayerId, playedCard);
 
@@ -33,13 +34,34 @@ public class PlayCardShould
    }
 
    [Theory]
+   [HossRoundData]
+   public void AllowDifferentSuitWhenNotAvailable(AGame game)
+   {
+      var currentPlayerId = game.CurrentPlayerId;
+      game.SelectTrump(currentPlayerId, this.SuitWithMostCards(game, currentPlayerId));
+
+      var leadCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards[0];
+
+      game.PlayCard(currentPlayerId, leadCard);
+
+      var wrongSuitCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards[0];
+
+      game.PlayCard(game.CurrentPlayerId, wrongSuitCard);
+
+      game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(2);
+   }
+
+   private Suit SuitWithMostCards(AGame game, PlayerId currentPlayerId) => game.CurrentRoundState.DealForPlayer(currentPlayerId!).Cards.GroupBy(c => c.Suit).OrderByDescending(s => s.Count()).First().Key;
+
+   [Theory]
    [AutoBidFinishedGameData]
    public void ThrowEntityInvalidExceptionWhenCardDoesNotFollowSuit(AGame game)
    {
       var currentPlayerId = game.CurrentPlayerId;
-      game.SelectTrump(currentPlayerId, Suit.Hearts);
+      game.SelectTrump(currentPlayerId, this.SuitWithMostCards(game, currentPlayerId));
       var leadCard = game.CurrentRoundState.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
       game.PlayCard(currentPlayerId, leadCard);
+
       var wrongSuitCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards.First(c => c.Suit != leadCard.Suit);
       var action = () => game.PlayCard(game.CurrentPlayerId, wrongSuitCard);
 
@@ -51,8 +73,8 @@ public class PlayCardShould
    [AutoBidFinishedGameData]
    public void ThrowExceptionWhenCardNotInPlayerDeal(AGame game)
    {
-      game.SelectTrump(game.CurrentPlayerId, Suit.Hearts);
-      var card = game.CurrentRoundState.PlayerDeals.First(pd => pd != game.CurrentPlayerId)!.Cards.First();
+      game.SelectTrump(game.CurrentPlayerId, Hearts);
+      var card = game.CurrentRoundState.PlayerDeals.First(pd => pd != game.CurrentPlayerId)!.Cards[0];
       var action = () => game.PlayCard(game.CurrentPlayerId, card);
 
       action.Should().Throw<InvalidEntityStateException>();
@@ -64,7 +86,7 @@ public class PlayCardShould
    [AutoPlayerData]
    public void NotRaiseEventWhenNoRoundActive(AGame game)
    {
-      game.PlayCard(game.CurrentPlayerId, new ACard(Suit.Clubs, Rank.King));
+      game.PlayCard(game.CurrentPlayerId, new ACard(Clubs, Rank.King));
 
       game.Events.ShouldContain().NoEventsOfType<CardPlayedEvent>();
    }
@@ -73,10 +95,10 @@ public class PlayCardShould
    [AutoBidFinishedGameData]
    public void ThrowExceptionWhenPlayerNotInTurn(AGame game)
    {
-      game.SelectTrump(game.CurrentPlayerId, Suit.Hearts);
+      game.SelectTrump(game.CurrentPlayerId, Hearts);
       var playerNotInTurn = game.FindGamePlayers().FirstOrDefault(p => p.Id != game.CurrentPlayerId);
 
-      var playAction = () => game.PlayCard(playerNotInTurn!.PlayerId, new ACard(Suit.Clubs, Rank.King));
+      var playAction = () => game.PlayCard(playerNotInTurn!.PlayerId, new ACard(Clubs, Rank.King));
 
       playAction.Should().Throw<InvalidEntityStateException>();
    }

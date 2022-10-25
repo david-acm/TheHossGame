@@ -71,8 +71,7 @@ public abstract class Round : EntityBase<RoundId>
    {
    }
 
-   internal virtual Deal DealForPlayer(PlayerId playerId)
-   {
-      return new Deal(new NoPlayerId());
-   }
+   internal virtual Deal DealForPlayer(PlayerId playerId) => new (new NoPlayerId());
+
+   internal virtual IEnumerable<Card> CardsForPlayer(PlayerId playerId) => new List<Card>();
 }

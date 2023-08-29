@@ -16,32 +16,35 @@ using Hoss.SharedKernel;
 #endregion
 
 public class EventCollectionAssertions<TEvent> : GenericCollectionAssertions<IEnumerable<TEvent>, TEvent>
-   where TEvent : DomainEventBase
+    where TEvent : DomainEventBase
 {
-   public EventCollectionAssertions(IEnumerable<TEvent> instance)
-      : base(instance)
-   {
-   }
+    public EventCollectionAssertions(IEnumerable<TEvent> instance)
+        : base(instance)
+    {
+    }
 
-   public TExpectedEvent SingleEventOfType<TExpectedEvent>(string because = "", params object[] becauseArgs)
-      where TExpectedEvent : DomainEventBase
-   {
-      var @event = this.Subject.Where(e => e is TExpectedEvent).Should().ContainSingle(because, becauseArgs).Subject.As<TExpectedEvent>();
+    public TExpectedEvent SingleEventOfType<TExpectedEvent>(string because = "", params object[] becauseArgs)
+        where TExpectedEvent : DomainEventBase
+    {
+        var @event = this.Subject.Should().ContainSingle(e => e is TExpectedEvent).Subject.As<TExpectedEvent>();
 
-      return @event;
-   }
+        return @event;
+    }
 
-   public void NoEventsOfType<TExpectedEvent>(string because = "", params object[] becauseArgs)
-      where TExpectedEvent : DomainEventBase
-   {
-      this.Subject.Where(e => e is TExpectedEvent).Should().NotContain(e => e is TExpectedEvent, because, becauseArgs);
-   }
+    public void NoEventsOfType<TExpectedEvent>(string because = "", params object[] becauseArgs)
+        where TExpectedEvent : DomainEventBase
+    {
+        this.Subject.Where(e => e is TExpectedEvent).Should()
+            .NotContain(e => e is TExpectedEvent, because, becauseArgs);
+    }
 
-   public IEnumerable<TExpectedEvent> ManyEventsOfType<TExpectedEvent>(int count, string because = "", params object[] becauseArgs)
-      where TExpectedEvent : DomainEventBase
-   {
-      var @event = this.Subject.Where(e => e is TExpectedEvent).Should().HaveCount(count, because, becauseArgs).And.Subject.Cast<TExpectedEvent>().As<IEnumerable<TExpectedEvent>>();
+    public IEnumerable<TExpectedEvent> ManyEventsOfType<TExpectedEvent>(int count, string because = "",
+        params object[] becauseArgs)
+        where TExpectedEvent : DomainEventBase
+    {
+        var @event = this.Subject.Where(e => e is TExpectedEvent).Should().HaveCount(count, because, becauseArgs).And
+            .Subject.Cast<TExpectedEvent>().As<IEnumerable<TExpectedEvent>>();
 
-      return @event;
-   }
+        return @event;
+    }
 }

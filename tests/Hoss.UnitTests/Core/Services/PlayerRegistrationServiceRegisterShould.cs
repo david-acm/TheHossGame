@@ -22,47 +22,52 @@ using Xunit;
 
 public class PlayerRegistrationServiceRegisterShould
 {
-   [Theory]
-   [AutoPlayerData]
-   public async Task NotRegisterPlayerWhenPlayerNameIsNotUnique([Frozen] Mock<IRepository<APlayer>> playerRepository, [Frozen] Mock<IEventStore<APlayer>> eventStore, PlayerRegistrationService service, APlayer player)
-   {
-      playerRepository.Setup(r => r.AnyAsync(It.IsAny<PlayerWithNameSpec>(), default!)).ReturnsAsync(true);
+    [Theory]
+    [AutoPlayerData]
+    public async Task NotRegisterPlayerWhenPlayerNameIsNotUnique([Frozen] Mock<IRepository<Player>> playerRepository,
+        [Frozen] Mock<IEventStore<Player>> eventStore, PlayerRegistrationService service, Player player)
+    {
+        playerRepository.Setup(r => r.AnyAsync(It.IsAny<PlayerWithNameSpec>(), default!)).ReturnsAsync(true);
 
-      await service.RegisterAsync(player);
+        await service.RegisterAsync(player);
 
-      eventStore.Verify(store => store.PushEventsAsync(It.IsAny<IEnumerable<DomainEventBase>>()), Times.Never);
-   }
+        eventStore.Verify(store => store.PushEventsAsync(It.IsAny<IEnumerable<DomainEventBase>>()), Times.Never);
+    }
 
-   [Theory]
-   [AutoPlayerData]
-   public async Task RegisterPlayerWhenPlayerNameIsUnique([Frozen] Mock<IRepository<APlayer>> playerRepository, PlayerRegistrationService service, APlayer player)
-   {
-      await service.RegisterAsync(player);
+    [Theory]
+    [AutoPlayerData]
+    public async Task RegisterPlayerWhenPlayerNameIsUnique([Frozen] Mock<IRepository<Player>> playerRepository,
+        PlayerRegistrationService service, Player player)
+    {
+        await service.RegisterAsync(player);
 
-      playerRepository.Verify(repo => repo.AnyAsync(It.IsAny<PlayerWithNameSpec>(), default!), Times.Once);
-   }
+        playerRepository.Verify(repo => repo.AnyAsync(It.IsAny<PlayerWithNameSpec>(), default!), Times.Once);
+    }
 
-   [Theory]
-   [AutoPlayerData]
-   public async Task NotRegisterPlayerWhenPlayerIsAlreadyRegistered([Frozen] Mock<IRepository<APlayer>> playerRepository, [Frozen] Mock<IEventStore<APlayer>> eventStore, PlayerRegistrationService service, APlayer player)
-   {
-      playerRepository.Setup(r => r.AnyAsync(It.IsAny<PlayerWithEmailSpec>(), default!)).ReturnsAsync(true);
+    [Theory]
+    [AutoPlayerData]
+    public async Task NotRegisterPlayerWhenPlayerIsAlreadyRegistered(
+        [Frozen] Mock<IRepository<Player>> playerRepository,
+        [Frozen] Mock<IEventStore<Player>> eventStore, PlayerRegistrationService service, Player player)
+    {
+        playerRepository.Setup(r => r.AnyAsync(It.IsAny<PlayerWithEmailSpec>(), default!)).ReturnsAsync(true);
 
-      await service.RegisterAsync(player);
+        await service.RegisterAsync(player);
 
-      playerRepository.Verify(repo => repo.AnyAsync(It.IsAny<PlayerWithEmailSpec>(), default!), Times.Once);
+        playerRepository.Verify(repo => repo.AnyAsync(It.IsAny<PlayerWithEmailSpec>(), default!), Times.Once);
 
-      eventStore.Verify(store => store.PushEventsAsync(It.IsAny<IEnumerable<DomainEventBase>>()), Times.Never);
-   }
+        eventStore.Verify(store => store.PushEventsAsync(It.IsAny<IEnumerable<DomainEventBase>>()), Times.Never);
+    }
 
-   [Theory]
-   [AutoPlayerData]
-   public async Task RegisterPlayerWhenPlayerIsNotRegistered([Frozen] Mock<IRepository<APlayer>> playerRepository, [Frozen] Mock<IEventStore<APlayer>> eventStore, PlayerRegistrationService service, APlayer player)
-   {
-      await service.RegisterAsync(player);
+    [Theory]
+    [AutoPlayerData]
+    public async Task RegisterPlayerWhenPlayerIsNotRegistered([Frozen] Mock<IRepository<Player>> playerRepository,
+        [Frozen] Mock<IEventStore<Player>> eventStore, PlayerRegistrationService service, Player player)
+    {
+        await service.RegisterAsync(player);
 
-      playerRepository.Verify(repo => repo.AnyAsync(It.IsAny<PlayerWithEmailSpec>(), default!), Times.Once);
+        playerRepository.Verify(repo => repo.AnyAsync(It.IsAny<PlayerWithEmailSpec>(), default!), Times.Once);
 
-      eventStore.Verify(store => store.PushEventsAsync(It.IsAny<IEnumerable<DomainEventBase>>()), Times.Once);
-   }
+        eventStore.Verify(store => store.PushEventsAsync(It.IsAny<IEnumerable<DomainEventBase>>()), Times.Once);
+    }
 }

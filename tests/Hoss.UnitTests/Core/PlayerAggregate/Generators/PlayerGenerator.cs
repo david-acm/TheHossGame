@@ -17,22 +17,22 @@ using Hoss.Core.PlayerAggregate;
 
 public class PlayerGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? specimenContext;
+    private ISpecimenContext? specimenContext;
 
-   #region ISpecimenBuilder Members
+    #region ISpecimenBuilder Members
 
-   public object Create(object request, ISpecimenContext context)
-   {
-      this.specimenContext = context;
-      return typeof(Player).Equals(request) ? this.RandomPlayerEmail() : new NoSpecimen();
-   }
+    public object Create(object request, ISpecimenContext context)
+    {
+        this.specimenContext = context;
+        return typeof(Base).Equals(request) ? this.RandomPlayerEmail() : new NoSpecimen();
+    }
 
-   #endregion
+    #endregion
 
-   private APlayer RandomPlayerEmail()
-   {
-      var playerId = this.specimenContext.Create<APlayerId>();
-      var playerName = this.specimenContext.Create<PlayerName>();
-      return APlayer.FromRegister(playerId, playerName);
-   }
+    private Player RandomPlayerEmail()
+    {
+        var playerId = this.specimenContext.Create<APlayerId>();
+        var playerName = this.specimenContext.Create<PlayerName>();
+        return Player.FromRegister(playerId, playerName);
+    }
 }

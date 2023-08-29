@@ -15,91 +15,158 @@ using Hoss.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
+using static Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects.Rank;
 using static Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects.Suit;
 
 public class PlayCardShould
 {
-   [Theory]
-   [AutoBidFinishedGameData]
-   public void RaiseEventWhenRoundActive(AGame game)
-   {
-      var currentPlayerId = game.CurrentPlayerId;
-      game.SelectTrump(currentPlayerId, Hearts);
-      var playedCard = game.CurrentRoundState.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
-      game.PlayCard(currentPlayerId, playedCard);
+    [Theory]
+    [BidFinishedGameData]
+    public void StartNewHandWhenAHandIsPlayed(AGame game)
+    {
+        var winner = game.CurrentPlayerId;
+        game.SelectTrump(winner, SuitWithMostCards(game, winner));
 
-      game.Events.ShouldContain().SingleEventOfType<CardPlayedEvent>();
-      game.CurrentRoundState.TableCenter.Should().Contain(cp => cp.Card == playedCard);
-      game.CurrentRoundState.DealForPlayer(currentPlayerId).Cards.Should().NotContain(playedCard);
-   }
+        game.PlayCard(winner, new ACard(Jack, Hearts));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Hearts));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Spades));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Jack, Diamonds));
 
-   [Theory]
-   [HossRoundData]
-   public void AllowDifferentSuitWhenNotAvailable(AGame game)
-   {
-      var currentPlayerId = game.CurrentPlayerId;
-      game.SelectTrump(currentPlayerId, this.SuitWithMostCards(game, currentPlayerId));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Ten, Hearts));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Ace, Clubs));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Ten, Spades));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Ten, Diamonds));
 
-      var leadCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards[0];
+        game.PlayCard(game.CurrentPlayerId, new ACard(Queen, Hearts));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Jack, Clubs));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Jack, Spades));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Diamonds));
 
-      game.PlayCard(currentPlayerId, leadCard);
+        game.PlayCard(game.CurrentPlayerId, new ACard(King, Hearts));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Queen, Clubs));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Queen, Spades));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Queen, Diamonds));
 
-      var wrongSuitCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards[0];
+        game.PlayCard(game.CurrentPlayerId, new ACard(Ace, Hearts));
+        game.PlayCard(game.CurrentPlayerId, new ACard(King, Clubs));
+        game.PlayCard(game.CurrentPlayerId, new ACard(King, Spades));
+        game.PlayCard(game.CurrentPlayerId, new ACard(King, Diamonds));
 
-      game.PlayCard(game.CurrentPlayerId, wrongSuitCard);
+        game.PlayCard(game.CurrentPlayerId, new ACard(Ten, Clubs));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Clubs));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Ace, Spades));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Ace, Diamonds));
 
-      game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(2);
-   }
+        game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(24);
+        game.Events.ShouldContain().ManyEventsOfType<HandPlayedEvent>(6)
+            .ToList()
+            .ForEach(c => c.HandWinner.PlayerId.Should().Be(winner));
+        game.CurrentPlayerId.Should().Be(winner);
+    }
 
-   private Suit SuitWithMostCards(AGame game, PlayerId currentPlayerId) => game.CurrentRoundState.DealForPlayer(currentPlayerId!).Cards.GroupBy(c => c.Suit).OrderByDescending(s => s.Count()).First().Key;
+    [Theory]
+    [BidFinishedGameData]
+    public void CurrentPlayerShouldBeHandWinner(AGame game)
+    {
+        var winner = game.CurrentPlayerId;
+        game.SelectTrump(winner, SuitWithMostCards(game, winner));
+        game.PlayCard(winner, new ACard(Jack, Hearts));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Hearts));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Spades));
+        game.PlayCard(game.CurrentPlayerId, new ACard(Jack, Diamonds));
 
-   [Theory]
-   [AutoBidFinishedGameData]
-   public void ThrowEntityInvalidExceptionWhenCardDoesNotFollowSuit(AGame game)
-   {
-      var currentPlayerId = game.CurrentPlayerId;
-      game.SelectTrump(currentPlayerId, this.SuitWithMostCards(game, currentPlayerId));
-      var leadCard = game.CurrentRoundState.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
-      game.PlayCard(currentPlayerId, leadCard);
+        game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(4);
+        game.Events.ShouldContain().SingleEventOfType<HandPlayedEvent>()
+            .HandWinner.Should().Be(new CardPlay(winner, new ACard(Jack, Hearts)));
+        game.CurrentPlayerId.Should().Be(winner);
+    }
 
-      var wrongSuitCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards.First(c => c.Suit != leadCard.Suit);
-      var action = () => game.PlayCard(game.CurrentPlayerId, wrongSuitCard);
+    [Theory]
+    [BidFinishedGameData]
+    public void RaiseEventWhenRoundActive(AGame game)
+    {
+        var currentPlayerId = game.CurrentPlayerId;
+        game.SelectTrump(currentPlayerId, Hearts);
+        var playedCard = game.CurrentRoundState.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
+        game.PlayCard(currentPlayerId, playedCard);
 
-      game.Events.ShouldContain().SingleEventOfType<CardPlayedEvent>();
-      action.Should().Throw<InvalidEntityStateException>();
-   }
+        game.Events.ShouldContain().SingleEventOfType<CardPlayedEvent>();
+        game.CurrentRoundState.TableCenter.Should().Contain(cp => cp.Card == playedCard);
+        game.CurrentRoundState.DealForPlayer(currentPlayerId).Cards.Should().NotContain(playedCard);
+    }
 
-   [Theory]
-   [AutoBidFinishedGameData]
-   public void ThrowExceptionWhenCardNotInPlayerDeal(AGame game)
-   {
-      game.SelectTrump(game.CurrentPlayerId, Hearts);
-      var card = game.CurrentRoundState.PlayerDeals.First(pd => pd != game.CurrentPlayerId)!.Cards[0];
-      var action = () => game.PlayCard(game.CurrentPlayerId, card);
+    [Theory]
+    [HossRoundData]
+    public void AllowDifferentSuitWhenNotAvailable(AGame game)
+    {
+        var currentPlayerId = game.CurrentPlayerId;
+        game.SelectTrump(currentPlayerId, SuitWithMostCards(game, currentPlayerId));
 
-      action.Should().Throw<InvalidEntityStateException>();
+        var leadCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards[0];
 
-      game.Events.ShouldContain().NoEventsOfType<CardPlayedEvent>();
-   }
+        game.PlayCard(currentPlayerId, leadCard);
 
-   [Theory]
-   [AutoPlayerData]
-   public void NotRaiseEventWhenNoRoundActive(AGame game)
-   {
-      game.PlayCard(game.CurrentPlayerId, new ACard(Clubs, Rank.King));
+        var wrongSuitCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards[0];
 
-      game.Events.ShouldContain().NoEventsOfType<CardPlayedEvent>();
-   }
+        game.PlayCard(game.CurrentPlayerId, wrongSuitCard);
 
-   [Theory]
-   [AutoBidFinishedGameData]
-   public void ThrowExceptionWhenPlayerNotInTurn(AGame game)
-   {
-      game.SelectTrump(game.CurrentPlayerId, Hearts);
-      var playerNotInTurn = game.FindGamePlayers().FirstOrDefault(p => p.Id != game.CurrentPlayerId);
+        game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(2);
+    }
 
-      var playAction = () => game.PlayCard(playerNotInTurn!.PlayerId, new ACard(Clubs, Rank.King));
+    [Theory]
+    [BidFinishedGameData]
+    public void ThrowEntityInvalidExceptionWhenCardDoesNotFollowSuit(AGame game)
+    {
+        var currentPlayerId = game.CurrentPlayerId;
+        game.SelectTrump(currentPlayerId, SuitWithMostCards(game, currentPlayerId));
+        var leadCard = game.CurrentRoundState.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
+        game.PlayCard(currentPlayerId, leadCard);
 
-      playAction.Should().Throw<InvalidEntityStateException>();
-   }
+        var wrongSuitCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards
+            .First(c => c.Suit != leadCard.Suit);
+        var action = () => game.PlayCard(game.CurrentPlayerId, wrongSuitCard);
+
+        game.Events.ShouldContain().SingleEventOfType<CardPlayedEvent>();
+        action.Should().Throw<InvalidEntityStateException>();
+    }
+
+    [Theory]
+    [BidFinishedGameData]
+    public void ThrowExceptionWhenCardNotInPlayerDeal(AGame game)
+    {
+        game.SelectTrump(game.CurrentPlayerId, Hearts);
+        var card = game.CurrentRoundState.PlayerDeals.First(pd => pd != game.CurrentPlayerId)!.Cards[0];
+        var action = () => game.PlayCard(game.CurrentPlayerId, card);
+
+        action.Should().Throw<InvalidEntityStateException>();
+
+        game.Events.ShouldContain().NoEventsOfType<CardPlayedEvent>();
+    }
+
+    [Theory]
+    [AutoPlayerData]
+    public void NotRaiseEventWhenNoRoundActive(AGame game)
+    {
+        game.PlayCard(game.CurrentPlayerId, new ACard(King, Clubs));
+
+        game.Events.ShouldContain().NoEventsOfType<CardPlayedEvent>();
+    }
+
+    [Theory]
+    [BidFinishedGameData]
+    public void ThrowExceptionWhenPlayerNotInTurn(AGame game)
+    {
+        game.SelectTrump(game.CurrentPlayerId, Hearts);
+        var playerNotInTurn = game.FindGamePlayers().FirstOrDefault(p => p.Id != game.CurrentPlayerId);
+
+        var playAction = () => game.PlayCard(playerNotInTurn!.PlayerId, new ACard(King, Clubs));
+
+        playAction.Should().Throw<InvalidEntityStateException>();
+    }
+
+    private static Suit SuitWithMostCards(AGame game, PlayerId currentPlayerId)
+    {
+        return game.CurrentRoundState.DealForPlayer(currentPlayerId!).Cards.GroupBy(c => c.Suit)
+            .OrderByDescending(s => s.Count()).First().Key;
+    }
 }

@@ -4,14 +4,13 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Infrastructure.Data;
+namespace Hoss.Infrastructure.Data;
 
 using Ardalis.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using TheHossGame.Core.ProjectAggregate;
-using TheHossGame.SharedKernel;
-using TheHossGame.SharedKernel.Interfaces;
+using Hoss.SharedKernel;
+using Hoss.SharedKernel.Interfaces;
 
 public class AppDbContext : DbContext
 {

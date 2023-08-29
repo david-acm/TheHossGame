@@ -4,11 +4,11 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Infrastructure;
+namespace Hoss.Infrastructure;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using TheHossGame.Infrastructure.Data;
+using Hoss.Infrastructure.Data;
 
 public static class StartupSetup
 {

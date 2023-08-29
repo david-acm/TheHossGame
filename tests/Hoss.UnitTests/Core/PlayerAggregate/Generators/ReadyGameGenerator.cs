@@ -20,36 +20,36 @@ using Moq;
 
 public class ReadyGameGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? specimenContext;
+    private ISpecimenContext? specimenContext;
 
-   #region ISpecimenBuilder Members
+    #region ISpecimenBuilder Members
 
-   public object Create(object request, ISpecimenContext context)
-   {
-      this.specimenContext = context;
-      if (!typeof(AGame).Equals(request))
-      {
-         return new NoSpecimen();
-      }
+    public object Create(object request, ISpecimenContext context)
+    {
+        this.specimenContext = context;
+        if (!typeof(AGame).Equals(request))
+        {
+            return new NoSpecimen();
+        }
 
-      return this.GenerateReadyGame();
-   }
+        return this.GenerateReadyGame();
+    }
 
-   #endregion
+    #endregion
 
-   private AGame GenerateReadyGame()
-   {
-      var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
-      var players = this.specimenContext.Create<IEnumerable<Player>>().ToList();
+    private AGame GenerateReadyGame()
+    {
+        var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
+        var players = this.specimenContext.Create<IEnumerable<Base>>().ToList();
 
-      var readyGame = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
+        var readyGame = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
 
-      readyGame.JoinPlayerToTeam(players[1].Id, Game.TeamId.Team1);
-      readyGame.JoinPlayerToTeam(players[2].Id, Game.TeamId.Team2);
-      readyGame.JoinPlayerToTeam(players[3].Id, Game.TeamId.Team2);
+        readyGame.JoinPlayerToTeam(players[1].Id, Game.TeamId.Team1);
+        readyGame.JoinPlayerToTeam(players[2].Id, Game.TeamId.Team2);
+        readyGame.JoinPlayerToTeam(players[3].Id, Game.TeamId.Team2);
 
-      players.ForEach(player => readyGame.TeamPlayerReady(player.Id));
+        players.ForEach(player => readyGame.TeamPlayerReady(player.Id));
 
-      return readyGame;
-   }
+        return readyGame;
+    }
 }

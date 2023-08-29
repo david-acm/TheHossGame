@@ -16,33 +16,33 @@ using Hoss.Core.PlayerAggregate;
 
 public class PlayerEnumerableGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? specimenContext;
+    private ISpecimenContext? specimenContext;
 
-   #region ISpecimenBuilder Members
+    #region ISpecimenBuilder Members
 
-   public object Create(object request, ISpecimenContext context)
-   {
-      this.specimenContext = context;
-      return typeof(IEnumerable<Player>).Equals(request) ? this.GeneratePlayerList() : new NoSpecimen();
-   }
+    public object Create(object request, ISpecimenContext context)
+    {
+        this.specimenContext = context;
+        return typeof(IEnumerable<Base>).Equals(request) ? this.GeneratePlayerList() : new NoSpecimen();
+    }
 
-   #endregion
+    #endregion
 
-   private List<Player> GeneratePlayerList()
-   {
-      var playerList = new List<Player>
-      {
-         this.GeneratePLayer(),
-         this.GeneratePLayer(),
-         this.GeneratePLayer(),
-         this.GeneratePLayer(),
-      };
+    private List<Base> GeneratePlayerList()
+    {
+        var playerList = new List<Base>
+        {
+            this.GeneratePLayer(),
+            this.GeneratePLayer(),
+            this.GeneratePLayer(),
+            this.GeneratePLayer(),
+        };
 
-      return playerList;
-   }
+        return playerList;
+    }
 
-   private Player GeneratePLayer()
-   {
-      return (Player)new PlayerGenerator().Create(typeof(Player), this.specimenContext!);
-   }
+    private Base GeneratePLayer()
+    {
+        return (Base) new PlayerGenerator().Create(typeof(Base), this.specimenContext!);
+    }
 }

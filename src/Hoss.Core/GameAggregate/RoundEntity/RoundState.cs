@@ -7,7 +7,7 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
-   #region
+#region
 
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
@@ -18,23 +18,28 @@ using Hoss.SharedKernel;
 
 public record RoundState(Round currentRound) : ValueObject
 {
-   private readonly Round currentRound = currentRound;
+    private readonly Round currentRound = currentRound;
 
-   public IReadOnlyList<ADeal> PlayerDeals => this.currentRound.Deals;
+    public IReadOnlyList<ADeal> PlayerDeals => this.currentRound.Deals;
 
-   internal PlayerId CurrentPlayerId => this.currentRound.CurrentPlayerId;
+    internal PlayerId CurrentPlayerId => this.currentRound.CurrentPlayerId;
 
-   public RoundId Id => this.currentRound.Id;
+    public RoundId Id => this.currentRound.Id;
 
-   public Round.RoundState State => this.currentRound.State;
+    public Round.RoundState State => this.currentRound.State;
 
-   public IReadOnlyList<Bid> Bids => this.currentRound.Bids;
+    public IReadOnlyList<Bid> Bids => this.currentRound.Bids;
 
-   public IReadOnlyList<RoundPlayer> RoundPlayers => this.currentRound.RoundPlayers;
+    public IReadOnlyList<RoundPlayer> RoundPlayers => this.currentRound.RoundPlayers;
 
-   public Suit TrumpSelected => this.currentRound.SelectedTrump;
+    public Suit TrumpSelected => this.currentRound.SelectedTrump;
 
-   public IReadOnlyList<CardPlay> TableCenter => this.currentRound.CardsPlayed;
+    public IReadOnlyList<CardPlay> TableCenter => this.currentRound.CardsPlayed;
 
-   public Deal DealForPlayer(PlayerId playerId) => this.currentRound.DealForPlayer(playerId);
+    public Deal DealForPlayer(PlayerId playerId) => this.currentRound.DealForPlayer(playerId);
+
+    public Deal DealForCurrentPlayer()
+    {
+        return this.currentRound.DealForPlayer(this.CurrentPlayerId);
+    }
 }

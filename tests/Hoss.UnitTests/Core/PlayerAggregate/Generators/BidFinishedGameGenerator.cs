@@ -21,41 +21,41 @@ using Moq;
 
 public class BidFinishedGameGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? specimenContext;
+    private ISpecimenContext? specimenContext;
 
-   #region ISpecimenBuilder Members
+    #region ISpecimenBuilder Members
 
-   public object Create(object request, ISpecimenContext context)
-   {
-      this.specimenContext = context;
-      if (!typeof(AGame).Equals(request))
-      {
-         return new NoSpecimen();
-      }
+    public object Create(object request, ISpecimenContext context)
+    {
+        this.specimenContext = context;
+        if (!typeof(AGame).Equals(request))
+        {
+            return new NoSpecimen();
+        }
 
-      return this.GenerateBidFinishedGame();
-   }
+        return this.GenerateBidFinishedGame();
+    }
 
-   #endregion
+    #endregion
 
-   private AGame GenerateBidFinishedGame()
-   {
-      var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
-      var players = this.specimenContext.Create<IEnumerable<Player>>().ToList();
+    private AGame GenerateBidFinishedGame()
+    {
+        var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
+        var players = this.specimenContext.Create<IEnumerable<Base>>().ToList();
 
-      var game = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
+        var game = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
 
-      game.JoinPlayerToTeam(players[1].Id, Game.TeamId.Team1);
-      game.JoinPlayerToTeam(players[2].Id, Game.TeamId.Team2);
-      game.JoinPlayerToTeam(players[3].Id, Game.TeamId.Team2);
+        game.JoinPlayerToTeam(players[1].Id, Game.TeamId.Team1);
+        game.JoinPlayerToTeam(players[2].Id, Game.TeamId.Team2);
+        game.JoinPlayerToTeam(players[3].Id, Game.TeamId.Team2);
 
-      players.ForEach(player => game.TeamPlayerReady(player.Id));
+        players.ForEach(player => game.TeamPlayerReady(player.Id));
 
-      game.Bid(game.CurrentPlayerId, BidValue.One);
-      game.Bid(game.CurrentPlayerId, BidValue.Two);
-      game.Bid(game.CurrentPlayerId, BidValue.Three);
-      game.Bid(game.CurrentPlayerId, BidValue.Pass);
+        game.Bid(game.CurrentPlayerId, BidValue.One);
+        game.Bid(game.CurrentPlayerId, BidValue.Two);
+        game.Bid(game.CurrentPlayerId, BidValue.Three);
+        game.Bid(game.CurrentPlayerId, BidValue.Pass);
 
-      return game;
-   }
+        return game;
+    }
 }

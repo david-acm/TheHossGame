@@ -4,12 +4,11 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Infrastructure.Data.Config;
+namespace Hoss.Infrastructure.Data.Config;
 
 using Ardalis.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TheHossGame.Core.ProjectAggregate;
 
 public class ToDoConfiguration : IEntityTypeConfiguration<ToDoItem>
 {

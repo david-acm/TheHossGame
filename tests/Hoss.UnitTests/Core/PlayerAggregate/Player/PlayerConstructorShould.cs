@@ -19,16 +19,16 @@ using Xunit;
 
 public class PlayerConstructorShould
 {
-   [Fact]
-   public void DeriveFromEntityBase()
-   {
-      typeof(APlayer).Should().BeDerivedFrom<EntityBase<PlayerId>>();
-   }
+    [Fact]
+    public void DeriveFromEntityBase()
+    {
+        typeof(Player).Should().BeDerivedFrom<EntityBase<PlayerId>>();
+    }
 
-   [Theory]
-   [AutoPlayerData]
-   public void CreateNewPlayer(APlayer player)
-   {
-      player.Should().NotBeNull();
-   }
+    [Theory]
+    [AutoPlayerData]
+    public void CreateNewPlayer(Player player)
+    {
+        player.Should().NotBeNull();
+    }
 }

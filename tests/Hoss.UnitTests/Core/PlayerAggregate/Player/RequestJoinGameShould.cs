@@ -20,33 +20,34 @@ using Xunit;
 
 public class RequestJoinGameShould
 {
-   [Theory]
-   [AutoPlayerData]
-   public void RaiseRequestJoinGameEvent(APlayer player, AGameId gameId)
-   {
-      player.RequestJoinGame(gameId);
+    [Theory]
+    [AutoPlayerData]
+    public void RaiseRequestJoinGameEvent(Player player, AGameId gameId)
+    {
+        player.RequestJoinGame(gameId);
 
-      player.Events.Should().ContainSingle(e => e is RequestedJoinGameEvent).Which.Should().BeOfType<RequestedJoinGameEvent>().Which.GameId.Should().Be(gameId);
-   }
+        player.Events.Should().ContainSingle(e => e is RequestedJoinGameEvent).Which.Should()
+            .BeOfType<RequestedJoinGameEvent>().Which.GameId.Should().Be(gameId);
+    }
 
-   [Theory]
-   [AutoPlayerData]
-   public void RaiseCannotJoinGameEventWhenPlayerAlreadyInAGame(APlayer player, AGameId gameId, AGameId anotherGameId)
-   {
-      player.RequestJoinGame(gameId);
-      player.RequestJoinGame(anotherGameId);
+    [Theory]
+    [AutoPlayerData]
+    public void RaiseCannotJoinGameEventWhenPlayerAlreadyInAGame(Player player, AGameId gameId, AGameId anotherGameId)
+    {
+        player.RequestJoinGame(gameId);
+        player.RequestJoinGame(anotherGameId);
 
-      var @event = player.Events.Should().ContainSingle(e => e is CannotJoinGameEvent);
-      @event.Which.Should().BeOfType<CannotJoinGameEvent>();
-      @event.Subject.Should().BeAssignableTo<PlayerEventBase>().Which.PlayerId.Should().Be(player.Id);
-   }
+        var @event = player.Events.Should().ContainSingle(e => e is CannotJoinGameEvent);
+        @event.Which.Should().BeOfType<CannotJoinGameEvent>();
+        @event.Subject.Should().BeAssignableTo<PlayerEventBase>().Which.PlayerId.Should().Be(player.Id);
+    }
 
-   [Theory]
-   [AutoPlayerData]
-   public void ThrowInvalidEntityStateException(APlayer player, NoGameId noGameId)
-   {
-      var requestAction = () => player.RequestJoinGame(noGameId);
+    [Theory]
+    [AutoPlayerData]
+    public void ThrowInvalidEntityStateException(Player player, NoGameId noGameId)
+    {
+        var requestAction = () => player.RequestJoinGame(noGameId);
 
-      requestAction.Should().Throw<InvalidEntityStateException>();
-   }
+        requestAction.Should().Throw<InvalidEntityStateException>();
+    }
 }

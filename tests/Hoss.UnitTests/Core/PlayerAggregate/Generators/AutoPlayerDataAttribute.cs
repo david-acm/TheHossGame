@@ -16,56 +16,56 @@ using TheHossGame.UnitTests.Core.Services;
 #endregion
 
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class AutoPlayerDataAttribute : LazyDataAttribute
+public class AutoPlayerDataAttribute : LazyDataAttribute
 {
-   public AutoPlayerDataAttribute()
-   {
-      AddCustomization(new PlayerDataCustomization());
-      AddCustomization(new AutoMoqCustomization());
-   }
+    public AutoPlayerDataAttribute()
+    {
+        AddCustomization(new PlayerDataCustomization());
+        AddCustomization(new AutoMoqCustomization());
+    }
 }
 
 internal class PlayerDataCustomization : ICustomization
 {
-   #region ICustomization Members
+    #region ICustomization Members
 
-   public void Customize(IFixture fixture)
-   {
-      fixture.Customizations.Add(new PlayerNameGenerator());
-      fixture.Customizations.Add(new PlayerEmailGenerator());
-      fixture.Customizations.Add(new PlayerGenerator());
-      fixture.Customizations.Add(new PlayerEnumerableGenerator());
-   }
+    public void Customize(IFixture fixture)
+    {
+        fixture.Customizations.Add(new PlayerNameGenerator());
+        fixture.Customizations.Add(new PlayerEmailGenerator());
+        fixture.Customizations.Add(new PlayerGenerator());
+        fixture.Customizations.Add(new PlayerEnumerableGenerator());
+    }
 
-   #endregion
+    #endregion
 }
 
 internal class ReadyGameCustomization : ICustomization
 {
-   #region ICustomization Members
+    #region ICustomization Members
 
-   public void Customize(IFixture fixture)
-   {
-      fixture.Customizations.Add(new PlayerNameGenerator());
-      fixture.Customizations.Add(new PlayerGenerator());
-      fixture.Customizations.Add(new PlayerEnumerableGenerator());
-      fixture.Customizations.Add(new ReadyGameGenerator());
-   }
+    public void Customize(IFixture fixture)
+    {
+        fixture.Customizations.Add(new PlayerNameGenerator());
+        fixture.Customizations.Add(new PlayerGenerator());
+        fixture.Customizations.Add(new PlayerEnumerableGenerator());
+        fixture.Customizations.Add(new ReadyGameGenerator());
+    }
 
-   #endregion
+    #endregion
 }
 
 internal class ReadyBidFinishedGameCustomization : ICustomization
 {
-   #region ICustomization Members
+    #region ICustomization Members
 
-   public void Customize(IFixture fixture)
-   {
-      fixture.Customizations.Add(new PlayerNameGenerator());
-      fixture.Customizations.Add(new PlayerGenerator());
-      fixture.Customizations.Add(new PlayerEnumerableGenerator());
-      fixture.Customizations.Add(new BidFinishedGameGenerator());
-   }
+    public void Customize(IFixture fixture)
+    {
+        fixture.Customizations.Add(new PlayerNameGenerator());
+        fixture.Customizations.Add(new PlayerGenerator());
+        fixture.Customizations.Add(new PlayerEnumerableGenerator());
+        fixture.Customizations.Add(new BidFinishedGameGenerator());
+    }
 
-   #endregion
+    #endregion
 }

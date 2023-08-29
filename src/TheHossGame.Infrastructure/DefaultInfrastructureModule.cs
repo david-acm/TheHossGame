@@ -4,17 +4,16 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Infrastructure;
+namespace Hoss.Infrastructure;
 
 using Autofac;
 using MediatR;
 using MediatR.Pipeline;
 using System.Reflection;
-using TheHossGame.Core.Interfaces;
-using TheHossGame.Core.ProjectAggregate;
-using TheHossGame.Infrastructure.Data;
-using TheHossGame.SharedKernel;
-using TheHossGame.SharedKernel.Interfaces;
+using Hoss.Core.Interfaces;
+using Hoss.Infrastructure.Data;
+using Hoss.SharedKernel;
+using Hoss.SharedKernel.Interfaces;
 using Module = Autofac.Module;
 
 public class DefaultInfrastructureModule : Module

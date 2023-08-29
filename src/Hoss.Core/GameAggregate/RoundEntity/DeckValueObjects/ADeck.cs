@@ -7,7 +7,7 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
-   #region
+#region
 
 using Hoss.Core.Interfaces;
 
@@ -15,27 +15,27 @@ using Hoss.Core.Interfaces;
 
 public sealed record ADeck : Deck
 {
-   private readonly Stack<ACard> cards = new ();
+    private readonly Stack<ACard> cards = new();
 
-   private ADeck(IShufflingService shufflingService)
-   {
-      var cardList = new List<ACard>();
-      cardList.AddRange(Suit.List.SelectMany(suit => Rank.List.Select(rank => new ACard(suit, rank))));
-      shufflingService.Shuffle(cardList);
-      this.cards = new Stack<ACard>(cardList);
-   }
+    private ADeck(IShufflingService shufflingService)
+    {
+        var cardList = new List<ACard>();
+        cardList.AddRange(Suit.List.SelectMany(suit => Rank.List.Select(rank => new ACard(rank, suit))));
+        shufflingService.Shuffle(cardList);
+        this.cards = new Stack<ACard>(cardList);
+    }
 
-   public IReadOnlyList<ACard> Cards => this.cards.ToList().AsReadOnly();
+    public IReadOnlyList<ACard> Cards => this.cards.ToList().AsReadOnly();
 
-   public override bool HasCards => this.cards.Any();
+    public override bool HasCards => this.cards.Any();
 
-   public static ADeck ShuffleNew(IShufflingService shufflingService)
-   {
-      return new ADeck(shufflingService);
-   }
+    public static ADeck ShuffleNew(IShufflingService shufflingService)
+    {
+        return new ADeck(shufflingService);
+    }
 
-   public override Card Deal()
-   {
-      return this.cards.Pop();
-   }
+    public override Card Deal()
+    {
+        return this.cards.Pop();
+    }
 }

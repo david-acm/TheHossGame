@@ -7,7 +7,7 @@
 
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
-   #region
+#region
 
 using TheHossGame.UnitTests.Core.Services;
 
@@ -15,27 +15,27 @@ using TheHossGame.UnitTests.Core.Services;
 
 public sealed class AutoReadyGameDataAttribute : LazyDataAttribute
 {
-   public AutoReadyGameDataAttribute()
-   {
-      AddCustomization(new ReadyGameCustomization());
-      AddCustomization(new AutoOrderedDeckCustomization());
-   }
+    public AutoReadyGameDataAttribute()
+    {
+        AddCustomization(new ReadyGameCustomization());
+        AddCustomization(new AutoOrderedDeckCustomization());
+    }
 }
 
-public sealed class AutoBidFinishedGameDataAttribute : LazyDataAttribute
+public sealed class BidFinishedGameDataAttribute : LazyDataAttribute
 {
-   public AutoBidFinishedGameDataAttribute()
-   {
-      AddCustomization(new ReadyBidFinishedGameCustomization());
-      AddCustomization(new AutoOrderedDeckCustomization());
-   }
+    public BidFinishedGameDataAttribute()
+    {
+        AddCustomization(new ReadyBidFinishedGameCustomization());
+        AddCustomization(new AutoOrderedDeckCustomization());
+    }
 }
 
 public sealed class HossRoundDataAttribute : LazyDataAttribute
 {
-   public HossRoundDataAttribute()
-   {
-      AddCustomization(new ReadyBidFinishedGameCustomization());
-      AddCustomization(new AutoPlayerWithNoTrumpCustomization());
-   }
+    public HossRoundDataAttribute()
+    {
+        AddCustomization(new ReadyBidFinishedGameCustomization());
+        AddCustomization(new AutoPlayerWithNoTrumpCustomization());
+    }
 }

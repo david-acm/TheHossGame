@@ -4,11 +4,11 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace TheHossGame.Infrastructure;
+namespace Hoss.Infrastructure;
 
 using Microsoft.Extensions.Logging;
 using System.Net.Mail;
-using TheHossGame.Core.Interfaces;
+using Hoss.Core.Interfaces;
 
 public class EmailSender : IEmailSender
 {

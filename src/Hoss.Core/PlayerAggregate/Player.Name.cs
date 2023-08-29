@@ -16,13 +16,13 @@ using Hoss.SharedKernel;
 
 public record PlayerName
 {
-   public PlayerName(string name)
-   {
-      Guard.Against.NullOrEmpty(name);
-      GuardExtensions.InvalidLength(name, nameof(name), 1, 30);
+    public PlayerName(string name)
+    {
+        Guard.Against.NullOrEmpty(name, nameof(name));
+        GuardExtensions.InvalidLength(name, nameof(name), 1, 30);
 
-      this.Name = name;
-   }
+        this.Name = name;
+    }
 
-   public string Name { get; }
+    public string Name { get; }
 }

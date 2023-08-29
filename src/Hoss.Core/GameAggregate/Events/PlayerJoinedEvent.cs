@@ -7,7 +7,7 @@
 
 namespace Hoss.Core.GameAggregate.Events;
 
-   #region
+#region
 
 using Hoss.Core.GameAggregate.RoundEntity;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
@@ -26,6 +26,9 @@ public record TeamsFormedEvent(GameId GameId) : GameEventBase(GameId);
 
 public record PlayerReadyEvent(GameId GameId, PlayerId PlayerId) : DomainEventBase(GameId);
 
-public record GameStartedEvent(GameId GameId, RoundId RoundId, IEnumerable<RoundPlayer> TeamPlayers, IEnumerable<ADeal> Deals, IEnumerable<Bid> Bids) : GameEventBase(GameId);
+public record GameStartedEvent(GameId GameId, RoundId RoundId, IEnumerable<RoundPlayer> TeamPlayers,
+    IEnumerable<ADeal> Deals, IEnumerable<Bid> Bids) : GameEventBase(GameId);
 
 public record GameFinishedEvent(GameId GameId) : GameEventBase(GameId);
+
+public record RoundPlayedEvent(GameId GameId) : GameEventBase(GameId);

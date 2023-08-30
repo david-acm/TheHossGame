@@ -45,7 +45,7 @@ public class PlayerReadyShould
         startedEvent.Should().NotBeNull();
         startedEvent.Should().BeAssignableTo<GameEventBase>();
         startedEvent.GameId.Should().Be(readyGame.Id);
-        readyGame.State.Should().Be(Started);
+        readyGame.Stage.Should().Be(Started);
     }
 
     [Theory]
@@ -60,7 +60,7 @@ public class PlayerReadyShould
         readyEvent.PlayerId.Should().Be(playerId);
         readyEvent.GameId.Should().Be(game.Id);
         game.FindPlayer(playerId).IsReady.Should().BeTrue();
-        game.State.Should().Be(Created);
+        game.Stage.Should().Be(Created);
     }
 
     [Theory]

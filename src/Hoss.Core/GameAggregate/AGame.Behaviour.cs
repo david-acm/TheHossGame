@@ -85,13 +85,13 @@ public sealed partial class AGame
     protected override void EnsureValidState()
     {
 #pragma warning disable CS8524
-        var valid = this.State switch
+        var valid = this.Stage switch
 #pragma warning restore CS8524
         {
             GameState.Created => this.TeamValid(Team1) && this.TeamValid(Team2),
             GameState.TeamsFormed => this.TeamComplete(Team1) && this.TeamComplete(Team2),
             GameState.Started => this.FindGamePlayers().All(t => t.IsReady),
-            GameState.Finished => this.State == GameState.Finished,
+            GameState.Finished => this.Stage == GameState.Finished,
         };
 
         if (!valid)
@@ -108,10 +108,15 @@ public sealed partial class AGame
             NewGameCreatedEvent => HandleGameCreated,
             TeamsFormedEvent => this.HandleTeamsFormedEvent,
             GameStartedEvent e => () => this.HandleGameStartedEvent(e),
-            GameFinishedEvent => () => this.State = GameState.Finished,
-            RoundPlayedEvent => () => this.HandleRoundPlayedEvent(),
+            GameFinishedEvent => () => this.HandleGameFinishedEvent(),
+            RoundPlayedEvent e => () => this.HandleRoundPlayedEvent(e),
             _ => () => { },
         }).Invoke();
+    }
+
+    private GameState HandleGameFinishedEvent()
+    {
+        return this.Stage = GameState.Finished;
     }
 
     private static void HandleGameCreated()
@@ -138,11 +143,18 @@ public sealed partial class AGame
         var round = ARound.FromStream(@event, this.Apply);
         this.rounds.Add(round);
 
-        this.State = GameState.Started;
+        this.Stage = GameState.Started;
     }
 
-    private void HandleRoundPlayedEvent()
+    private void HandleRoundPlayedEvent(RoundPlayedEvent e)
     {
+        this.Score = this.Score.AddRoundScore(e.RoundScore);
+        if (this.Score >= MaxScore)
+        {
+            this.Apply(new GameFinishedEvent(this.Id));
+            return;
+        }
+
         this.rounds.Add(ARound.StartNew(this.Id, new Queue<RoundPlayer>(this.GetTeamPlayers()),
             ADeck.ShuffleNew(this.shufflingService), this.Apply, this.rounds.Count));
     }
@@ -154,7 +166,7 @@ public sealed partial class AGame
 
     private void HandleTeamsFormedEvent()
     {
-        this.State = GameState.TeamsFormed;
+        this.Stage = GameState.TeamsFormed;
     }
 
     private void HandleJoin(PlayerJoinedEvent e)

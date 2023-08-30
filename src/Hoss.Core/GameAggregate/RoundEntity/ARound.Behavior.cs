@@ -113,6 +113,7 @@ public sealed partial class ARound
     private void HandleRoundPlayedEvent(RoundPlayedEvent roundPlayedEvent)
     {
         this.stage = RoundState.Played;
+        this.Score = this.Score + roundPlayedEvent.RoundScore;
     }
 
     private static List<ADeal> DealCards(Deck deck, IEnumerable<RoundPlayer> teamPlayers)

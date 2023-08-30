@@ -31,6 +31,8 @@ public record ACard(Rank Rank, Suit Suit) : Card
     }
 }
 
+public record NoCard() : ACard(Rank.None, Suit.None);
+
 public abstract record Card : ValueObject
 {
     public abstract Suit Suit { get; }

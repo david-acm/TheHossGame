@@ -9,7 +9,9 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
+using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity;
+using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using Hoss.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
@@ -64,8 +66,8 @@ public class PlayCardShould
             .ToList()
             .ForEach(c => c.HandWinner.PlayerId.Should().Be(winner));
         var roundPlayed = game.Events.ShouldContain().SingleEventOfType<RoundPlayedEvent>();
-        roundPlayed.Score.team1.Score.Should().Be(6);
-        roundPlayed.Score.team2.Score.Should().Be(0);
+        roundPlayed.RoundScore.team1.Score.Should().Be(6);
+        roundPlayed.RoundScore.team2.Score.Should().Be(0);
 
         game.CurrentPlayerId.Should().Be(nextRoundFirstPlayer);
     }
@@ -85,6 +87,52 @@ public class PlayCardShould
         forbiddenPlay.Should().Throw<InvalidEntityStateException>();
         game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(3);
         game.Events.ShouldContain().NoEventsOfType<TrickPlayedEvent>();
+    }
+
+
+    [Theory]
+    [BidFinishedGameData]
+    public void EndGameWhenGameReachesMaximumScore(AGame game)
+    {
+        var winner = game.CurrentPlayerId;
+        game.SelectTrump(winner, SuitWithMostCards(game, winner));
+
+        // Round playing
+        for (var round = 1; round <= 6; round++)
+        {
+            game.PlayerInTurnPlays(new(Jack, Hearts));
+            game.PlayerInTurnPlaysAValidCard();
+            game.PlayerInTurnPlaysAValidCard();
+            game.PlayerInTurnPlaysAValidCard();
+
+            // Hand playing
+            for (var hand = 2; hand <= 6; hand++)
+            {
+                game.PlayerInTurnPlaysAValidCard();
+                game.PlayerInTurnPlaysAValidCard();
+                game.PlayerInTurnPlaysAValidCard();
+                game.PlayerInTurnPlaysAValidCard();
+            }
+
+            game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(24 * round);
+            game.Events.ShouldContain().ManyEventsOfType<TrickPlayedEvent>(6 * round);
+            game.Events.ShouldContain().ManyEventsOfType<TrickPlayedEvent>(6 * round);
+
+            var roundPlayed = game.Events.ShouldContain()
+                .ManyEventsOfType<RoundPlayedEvent>(round).Last();
+            roundPlayed.RoundScore.team1.Score.Should().Be(6);
+            roundPlayed.RoundScore.team2.Score.Should().Be(0);
+
+            if (game.Stage == AGame.GameState.Finished)
+                break;
+            // Bidding and Trump Selection
+            for (var player = 1; player <= 4; player++)
+                game.Bid(game.CurrentPlayerId, game.CurrentPlayerId == winner ? BidValue.Six : BidValue.Pass);
+
+            game.SelectTrump(winner, SuitWithMostCards(game, winner));
+        }
+
+        game.Events.ShouldContain().SingleEventOfType<GameFinishedEvent>();
     }
 
     [Theory]
@@ -138,7 +186,7 @@ public class PlayCardShould
 
     [Theory]
     [BidFinishedGameData]
-    public void ThrowEntityInvalidExceptionWhenCardDoesNotFollowSuit(AGame game)
+    public void NotAllowToPlayACardThatDoesNotFollowSuit(AGame game)
     {
         var currentPlayerId = game.CurrentPlayerId;
         game.SelectTrump(currentPlayerId, SuitWithMostCards(game, currentPlayerId));
@@ -155,7 +203,7 @@ public class PlayCardShould
 
     [Theory]
     [BidFinishedGameData]
-    public void ThrowExceptionWhenCardNotInPlayerDeal(AGame game)
+    public void NotAllowToPlayACardNotPresentInThePlayersDeal(AGame game)
     {
         game.SelectTrump(game.CurrentPlayerId, Hearts);
         var card = game.CurrentRoundState.PlayerDeals.First(pd => pd != game.CurrentPlayerId)!.Cards[0];
@@ -177,7 +225,7 @@ public class PlayCardShould
 
     [Theory]
     [BidFinishedGameData]
-    public void ThrowExceptionWhenPlayerNotInTurn(AGame game)
+    public void NotAllowAPlayerNotInTurnToPlay(AGame game)
     {
         game.SelectTrump(game.CurrentPlayerId, Hearts);
         var playerNotInTurn = game.FindGamePlayers().FirstOrDefault(p => p.Id != game.CurrentPlayerId);
@@ -199,5 +247,14 @@ public static class GameExtensions
     internal static void PlayerInTurnPlays(this AGame game, ACard aCard)
     {
         game.PlayCard(game.CurrentPlayerId, aCard);
+    }
+
+    internal static void PlayerInTurnPlaysAValidCard(this AGame game)
+    {
+        var currentPlayerCards = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards;
+        var lastPlayedCard = game.CurrentRoundState.TableCenter.LastOrDefault()?.Card;
+        var comparer = new Card.CardComparer(game.CurrentRoundState.TrumpSelected, lastPlayedCard?.Suit);
+        var sameSuitCard = currentPlayerCards.OrderByDescending(c => c, comparer).First();
+        game.PlayCard(game.CurrentPlayerId, sameSuitCard);
     }
 }

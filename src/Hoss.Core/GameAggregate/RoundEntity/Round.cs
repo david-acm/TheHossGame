@@ -51,6 +51,7 @@ public abstract class Round : EntityBase<RoundId>
     internal abstract PlayerId CurrentPlayerId { get; }
 
     internal abstract Suit SelectedTrump { get; }
+    public RoundScore Score { get; protected set; } = RoundScore.New();
 
     internal virtual void Bid(PlayerId playerId, BidValue value)
     {

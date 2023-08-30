@@ -21,48 +21,52 @@ using Hoss.Core.PlayerAggregate;
 /// </summary>
 public sealed partial class AGame : Game
 {
-   #region GameState enum
+    #region GameState enum
 
-   public enum GameState
-   {
-      Created,
-      TeamsFormed,
-      Started,
-      Finished,
-   }
+    public enum GameState
+    {
+        Created,
+        TeamsFormed,
+        Started,
+        Finished,
+    }
 
-   #endregion
+    #endregion
 
-   private readonly List<GamePlayer> gamePlayers = new ();
+    private const int MaxScore = 31;
 
-   private readonly List<Round> rounds = new List<ARound>().Cast<Round>().ToList();
+    private readonly List<GamePlayer> gamePlayers = new();
 
-   private AGame(IShufflingService shufflingService)
-      : base(new AGameId())
-   {
-      this.shufflingService = shufflingService;
-   }
+    private readonly List<Round> rounds = new List<ARound>().Cast<Round>().ToList();
 
-   public RoundState CurrentRoundState => new (this.CurrentRound);
+    private AGame(IShufflingService shufflingService)
+        : base(new AGameId())
+    {
+        this.shufflingService = shufflingService;
+    }
 
-   public PlayerId CurrentPlayerId => this.CurrentRoundState.CurrentPlayerId;
+    public RoundState CurrentRoundState => new(this.CurrentRound);
 
-   public GameState State { get; private set; }
+    public PlayerId CurrentPlayerId => this.CurrentRoundState.CurrentPlayerId;
 
-   private Round CurrentRound => this.rounds.LastOrDefault() ?? new NoRound();
+    public GameState Stage { get; private set; }
 
-   public IReadOnlyCollection<GamePlayer> FindGamePlayers(TeamId teamId)
-   {
-      return this.gamePlayers.Where(p => p.TeamId == teamId).ToList().AsReadOnly();
-   }
+    private Round CurrentRound => this.rounds.LastOrDefault() ?? new NoRound();
+    public GameScore Score { get; private set; } = GameScore.New();
 
-   public IReadOnlyCollection<GamePlayer> FindGamePlayers()
-   {
-      return this.gamePlayers.ToList().AsReadOnly();
-   }
+    public IReadOnlyCollection<GamePlayer> FindGamePlayers(TeamId teamId)
+    {
+        return this.gamePlayers.Where(p => p.TeamId == teamId).ToList().AsReadOnly();
+    }
 
-   public GamePlayer FindPlayer(PlayerId playerId)
-   {
-      return this.FindGamePlayers().FirstOrDefault(p => p.PlayerId == playerId) ?? new NoGamePlayer(this.Id, playerId, this.Apply);
-   }
+    public IReadOnlyCollection<GamePlayer> FindGamePlayers()
+    {
+        return this.gamePlayers.ToList().AsReadOnly();
+    }
+
+    public GamePlayer FindPlayer(PlayerId playerId)
+    {
+        return this.FindGamePlayers().FirstOrDefault(p => p.PlayerId == playerId) ??
+               new NoGamePlayer(this.Id, playerId, this.Apply);
+    }
 }

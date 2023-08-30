@@ -27,10 +27,11 @@ public sealed partial class ARound
     private PlayerId BidWinner => this.WinningBid().PlayerId;
 
     internal static ARound StartNew(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Deck shuffledDeck,
-        Action<DomainEventBase> when)
+        Action<DomainEventBase> when,
+        int roundNumber = 0)
     {
         var roundPlayers = teamPlayers.ToList();
-        var round = new ARound(gameId, roundPlayers, when);
+        var round = new ARound(gameId, roundPlayers, when, roundNumber);
         var playerDeals = DealCards(shuffledDeck, roundPlayers);
 
         round.Apply(new RoundStartedEvent(gameId, round.Id, round.teamPlayers));
@@ -47,7 +48,7 @@ public sealed partial class ARound
             teamPlayers = new Queue<RoundPlayer>(@event.TeamPlayers),
             deals = @event.Deals.ToList(),
             bids = @event.Bids.ToList(),
-            state = RoundState.Bidding,
+            stage = RoundState.Bidding,
         };
     }
 
@@ -66,7 +67,21 @@ public sealed partial class ARound
     internal override void PlayCard(PlayerId playerId, Card card)
     {
         this.Apply(new CardPlayedEvent(this.GameId, this.Id, playerId, card));
-        if (this.CardsPlayed.Count == 4) this.Apply(new HandPlayedEvent(this.GameId, this.Id, this.GetHandWinner()));
+        if (this.CardsPlayed.Count == 4) this.Apply(new TrickPlayedEvent(this.GameId, this.Id, this.GetHandWinner()));
+
+        if (this.tricks.Count != 6) return;
+        var bidWinningTeam = this.GetBiddingTeam();
+        this.Apply(new RoundPlayedEvent(
+            this.GameId,
+            this.Id, RoundScore.FromRound(bidWinningTeam, this.tricks, this.WinningBid())));
+    }
+
+    private (RoundPlayer, RoundPlayer) GetBiddingTeam()
+    {
+        var biddingTeam = this.teamPlayers.First(t => t.PlayerId == this.WinningBid().PlayerId).TeamId;
+        var bidWinningTeam = (this.teamPlayers.First(t => t.TeamId == biddingTeam),
+            this.teamPlayers.Last(t => t.TeamId == biddingTeam));
+        return bidWinningTeam;
     }
 
     private CardPlay GetHandWinner()
@@ -90,8 +105,14 @@ public sealed partial class ARound
             BidCompleteEvent e => () => this.HandleBidCompleteEvent(e),
             TrumpSelectedEvent e => () => this.HandleTrumpSelectedEvent(e),
             CardPlayedEvent e => () => this.HandleCardPlayedEvent(e),
-            HandPlayedEvent e => () => this.HandleHandPlayedEvent(e),
+            TrickPlayedEvent e => () => this.HandleHandPlayedEvent(e),
+            RoundPlayedEvent e => () => this.HandleRoundPlayedEvent(e),
         }).Invoke();
+    }
+
+    private void HandleRoundPlayedEvent(RoundPlayedEvent roundPlayedEvent)
+    {
+        this.stage = RoundState.Played;
     }
 
     private static List<ADeal> DealCards(Deck deck, IEnumerable<RoundPlayer> teamPlayers)
@@ -108,7 +129,7 @@ public sealed partial class ARound
         return this.bids.OrderByDescending(b => b.Value).First();
     }
 
-    private void OrderPlayers(IEnumerable<RoundPlayer> players)
+    private void OrderPlayers(IEnumerable<RoundPlayer> players, int roundNumber)
     {
         var teamPlayerList = players.OrderBy(t => t.TeamId).ToList();
         var secondPlayer = teamPlayerList.First(t => t.TeamId == TeamId.Team2);
@@ -116,24 +137,32 @@ public sealed partial class ARound
         teamPlayerList[2] = thirdPlayer;
         teamPlayerList[1] = secondPlayer;
 
-        this.teamPlayers = new Queue<RoundPlayer>(teamPlayerList);
+        var roundPlayers = new Queue<RoundPlayer>(teamPlayerList);
+        RotateFirstPlayer(roundNumber, roundPlayers);
+
+        this.teamPlayers = roundPlayers;
+    }
+
+    private static void RotateFirstPlayer(int roundNumber, Queue<RoundPlayer> roundPlayers)
+    {
+        for (var i = 0; i < 4 - roundNumber % 4; i++) roundPlayers.Enqueue(roundPlayers.Dequeue());
     }
 
     private void HandleStartedEvent(RoundStartedEvent e)
     {
-        this.state = RoundState.ShufflingCards;
+        this.stage = RoundState.ShufflingCards;
         this.teamPlayers = new Queue<RoundPlayer>(e.TeamPlayers.ToList());
     }
 
     private void HandlePlayerCardsDealtEvent(PlayerCardsDealtEvent e)
     {
-        this.state = RoundState.DealingCards;
+        this.stage = RoundState.DealingCards;
         this.deals.Add(e.Deal);
     }
 
     private void HandleCardsDealtEvent()
     {
-        this.state = RoundState.Bidding;
+        this.stage = RoundState.Bidding;
     }
 
     private void HandleBidEvent(BidEvent e)
@@ -145,13 +174,13 @@ public sealed partial class ARound
     {
         while (this.CurrentPlayerId != e.WinningBid.PlayerId) this.FinishTurn();
 
-        this.state = RoundState.SelectingTrump;
+        this.stage = RoundState.SelectingTrump;
     }
 
     private void HandleTrumpSelectedEvent(TrumpSelectedEvent e)
     {
         this.trumpSelection = new TrumpSelection(e.PlayerId, e.Trump);
-        this.state = RoundState.PlayingCards;
+        this.stage = RoundState.PlayingCards;
     }
 
     private void HandleCardPlayedEvent(CardPlayedEvent @event)
@@ -165,11 +194,12 @@ public sealed partial class ARound
         });
     }
 
-    private void HandleHandPlayedEvent(HandPlayedEvent @event)
+    private void HandleHandPlayedEvent(TrickPlayedEvent @event)
     {
-        this.tricks.Push(Trick.FromTableCenter(this.tableCenter));
+        this.tricks.Push(Trick.FromTableCenter(this.tableCenter, this.trumpSelection));
+        var trickWinner = this.tricks.First().Winner;
         while (this.CurrentPlayerId !=
-               this.tricks.First().Winner(this.trumpSelection, this.tableCenter.CardPlays.Last().Card))
+               trickWinner)
             this.FinishTurn();
         this.tableCenter = TableCenter.Clear();
     }

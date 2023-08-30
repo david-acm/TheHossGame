@@ -7,7 +7,7 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
-   #region
+#region
 
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
@@ -18,24 +18,24 @@ using Hoss.Core.PlayerAggregate;
 
 public sealed class NoRound : Round
 {
-   public NoRound()
-      : base(new RoundId(), _ => { })
-   {
-      this.Apply(new RoundStartedEvent(new NoGameId(), new RoundId(), new List<RoundPlayer>()));
-   }
+    public NoRound()
+        : base(new RoundId(), _ => { })
+    {
+        this.Apply(new RoundStartedEvent(new NoGameId(), new RoundId(), new List<RoundPlayer>()));
+    }
 
-   internal override RoundState State => RoundState.None;
+    internal override RoundState Stage => RoundState.None;
 
-   internal override IReadOnlyList<ADeal> Deals => new List<ADeal>();
+    internal override IReadOnlyList<ADeal> Deals => new List<ADeal>();
 
-   internal override IReadOnlyList<RoundPlayer> RoundPlayers => new List<RoundPlayer>();
+    internal override IReadOnlyList<RoundPlayer> RoundPlayers => new List<RoundPlayer>();
 
-   internal override IReadOnlyList<Bid> Bids => new List<Bid>();
+    internal override IReadOnlyList<Bid> Bids => new List<Bid>();
 
-   /// <inheritdoc />
-   internal override IReadOnlyList<CardPlay> CardsPlayed => new List<CardPlay>();
+    /// <inheritdoc />
+    internal override IReadOnlyList<CardPlay> CardsPlayed => new List<CardPlay>();
 
-   internal override PlayerId CurrentPlayerId => new NoPlayerId();
+    internal override PlayerId CurrentPlayerId => new NoPlayerId();
 
-   internal override Suit SelectedTrump => Suit.None;
+    internal override Suit SelectedTrump => Suit.None;
 }

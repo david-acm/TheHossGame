@@ -24,15 +24,16 @@ using Xunit;
 
 public class DomainEventDispatcherShould
 {
-   [Theory]
-   [AutoReadyGameData]
-   [AutoMoqData]
-   public void ShouldPublishEventsAsync([Frozen] Mock<IMediator> mediator, AGame game, DomainEventDispatcher<GameId> dispatcher)
-   {
-      dispatcher.DispatchAndClearEvents(new[] { game });
+    [Theory]
+    [ReadyGameData]
+    [AutoMoqData]
+    public void ShouldPublishEventsAsync([Frozen] Mock<IMediator> mediator, AGame game,
+        DomainEventDispatcher<GameId> dispatcher)
+    {
+        dispatcher.DispatchAndClearEvents(new[] {game});
 
-      var eventCount = game.Events.Count();
-      mediator.Verify(m => m.Publish(It.IsAny<GameEventBase>(), default!), Times.Exactly(eventCount));
-      game.Events.Should().BeEmpty();
-   }
+        var eventCount = game.Events.Count();
+        mediator.Verify(m => m.Publish(It.IsAny<GameEventBase>(), default!), Times.Exactly(eventCount));
+        game.Events.Should().BeEmpty();
+    }
 }

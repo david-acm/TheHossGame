@@ -26,7 +26,7 @@ public class PlayerConstructorShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void CreateNewPlayer(Player player)
     {
         player.Should().NotBeNull();

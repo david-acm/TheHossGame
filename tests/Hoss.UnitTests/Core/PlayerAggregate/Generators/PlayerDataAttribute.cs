@@ -11,17 +11,19 @@ namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 using AutoFixture;
 using AutoFixture.AutoMoq;
+using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using TheHossGame.UnitTests.Core.Services;
 
 #endregion
 
 [AttributeUsage(AttributeTargets.Method)]
-public class AutoPlayerDataAttribute : LazyDataAttribute
+public class PlayerDataAttribute : LazyDataAttribute
 {
-    public AutoPlayerDataAttribute()
+    public PlayerDataAttribute()
     {
         AddCustomization(new PlayerDataCustomization());
         AddCustomization(new AutoMoqCustomization());
+        AddCustomization(new BidValueCustomization());
     }
 }
 
@@ -50,6 +52,24 @@ internal class ReadyGameCustomization : ICustomization
         fixture.Customizations.Add(new PlayerGenerator());
         fixture.Customizations.Add(new PlayerEnumerableGenerator());
         fixture.Customizations.Add(new ReadyGameGenerator());
+        fixture.Customize(new BidValueCustomization());
+    }
+
+    #endregion
+}
+
+internal class BidValueCustomization : ICustomization
+{
+    #region ICustomization Members
+
+    /// <inheritdoc />
+    public void Customize(IFixture fixture)
+    {
+        fixture.Customize<BidValue>(c => c.FromFactory(() =>
+        {
+            var random = new Random();
+            return BidValue.FromValue(random.Next(0, 6));
+        }));
     }
 
     #endregion

@@ -19,12 +19,12 @@ using Xunit;
 
 public class ConstructorShould
 {
-   [Theory]
-   [AutoPlayerData]
-   public void ReturnNewGameAggregate(AGame game)
-   {
-      game.Should().NotBeNull();
+    [Theory]
+    [PlayerData]
+    public void ReturnNewGameAggregate(AGame game)
+    {
+        game.Should().NotBeNull();
 
-      typeof(AGame).Should().Implement<IAggregateRoot>();
-   }
+        typeof(AGame).Should().Implement<IAggregateRoot>();
+    }
 }

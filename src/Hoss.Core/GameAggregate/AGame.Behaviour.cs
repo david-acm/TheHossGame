@@ -143,6 +143,8 @@ public sealed partial class AGame
 
     private void HandleRoundPlayedEvent()
     {
+        this.rounds.Add(ARound.StartNew(this.Id, new Queue<RoundPlayer>(this.GetTeamPlayers()),
+            ADeck.ShuffleNew(this.shufflingService), this.Apply, this.rounds.Count));
     }
 
     private IEnumerable<RoundPlayer> GetTeamPlayers()

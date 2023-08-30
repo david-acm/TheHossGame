@@ -21,7 +21,7 @@ using Xunit;
 public class RequestJoinGameShould
 {
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void RaiseRequestJoinGameEvent(Player player, AGameId gameId)
     {
         player.RequestJoinGame(gameId);
@@ -31,7 +31,7 @@ public class RequestJoinGameShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void RaiseCannotJoinGameEventWhenPlayerAlreadyInAGame(Player player, AGameId gameId, AGameId anotherGameId)
     {
         player.RequestJoinGame(gameId);
@@ -43,7 +43,7 @@ public class RequestJoinGameShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void ThrowInvalidEntityStateException(Player player, NoGameId noGameId)
     {
         var requestAction = () => player.RequestJoinGame(noGameId);

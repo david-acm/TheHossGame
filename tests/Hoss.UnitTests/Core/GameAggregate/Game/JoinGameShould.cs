@@ -24,7 +24,7 @@ using static Hoss.Core.GameAggregate.Game.TeamId;
 public class JoinGameShould
 {
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void RaisePlayerAlreadyInGame([Frozen] PlayerId playerId, AGame game)
     {
         game.JoinPlayerToTeam(playerId, Team1);
@@ -33,7 +33,7 @@ public class JoinGameShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void RaiseTeamsFormedEvent(IEnumerable<Player> players, AGame game)
     {
         var playerList = players.ToList();
@@ -47,7 +47,7 @@ public class JoinGameShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void RaisePlayerJoinedEvent(Player player, AGame game)
     {
         game.JoinPlayerToTeam(player.Id, Team1);
@@ -56,7 +56,7 @@ public class JoinGameShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void ThrowInvalidEntityStateWhenTeamsAreComplete(IEnumerable<PlayerId> playerIds, AGame game)
     {
         var playerIdList = playerIds.ToList();

@@ -24,7 +24,7 @@ public class CardShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void CompareCorrectly(ADeck deck)
     {
         var spadeIsTrumpComparer = Card.CompareWhenTrump(Spades);

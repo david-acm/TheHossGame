@@ -25,15 +25,16 @@ public sealed partial class ARound : Round
     private readonly Stack<Trick> tricks = new();
     private List<Bid> bids = new();
     private List<ADeal> deals = new();
-    private RoundState state;
+    private RoundState stage;
     private TableCenter tableCenter = new();
     private Queue<RoundPlayer> teamPlayers = new();
     private TrumpSelection trumpSelection = new(new NoPlayerId(), Suit.None);
 
-    private ARound(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Action<DomainEventBase> when)
+    private ARound(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Action<DomainEventBase> when,
+        int roundNumber = 0)
         : this(gameId, new RoundId(), when)
     {
-        this.OrderPlayers(teamPlayers);
+        this.OrderPlayers(teamPlayers, roundNumber);
     }
 
     private ARound(GameId gameId, RoundId roundId, Action<DomainEventBase> when)
@@ -42,7 +43,7 @@ public sealed partial class ARound : Round
         this.GameId = gameId;
     }
 
-    internal override RoundState State => this.state;
+    internal override RoundState Stage => this.stage;
 
     internal override IReadOnlyList<ADeal> Deals => this.deals.AsReadOnly();
 
@@ -80,23 +81,24 @@ public sealed partial class ARound : Round
 
 internal record Trick
 {
-    private Trick(Stack<CardPlay> cards)
+    private readonly TrumpSelection trumpSelection;
+
+    private Trick(Stack<CardPlay> plays, TrumpSelection trumpSelection)
     {
-        this.Cards = cards;
+        this.trumpSelection = trumpSelection;
+        this.Plays = plays;
     }
 
-    private Stack<CardPlay> Cards { get; }
+    private Stack<CardPlay> Plays { get; }
 
-    public PlayerId Winner(TrumpSelection trumpSelection, Card playedCard)
-    {
-        return this.Cards.OrderByDescending(
+    public PlayerId Winner =>
+        this.Plays.OrderByDescending(
             c => c.Card,
-            new Card.CardComparer(trumpSelection.Suit, playedCard.Suit)).First().PlayerId;
-    }
+            new Card.CardComparer(this.trumpSelection.Suit, this.Plays.Last().Card.Suit)).First().PlayerId;
 
-    public static Trick FromTableCenter(TableCenter tableCenter)
+    public static Trick FromTableCenter(TableCenter tableCenter, TrumpSelection trumpSelection)
     {
-        return new Trick(tableCenter.CardPlays);
+        return new Trick(tableCenter.CardPlays, trumpSelection);
     }
 }
 

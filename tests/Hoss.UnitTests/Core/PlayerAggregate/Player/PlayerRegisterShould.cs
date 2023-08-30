@@ -24,7 +24,7 @@ using Xunit;
 public class RegisterShould
 {
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void RaisePlayerRegisteredEvent(APlayerId playerId, PlayerName playerName)
     {
         var player = Player.FromRegister(playerId, playerName);
@@ -36,7 +36,7 @@ public class RegisterShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void BeEqualById(
         [Frozen] PlayerId playerId,
         NoGamePlayer gamePlayer1,
@@ -47,7 +47,7 @@ public class RegisterShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void NotBeEqualByType(
         AGame game,
         NoRound noRound,

@@ -23,7 +23,7 @@ using Xunit;
 public class PlayerRegistrationServiceRegisterShould
 {
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public async Task NotRegisterPlayerWhenPlayerNameIsNotUnique([Frozen] Mock<IRepository<Player>> playerRepository,
         [Frozen] Mock<IEventStore<Player>> eventStore, PlayerRegistrationService service, Player player)
     {
@@ -35,7 +35,7 @@ public class PlayerRegistrationServiceRegisterShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public async Task RegisterPlayerWhenPlayerNameIsUnique([Frozen] Mock<IRepository<Player>> playerRepository,
         PlayerRegistrationService service, Player player)
     {
@@ -45,7 +45,7 @@ public class PlayerRegistrationServiceRegisterShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public async Task NotRegisterPlayerWhenPlayerIsAlreadyRegistered(
         [Frozen] Mock<IRepository<Player>> playerRepository,
         [Frozen] Mock<IEventStore<Player>> eventStore, PlayerRegistrationService service, Player player)
@@ -60,7 +60,7 @@ public class PlayerRegistrationServiceRegisterShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public async Task RegisterPlayerWhenPlayerIsNotRegistered([Frozen] Mock<IRepository<Player>> playerRepository,
         [Frozen] Mock<IEventStore<Player>> eventStore, PlayerRegistrationService service, Player player)
     {

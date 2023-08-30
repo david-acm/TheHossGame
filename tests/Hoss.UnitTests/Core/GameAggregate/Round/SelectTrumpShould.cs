@@ -36,7 +36,7 @@ public class SelectTrumpShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void NotRaiseTrumpSelectedEventWhenGameNotReady(AGame game)
     {
         game.SelectTrump(game.CurrentPlayerId, Suit.Hearts);

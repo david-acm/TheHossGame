@@ -31,7 +31,7 @@ public sealed partial class ARound
             BidEvent e => this.ValidateBid(e),
             PlayerCardsDealtEvent e => ValidateCardsDealt(e),
             RoundStartedEvent e => ValidateRoundStarted(e),
-            HandPlayedEvent e => this.tableCenter.CardPlays.Count == 4,
+            TrickPlayedEvent e => this.tableCenter.CardPlays.Count == 4,
             _ => true,
         };
 
@@ -99,7 +99,12 @@ public sealed partial class ARound
 
     private bool ValidateBid(Bid bid)
     {
-        return this.ValidateBidValue(bid);
+        return this.PlayersCanBid() && this.ValidateBidValue(bid);
+    }
+
+    private bool PlayersCanBid()
+    {
+        return this.Stage == RoundState.Bidding;
     }
 
     private bool ValidateBidValue(Bid newBid)

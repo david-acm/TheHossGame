@@ -26,47 +26,70 @@ public class PlayCardShould
     {
         var winner = game.CurrentPlayerId;
         game.SelectTrump(winner, SuitWithMostCards(game, winner));
+        // Hand #1
+        game.PlayerInTurnPlays(new(Jack, Hearts));
+        var nextRoundFirstPlayer = game.CurrentPlayerId;
+        game.PlayerInTurnPlays(new(Nine, Hearts));
+        game.PlayerInTurnPlays(new(Nine, Spades));
+        game.PlayerInTurnPlays(new(Jack, Diamonds));
+        // Hand #2
+        game.PlayerInTurnPlays(new(Ten, Hearts));
+        game.PlayerInTurnPlays(new(Ace, Clubs));
+        game.PlayerInTurnPlays(new(Ten, Spades));
+        game.PlayerInTurnPlays(new(Ten, Diamonds));
+        // Hand #3
+        game.PlayerInTurnPlays(new(Queen, Hearts));
+        game.PlayerInTurnPlays(new(Jack, Clubs));
+        game.PlayerInTurnPlays(new(Jack, Spades));
+        game.PlayerInTurnPlays(new(Nine, Diamonds));
+        // Hand #4
+        game.PlayerInTurnPlays(new(King, Hearts));
+        game.PlayerInTurnPlays(new(Queen, Clubs));
+        game.PlayerInTurnPlays(new(Queen, Spades));
+        game.PlayerInTurnPlays(new(Queen, Diamonds));
+        // Hand #5
+        game.PlayerInTurnPlays(new(Ace, Hearts));
+        game.PlayerInTurnPlays(new(King, Clubs));
+        game.PlayerInTurnPlays(new(King, Spades));
+        game.PlayerInTurnPlays(new(King, Diamonds));
+        //Hand #6
+        game.PlayerInTurnPlays(new(Ten, Clubs));
+        game.PlayerInTurnPlays(new(Nine, Clubs));
+        game.PlayerInTurnPlays(new(Ace, Spades));
+        game.PlayerInTurnPlays(new(Ace, Diamonds));
 
-        game.PlayCard(winner, new ACard(Jack, Hearts));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Hearts));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Spades));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Jack, Diamonds));
-
-        game.PlayCard(game.CurrentPlayerId, new ACard(Ten, Hearts));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Ace, Clubs));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Ten, Spades));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Ten, Diamonds));
-
-        game.PlayCard(game.CurrentPlayerId, new ACard(Queen, Hearts));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Jack, Clubs));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Jack, Spades));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Diamonds));
-
-        game.PlayCard(game.CurrentPlayerId, new ACard(King, Hearts));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Queen, Clubs));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Queen, Spades));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Queen, Diamonds));
-
-        game.PlayCard(game.CurrentPlayerId, new ACard(Ace, Hearts));
-        game.PlayCard(game.CurrentPlayerId, new ACard(King, Clubs));
-        game.PlayCard(game.CurrentPlayerId, new ACard(King, Spades));
-        game.PlayCard(game.CurrentPlayerId, new ACard(King, Diamonds));
-
-        game.PlayCard(game.CurrentPlayerId, new ACard(Ten, Clubs));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Nine, Clubs));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Ace, Spades));
-        game.PlayCard(game.CurrentPlayerId, new ACard(Ace, Diamonds));
-
+        // Assert
         game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(24);
-        game.Events.ShouldContain().ManyEventsOfType<HandPlayedEvent>(6)
+        game.Events.ShouldContain().ManyEventsOfType<TrickPlayedEvent>(6)
             .ToList()
             .ForEach(c => c.HandWinner.PlayerId.Should().Be(winner));
-        game.CurrentPlayerId.Should().Be(winner);
+        var roundPlayed = game.Events.ShouldContain().SingleEventOfType<RoundPlayedEvent>();
+        roundPlayed.Score.team1.Score.Should().Be(6);
+        roundPlayed.Score.team2.Score.Should().Be(0);
+
+        game.CurrentPlayerId.Should().Be(nextRoundFirstPlayer);
     }
 
     [Theory]
     [BidFinishedGameData]
-    public void CurrentPlayerShouldBeHandWinner(AGame game)
+    public void NotAllowACardThatDoesNotFollowSuitWhenALeftBarIsAvailable(AGame game)
+    {
+        var winner = game.CurrentPlayerId;
+        game.SelectTrump(winner, SuitWithMostCards(game, winner));
+
+        game.PlayerInTurnPlays(new(Jack, Hearts));
+        game.PlayerInTurnPlays(new(Nine, Hearts));
+        game.PlayerInTurnPlays(new(Nine, Spades));
+        var forbiddenPlay = () => game.PlayerInTurnPlays(new(Ace, Diamonds));
+
+        forbiddenPlay.Should().Throw<InvalidEntityStateException>();
+        game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(3);
+        game.Events.ShouldContain().NoEventsOfType<TrickPlayedEvent>();
+    }
+
+    [Theory]
+    [BidFinishedGameData]
+    public void MakeWinnerTheNextPlayer(AGame game)
     {
         var winner = game.CurrentPlayerId;
         game.SelectTrump(winner, SuitWithMostCards(game, winner));
@@ -76,7 +99,7 @@ public class PlayCardShould
         game.PlayCard(game.CurrentPlayerId, new ACard(Jack, Diamonds));
 
         game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(4);
-        game.Events.ShouldContain().SingleEventOfType<HandPlayedEvent>()
+        game.Events.ShouldContain().SingleEventOfType<TrickPlayedEvent>()
             .HandWinner.Should().Be(new CardPlay(winner, new ACard(Jack, Hearts)));
         game.CurrentPlayerId.Should().Be(winner);
     }
@@ -144,7 +167,7 @@ public class PlayCardShould
     }
 
     [Theory]
-    [AutoPlayerData]
+    [PlayerData]
     public void NotRaiseEventWhenNoRoundActive(AGame game)
     {
         game.PlayCard(game.CurrentPlayerId, new ACard(King, Clubs));
@@ -168,5 +191,13 @@ public class PlayCardShould
     {
         return game.CurrentRoundState.DealForPlayer(currentPlayerId!).Cards.GroupBy(c => c.Suit)
             .OrderByDescending(s => s.Count()).First().Key;
+    }
+}
+
+public static class GameExtensions
+{
+    internal static void PlayerInTurnPlays(this AGame game, ACard aCard)
+    {
+        game.PlayCard(game.CurrentPlayerId, aCard);
     }
 }

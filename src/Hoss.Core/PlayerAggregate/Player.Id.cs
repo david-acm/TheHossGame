@@ -13,7 +13,14 @@ using Hoss.SharedKernel;
 
 #endregion
 
-public record APlayerId : PlayerId;
+public record APlayerId : PlayerId
+{
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return this.Id.ToString();
+    }
+}
 
 public record NoPlayerId : PlayerId;
 

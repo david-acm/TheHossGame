@@ -13,9 +13,9 @@ using TheHossGame.UnitTests.Core.Services;
 
 #endregion
 
-public sealed class AutoReadyGameDataAttribute : LazyDataAttribute
+public sealed class ReadyGameDataAttribute : LazyDataAttribute
 {
-    public AutoReadyGameDataAttribute()
+    public ReadyGameDataAttribute()
     {
         AddCustomization(new ReadyGameCustomization());
         AddCustomization(new AutoOrderedDeckCustomization());
@@ -28,6 +28,7 @@ public sealed class BidFinishedGameDataAttribute : LazyDataAttribute
     {
         AddCustomization(new ReadyBidFinishedGameCustomization());
         AddCustomization(new AutoOrderedDeckCustomization());
+        AddCustomization(new BidValueCustomization());
     }
 }
 

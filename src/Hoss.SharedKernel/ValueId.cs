@@ -12,13 +12,15 @@ namespace Hoss.SharedKernel;
 /// </summary>
 public abstract record ValueId : ValueObject
 {
-   private readonly Guid id;
+    /// <summary>
+    ///    Initializes a new instance of the <see cref="ValueId" /> class.
+    /// </summary>
+    protected ValueId()
+    {
+        this.Id = Guid.NewGuid();
+    }
 
-   /// <summary>
-   ///    Initializes a new instance of the <see cref="ValueId" /> class.
-   /// </summary>
-   protected ValueId()
-   {
-      this.id = Guid.NewGuid();
-   }
+    /// <summary>
+    /// </summary>
+    public Guid Id { get; }
 }

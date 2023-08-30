@@ -20,15 +20,15 @@ using Xunit;
 
 public class FinishShould
 {
-   [Theory]
-   [AutoReadyGameData]
-   public void RaiseGameFinishEvent(AGame game)
-   {
-      game.Finish();
+    [Theory]
+    [ReadyGameData]
+    public void RaiseGameFinishEvent(AGame game)
+    {
+        game.Finish();
 
-      var @event = game.Events.ShouldContain().SingleEventOfType<GameFinishedEvent>();
+        var @event = game.Events.ShouldContain().SingleEventOfType<GameFinishedEvent>();
 
-      @event.Should().BeAssignableTo<GameEventBase>();
-      @event.GameId.Should().Be(game.Id);
-   }
+        @event.Should().BeAssignableTo<GameEventBase>();
+        @event.GameId.Should().Be(game.Id);
+    }
 }

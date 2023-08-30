@@ -30,5 +30,3 @@ public record GameStartedEvent(GameId GameId, RoundId RoundId, IEnumerable<Round
     IEnumerable<ADeal> Deals, IEnumerable<Bid> Bids) : GameEventBase(GameId);
 
 public record GameFinishedEvent(GameId GameId) : GameEventBase(GameId);
-
-public record RoundPlayedEvent(GameId GameId) : GameEventBase(GameId);

@@ -33,7 +33,7 @@ public sealed class StartNewShould
         var teamPlayers = sut.FindGamePlayers().Select(g => new RoundPlayer(g.PlayerId, g.TeamId));
         sut.CurrentRoundState.Id.Should().NotBeNull();
         sut.CurrentRoundState.RoundPlayers.Should().Contain(teamPlayers);
-        sut.CurrentRoundState.State.Should().Be(Round.RoundState.Bidding);
+        sut.CurrentRoundState.Stage.Should().Be(Round.RoundStage.Bidding);
         sut.CurrentRoundState.PlayerDeals.Should().HaveCount(4);
     }
 
@@ -64,7 +64,7 @@ public sealed class StartNewShould
         gameId.Should().Be(game.Id);
         roundId.Should().NotBeNull();
 
-        game.CurrentRoundState.State.Should().Be(Round.RoundState.Bidding);
+        game.CurrentRoundState.Stage.Should().Be(Round.RoundStage.Bidding);
     }
 
     [Theory]

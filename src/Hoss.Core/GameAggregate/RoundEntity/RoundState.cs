@@ -26,7 +26,7 @@ public record RoundState(Round currentRound) : ValueObject
 
     public RoundId Id => this.currentRound.Id;
 
-    public Round.RoundState State => this.currentRound.Stage;
+    public Round.RoundStage Stage => this.currentRound.Stage;
 
     public IReadOnlyList<Bid> Bids => this.currentRound.Bids;
 

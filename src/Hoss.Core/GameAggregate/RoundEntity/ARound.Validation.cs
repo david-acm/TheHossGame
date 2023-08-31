@@ -104,7 +104,7 @@ public sealed partial class ARound
 
     private bool PlayersCanBid()
     {
-        return this.Stage == RoundState.Bidding;
+        return this.Stage == RoundStage.Bidding;
     }
 
     private bool ValidateBidValue(Bid newBid)

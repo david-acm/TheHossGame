@@ -18,9 +18,9 @@ using Hoss.SharedKernel;
 
 public abstract class Round : EntityBase<RoundId>
 {
-    #region RoundState enum
+    #region RoundStage enum
 
-    public enum RoundState
+    public enum RoundStage
     {
         None,
         ShufflingCards,
@@ -29,6 +29,7 @@ public abstract class Round : EntityBase<RoundId>
         SelectingTrump,
         PlayingCards,
         Played,
+        Hossinng,
     }
 
     #endregion
@@ -38,7 +39,7 @@ public abstract class Round : EntityBase<RoundId>
     {
     }
 
-    internal abstract RoundState Stage { get; }
+    internal abstract RoundStage Stage { get; }
 
     internal abstract IReadOnlyList<ADeal> Deals { get; }
 
@@ -76,4 +77,8 @@ public abstract class Round : EntityBase<RoundId>
     internal virtual Deal DealForPlayer(PlayerId playerId) => new(new NoPlayerId());
 
     internal virtual IEnumerable<Card> CardsForPlayer(PlayerId playerId) => new List<Card>();
+
+    internal abstract void RequestHoss(PlayerId playerId, Card card);
+
+    internal abstract void GiveHossCard(PlayerId playerId, Card card);
 }

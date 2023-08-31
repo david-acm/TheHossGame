@@ -25,7 +25,7 @@ public sealed partial class ARound : Round
     private readonly Stack<Trick> tricks = new();
     private List<Bid> bids = new();
     private List<ADeal> deals = new();
-    private RoundState stage;
+    private RoundStage stage;
     private TableCenter tableCenter = new();
     private Queue<RoundPlayer> teamPlayers = new();
     private TrumpSelection trumpSelection = new(new NoPlayerId(), Suit.None);
@@ -43,7 +43,7 @@ public sealed partial class ARound : Round
         this.GameId = gameId;
     }
 
-    internal override RoundState Stage => this.stage;
+    internal override RoundStage Stage => this.stage;
 
     internal override IReadOnlyList<ADeal> Deals => this.deals.AsReadOnly();
 

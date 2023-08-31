@@ -48,7 +48,7 @@ public sealed partial class ARound
             teamPlayers = new Queue<RoundPlayer>(@event.TeamPlayers),
             deals = @event.Deals.ToList(),
             bids = @event.Bids.ToList(),
-            stage = RoundState.Bidding,
+            stage = RoundStage.Bidding,
         };
     }
 
@@ -57,6 +57,18 @@ public sealed partial class ARound
         this.Apply(new BidEvent(this.GameId, this.Id, new Bid(playerId, value)));
 
         if (this.bids.Count == 4) this.Apply(new BidCompleteEvent(this.GameId, this.Id, this.WinningBid()));
+    }
+
+    /// <inheritdoc />
+    internal override void RequestHoss(PlayerId playerId, Card card)
+    {
+        this.Apply(new HossRequestedEvent(this.GameId, this.Id, new HossRequest(playerId, card)));
+    }
+
+    /// <inheritdoc />
+    internal override void GiveHossCard(PlayerId id, Card card)
+    {
+        this.Apply(new PartnerHossCardGivenEvent(this.GameId, this.Id, new HossPartnerCard(id, card)));
     }
 
     internal override void SelectTrump(PlayerId playerId, Suit suit)
@@ -102,6 +114,8 @@ public sealed partial class ARound
             PlayerCardsDealtEvent e => () => this.HandlePlayerCardsDealtEvent(e),
             AllCardsDealtEvent => this.HandleCardsDealtEvent,
             BidEvent e => () => this.HandleBidEvent(e),
+            HossRequestedEvent e => () => this.HandleRequestHossEvent(e),
+            PartnerHossCardGivenEvent e => () => this.HandlePartnerHossCardGiven(e),
             BidCompleteEvent e => () => this.HandleBidCompleteEvent(e),
             TrumpSelectedEvent e => () => this.HandleTrumpSelectedEvent(e),
             CardPlayedEvent e => () => this.HandleCardPlayedEvent(e),
@@ -110,9 +124,50 @@ public sealed partial class ARound
         }).Invoke();
     }
 
+    private void HandleRequestHossEvent(HossRequestedEvent e)
+    {
+        this.stage = RoundStage.Hossinng;
+        var hossingPlayer = e.HossRequest.PlayerId;
+        var hossPartner = this.GetHossingPartner(hossingPlayer);
+        this.DealForPlayer(hossingPlayer).GiveCard(e.HossRequest.Card);
+
+        this.MakeCurrentPlayer(hossPartner);
+    }
+
+    private void HandlePartnerHossCardGiven(PartnerHossCardGivenEvent e)
+    {
+        this.stage = RoundStage.PlayingCards;
+        var hossPartner = e.HossPartnerCard.PlayerId;
+        var hossingPlayer = this.GetHossingPartner(hossPartner);
+        this.DealForPlayer(e.HossPartnerCard.PlayerId).GiveCard(e.HossPartnerCard.Card);
+        this.DealForPlayer(hossingPlayer).ReceiveCard(e.HossPartnerCard.Card);
+        this.RemovePlayerFromRound(hossPartner);
+
+        this.MakeCurrentPlayer(hossingPlayer);
+    }
+
+    private void RemovePlayerFromRound(PlayerId hossPartner)
+    {
+        this.MakeCurrentPlayer(hossPartner);
+        this.teamPlayers.Dequeue();
+    }
+
+    private PlayerId GetHossingPartner(PlayerId playerId)
+    {
+        var hossingTeam = this.GetHossingTeam(playerId);
+        var hossPartner = this.teamPlayers.First(t => t.TeamId == hossingTeam && t.PlayerId != playerId)
+            .PlayerId;
+        return hossPartner;
+    }
+
+    private TeamId GetHossingTeam(PlayerId hossRequestPlayerId)
+    {
+        return this.teamPlayers.First(t => t.PlayerId == hossRequestPlayerId).TeamId;
+    }
+
     private void HandleRoundPlayedEvent(RoundPlayedEvent roundPlayedEvent)
     {
-        this.stage = RoundState.Played;
+        this.stage = RoundStage.Played;
         this.Score = this.Score + roundPlayedEvent.RoundScore;
     }
 
@@ -151,19 +206,19 @@ public sealed partial class ARound
 
     private void HandleStartedEvent(RoundStartedEvent e)
     {
-        this.stage = RoundState.ShufflingCards;
+        this.stage = RoundStage.ShufflingCards;
         this.teamPlayers = new Queue<RoundPlayer>(e.TeamPlayers.ToList());
     }
 
     private void HandlePlayerCardsDealtEvent(PlayerCardsDealtEvent e)
     {
-        this.stage = RoundState.DealingCards;
+        this.stage = RoundStage.DealingCards;
         this.deals.Add(e.Deal);
     }
 
     private void HandleCardsDealtEvent()
     {
-        this.stage = RoundState.Bidding;
+        this.stage = RoundStage.Bidding;
     }
 
     private void HandleBidEvent(BidEvent e)
@@ -173,15 +228,20 @@ public sealed partial class ARound
 
     private void HandleBidCompleteEvent(BidCompleteEvent e)
     {
-        while (this.CurrentPlayerId != e.WinningBid.PlayerId) this.FinishTurn();
+        this.MakeCurrentPlayer(e.WinningBid.PlayerId);
 
-        this.stage = RoundState.SelectingTrump;
+        this.stage = RoundStage.SelectingTrump;
+    }
+
+    private void MakeCurrentPlayer(PlayerId playerId)
+    {
+        while (this.CurrentPlayerId != playerId) this.FinishTurn();
     }
 
     private void HandleTrumpSelectedEvent(TrumpSelectedEvent e)
     {
         this.trumpSelection = new TrumpSelection(e.PlayerId, e.Trump);
-        this.stage = RoundState.PlayingCards;
+        this.stage = RoundStage.PlayingCards;
     }
 
     private void HandleCardPlayedEvent(CardPlayedEvent @event)

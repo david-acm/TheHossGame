@@ -67,6 +67,16 @@ public sealed partial class AGame
         this.CurrentRound.Bid(playerId, value);
     }
 
+    public void RequestHoss(PlayerId playerId, Card card)
+    {
+        this.CurrentRound.RequestHoss(playerId, card);
+    }
+
+    public void GiveHossCard(PlayerId playerId, Card card)
+    {
+        this.CurrentRound.GiveHossCard(playerId, card);
+    }
+
     public void SelectTrump(PlayerId currentPlayerId, Suit suit)
     {
         this.CurrentRound.SelectTrump(currentPlayerId, suit);

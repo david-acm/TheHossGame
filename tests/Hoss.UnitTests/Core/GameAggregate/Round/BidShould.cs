@@ -13,6 +13,7 @@ using FluentAssertions;
 using Hoss.Core.GameAggregate;
 using Hoss.Core.GameAggregate.RoundEntity;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
+using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using Hoss.Core.GameAggregate.RoundEntity.Events;
 using Hoss.Core.PlayerAggregate;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
@@ -83,7 +84,7 @@ public class BidShould
     {
         var bidPlayerId = game.CurrentPlayerId;
         game.Bid(bidPlayerId, value);
-        game.CurrentRoundState.State.Should().Be(Round.RoundState.Bidding);
+        game.CurrentRoundState.Stage.Should().Be(Round.RoundStage.Bidding);
         var bid = game.CurrentRoundState.Bids.Should().ContainSingle().Subject;
         bid.PlayerId.Should().Be(bidPlayerId);
         bid.Value.Should().Be(value);
@@ -98,6 +99,41 @@ public class BidShould
         game.Bid(game.CurrentPlayerId, BidValue.Pass);
 
         game.CurrentRoundState.Bids.Should().HaveCount(3);
+    }
+
+    [Theory]
+    [ReadyGameData]
+    public void AllowPlayersToHoss(AGame game)
+    {
+        // Arrange
+        game.Bid(game.CurrentPlayerId, BidValue.One);
+        game.Bid(game.CurrentPlayerId, BidValue.Two);
+
+        var playerHossing = game.CurrentPlayerId;
+        var withdrawnCard = GetPlayerCards(playerHossing, game).First();
+        game.RequestHoss(game.CurrentPlayerId, withdrawnCard);
+
+        var hossingPartner = game.CurrentPlayerId;
+        var contributingCard = GetPlayerCards(hossingPartner, game).First();
+        game.GiveHossCard(game.CurrentPlayerId, contributingCard);
+
+        // Assert
+        game.CurrentRoundState.Bids.Should().HaveCount(2);
+        game.Events.ShouldContain().SingleEventOfType<HossRequestedEvent>();
+        game.Events.ShouldContain().SingleEventOfType<PartnerHossCardGivenEvent>();
+
+        GetPlayerCards(playerHossing, game).Should().NotContain(withdrawnCard);
+        GetPlayerCards(hossingPartner, game).Should().NotContain(contributingCard);
+        GetPlayerCards(playerHossing, game).Should().Contain(contributingCard);
+
+        game.CurrentRoundState.RoundPlayers.Should().NotContain(r => r.PlayerId == hossingPartner);
+        game.CurrentRoundState.RoundPlayers.Should().HaveCount(3);
+        game.CurrentPlayerId.Should().Be(playerHossing);
+    }
+
+    private static IReadOnlyList<Card> GetPlayerCards(PlayerId playerId, AGame game)
+    {
+        return game.CurrentRoundState.PlayerDeals.First(d => d.PlayerId == playerId).Cards;
     }
 
     [Theory]

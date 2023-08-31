@@ -24,7 +24,7 @@ public sealed class NoRound : Round
         this.Apply(new RoundStartedEvent(new NoGameId(), new RoundId(), new List<RoundPlayer>()));
     }
 
-    internal override RoundState Stage => RoundState.None;
+    internal override RoundStage Stage => RoundStage.None;
 
     internal override IReadOnlyList<ADeal> Deals => new List<ADeal>();
 
@@ -38,4 +38,14 @@ public sealed class NoRound : Round
     internal override PlayerId CurrentPlayerId => new NoPlayerId();
 
     internal override Suit SelectedTrump => Suit.None;
+
+    /// <inheritdoc />
+    internal override void RequestHoss(PlayerId playerId, Card card)
+    {
+    }
+
+    /// <inheritdoc />
+    internal override void GiveHossCard(PlayerId id, Card card1)
+    {
+    }
 }

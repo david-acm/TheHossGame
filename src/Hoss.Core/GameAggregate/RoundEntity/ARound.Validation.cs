@@ -31,45 +31,59 @@ public sealed partial class ARound
             BidEvent e => this.ValidateBid(e),
             PlayerCardsDealtEvent e => ValidateCardsDealt(e),
             RoundStartedEvent e => ValidateRoundStarted(e),
-            TrickPlayedEvent e => this.tableCenter.CardPlays.Count == 4,
-            _ => true,
+            TrickPlayedEvent e => this.EnoughTricksHaveBeenPlayed(),
+            _ => new ValidationResult(true, string.Empty),
         };
 
-        if (!valid) throw new InvalidEntityStateException();
+        if (!valid) throw new InvalidEntityStateException(valid.Reason);
     }
 
-    private static bool ValidateCardsDealt(PlayerCardsDealtEvent e)
+    private ValidationResult EnoughTricksHaveBeenPlayed()
     {
-        return e.Deal.Cards.Count == 6;
+        return new ValidationResult(this.tableCenter.CardPlays.Count == this.teamPlayers.Count,
+            nameof(this.EnoughTricksHaveBeenPlayed));
     }
 
-    private static bool ValidateRoundStarted(RoundStartedEvent e)
+    private static ValidationResult ValidateCardsDealt(PlayerCardsDealtEvent e)
     {
-        return e.TeamPlayers.Count() == 4;
+        return new ValidationResult(e.Deal.Cards.Count == 6,
+            nameof(ValidateCardsDealt));
     }
 
-    private bool ValidateTrumpSelected(TrumpSelectedEvent @event)
+    private static ValidationResult ValidateRoundStarted(RoundStartedEvent e)
     {
-        return this.BidWinner == @event.PlayerId;
+        return new ValidationResult(e.TeamPlayers.Count() == 4,
+            nameof(ValidateRoundStarted));
     }
 
-    private bool ValidateCardPlayed(CardPlayedEvent e)
+    private ValidationResult ValidateTrumpSelected(TrumpSelectedEvent @event)
     {
-        return this.IsThePlayersTurn(e.PlayerId) &&
-               this.PlayerHasThatCard(e) && (this.IsOpeningCard() ||
-                                             this.CardFollowsSuit(e.Card) ||
-                                             this.PlayerHasNoCardsOfAskedSuit(e));
+        return new ValidationResult(this.BidWinner == @event.PlayerId
+                                    && this.Stage == RoundStage.SelectingTrump,
+            nameof(this.ValidateTrumpSelected));
     }
 
-    private bool IsOpeningCard()
+    private ValidationResult ValidateCardPlayed(CardPlayedEvent e)
     {
-        return this.tableCenter.CardPlays.Count == 0;
+        return new ValidationResult(
+            this.IsThePlayersTurn(e.PlayerId) &&
+            this.PlayerHasThatCard(e) && (this.IsOpeningCard() ||
+                                          this.CardFollowsSuit(e.Card) ||
+                                          this.PlayerHasNoCardsOfAskedSuit(e)),
+            nameof(this.ValidateCardPlayed));
     }
 
-    private bool CardFollowsSuit(Card card)
+    private ValidationResult IsOpeningCard()
+    {
+        return new ValidationResult(this.tableCenter.CardPlays.Count == 0,
+            nameof(this.IsOpeningCard));
+    }
+
+    private ValidationResult CardFollowsSuit(Card card)
     {
         var comparer = new Suit.SuitComparer(this.SelectedTrump);
-        return comparer.Equals(card, this.AskedCard());
+        return new ValidationResult(comparer.Equals(card, this.AskedCard()),
+            nameof(this.CardFollowsSuit));
     }
 
     private Card AskedCard()
@@ -77,24 +91,29 @@ public sealed partial class ARound
         return this.tableCenter.CardPlays.Last().Card;
     }
 
-    private bool PlayerHasNoCardsOfAskedSuit(CardPlayedEvent e)
+    private ValidationResult PlayerHasNoCardsOfAskedSuit(CardPlayedEvent e)
     {
-        return this.CardsForPlayer(e.PlayerId).All(c => !this.CardFollowsSuit(c));
+        return new ValidationResult(
+            this.CardsForPlayer(e.PlayerId).All(c => !this.CardFollowsSuit(c)),
+            nameof(this.PlayerHasNoCardsOfAskedSuit));
     }
 
-    private bool PlayerHasThatCard(CardPlayedEvent e)
+    private ValidationResult PlayerHasThatCard(CardPlayedEvent e)
     {
-        return this.CardsForPlayer(e.PlayerId).Contains(e.Card);
+        return new ValidationResult(
+            this.CardsForPlayer(e.PlayerId).Contains(e.Card),
+            nameof(this.PlayerHasThatCard));
     }
 
-    private bool IsThePlayersTurn(PlayerId playerId)
+    private ValidationResult IsThePlayersTurn(PlayerId playerId)
     {
-        return playerId == this.CurrentPlayerId;
+        return new ValidationResult(playerId == this.CurrentPlayerId, nameof(this.IsThePlayersTurn));
     }
 
-    private bool ValidateBid(BidEvent e)
+    private ValidationResult ValidateBid(BidEvent e)
     {
-        return this.ValidateBid(e.Bid) && this.IsThePlayersTurn(e.Bid.PlayerId);
+        return new ValidationResult(this.ValidateBid(e.Bid) && this.IsThePlayersTurn(e.Bid.PlayerId),
+            nameof(ValidateBid));
     }
 
     private bool ValidateBid(Bid bid)
@@ -102,18 +121,41 @@ public sealed partial class ARound
         return this.PlayersCanBid() && this.ValidateBidValue(bid);
     }
 
-    private bool PlayersCanBid()
+    private ValidationResult PlayersCanBid()
     {
-        return this.Stage == RoundStage.Bidding;
+        return new ValidationResult(this.Stage == RoundStage.Bidding, nameof(this.PlayersCanBid));
     }
 
-    private bool ValidateBidValue(Bid newBid)
+    private ValidationResult ValidateBidValue(Bid newBid)
     {
         bool BiggerThanPrevious()
         {
             return this.bids.TrueForAll(bid => newBid > bid);
         }
 
-        return newBid == Pass || BiggerThanPrevious();
+        return new ValidationResult(newBid == Pass || BiggerThanPrevious(), nameof(this.ValidateBidValue));
+    }
+}
+
+public class ValidationResult
+{
+    private readonly bool isValid;
+
+    public ValidationResult(bool isValid, string reason)
+    {
+        this.isValid = isValid;
+        this.Reason = reason;
+    }
+
+    public ValidationResult(ValidationResult[] args)
+    {
+        this.Reason = string.Concat(args.Select(v => v.Reason), "👉 ");
+    }
+
+    public string Reason { get; }
+
+    public static implicit operator bool(ValidationResult result)
+    {
+        return result.isValid;
     }
 }

@@ -64,6 +64,7 @@ public sealed partial class AGame
 
     public void Bid(PlayerId playerId, BidValue value)
     {
+        // TO DO: Hoss without help
         this.CurrentRound.Bid(playerId, value);
     }
 

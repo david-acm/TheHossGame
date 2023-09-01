@@ -89,3 +89,18 @@ internal class ReadyBidFinishedGameCustomization : ICustomization
 
     #endregion
 }
+
+internal class BidWithHossGameCustomization : ICustomization
+{
+    #region ICustomization Members
+
+    public void Customize(IFixture fixture)
+    {
+        fixture.Customizations.Add(new PlayerNameGenerator());
+        fixture.Customizations.Add(new PlayerGenerator());
+        fixture.Customizations.Add(new PlayerEnumerableGenerator());
+        fixture.Customizations.Add(new BidWithHossGameGenerator());
+    }
+
+    #endregion
+}

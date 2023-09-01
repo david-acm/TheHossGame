@@ -110,30 +110,25 @@ public class BidShould
         game.Bid(game.CurrentPlayerId, BidValue.Two);
 
         var playerHossing = game.CurrentPlayerId;
-        var withdrawnCard = GetPlayerCards(playerHossing, game).First();
+        var withdrawnCard = game.GetPlayerCards(playerHossing).First();
         game.RequestHoss(game.CurrentPlayerId, withdrawnCard);
 
         var hossingPartner = game.CurrentPlayerId;
-        var contributingCard = GetPlayerCards(hossingPartner, game).First();
+        var contributingCard = game.GetPlayerCards(hossingPartner).First();
         game.GiveHossCard(game.CurrentPlayerId, contributingCard);
 
         // Assert
-        game.CurrentRoundState.Bids.Should().HaveCount(2);
+        game.CurrentRoundState.Bids.Should().HaveCount(3);
         game.Events.ShouldContain().SingleEventOfType<HossRequestedEvent>();
         game.Events.ShouldContain().SingleEventOfType<PartnerHossCardGivenEvent>();
 
-        GetPlayerCards(playerHossing, game).Should().NotContain(withdrawnCard);
-        GetPlayerCards(hossingPartner, game).Should().NotContain(contributingCard);
-        GetPlayerCards(playerHossing, game).Should().Contain(contributingCard);
+        game.GetPlayerCards(playerHossing).Should().NotContain(withdrawnCard);
+        game.GetPlayerCards(hossingPartner).Should().NotContain(contributingCard);
+        game.GetPlayerCards(playerHossing).Should().Contain(contributingCard);
 
         game.CurrentRoundState.RoundPlayers.Should().NotContain(r => r.PlayerId == hossingPartner);
         game.CurrentRoundState.RoundPlayers.Should().HaveCount(3);
         game.CurrentPlayerId.Should().Be(playerHossing);
-    }
-
-    private static IReadOnlyList<Card> GetPlayerCards(PlayerId playerId, AGame game)
-    {
-        return game.CurrentRoundState.PlayerDeals.First(d => d.PlayerId == playerId).Cards;
     }
 
     [Theory]
@@ -177,5 +172,13 @@ public class BidShould
         var bidAction = () => game.Bid(playerId, BidValue.One);
 
         bidAction.Should().Throw<InvalidEntityStateException>();
+    }
+}
+
+public static class PlayerIdExtensions
+{
+    public static IReadOnlyList<Card> GetPlayerCards(this AGame game, PlayerId playerId)
+    {
+        return game.CurrentRoundState.PlayerDeals.First(d => d.PlayerId == playerId).Cards;
     }
 }

@@ -32,6 +32,16 @@ public sealed class BidFinishedGameDataAttribute : LazyDataAttribute
     }
 }
 
+public sealed class BidWithHossGameDataAttribute : LazyDataAttribute
+{
+    public BidWithHossGameDataAttribute()
+    {
+        AddCustomization(new BidWithHossGameCustomization());
+        AddCustomization(new AutoOrderedDeckCustomization());
+        AddCustomization(new BidValueCustomization());
+    }
+}
+
 public sealed class HossRoundDataAttribute : LazyDataAttribute
 {
     public HossRoundDataAttribute()

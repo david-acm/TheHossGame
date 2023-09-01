@@ -36,14 +36,27 @@ public record RoundScore
         var tricksWonByBiddingTeam = tricks.Count(t => t.Winner == bidWinningTeam.Item1.PlayerId ||
                                                        t.Winner == bidWinningTeam.Item2.PlayerId);
         var winningTeamId = bidWinningTeam.Item1.TeamId;
-        int score;
-        if (tricksWonByBiddingTeam >= winningBid.Value)
-            score = tricksWonByBiddingTeam;
-        else
-            score = -winningBid.Value;
+
+        var score = CalculateScore(winningBid, tricksWonByBiddingTeam);
+
         return new RoundScore(
             new TeamRoundScore(winningTeamId, score),
             new TeamRoundScore(winningTeamId == Game.TeamId.Team1 ? Game.TeamId.Team2 : Game.TeamId.Team1, 0));
+    }
+
+    private static int CalculateScore(Bid winningBid, int tricksWonByBiddingTeam)
+    {
+        int score;
+        if (tricksWonByBiddingTeam >= winningBid.Value || winningBid.Value == BidValue.Hoss)
+            score = CalculatePositiveScore(winningBid, tricksWonByBiddingTeam);
+        else
+            score = -winningBid.Value;
+        return score;
+    }
+
+    private static int CalculatePositiveScore(Bid winningBid, int tricksWonByBiddingTeam)
+    {
+        return winningBid.Value == BidValue.Hoss ? winningBid.Value : tricksWonByBiddingTeam;
     }
 
     internal static RoundScore New()

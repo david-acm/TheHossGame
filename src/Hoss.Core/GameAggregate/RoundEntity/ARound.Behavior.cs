@@ -56,7 +56,8 @@ public sealed partial class ARound
     {
         this.Apply(new BidEvent(this.GameId, this.Id, new Bid(playerId, value)));
 
-        if (this.bids.Count == 4) this.Apply(new BidCompleteEvent(this.GameId, this.Id, this.WinningBid()));
+        if (this.bids.Count == 4 && this.Stage != RoundStage.Hossinng)
+            this.Apply(new BidCompleteEvent(this.GameId, this.Id, this.WinningBid()));
     }
 
     /// <inheritdoc />
@@ -66,9 +67,11 @@ public sealed partial class ARound
     }
 
     /// <inheritdoc />
-    internal override void GiveHossCard(PlayerId id, Card card)
+    internal override void GiveHossCard(PlayerId playerId, Card card)
     {
-        this.Apply(new PartnerHossCardGivenEvent(this.GameId, this.Id, new HossPartnerCard(id, card)));
+        this.Apply(new PartnerHossCardGivenEvent(this.GameId, this.Id, new HossPartnerCard(playerId, card)));
+        this.Apply(new BidEvent(this.GameId, this.Id, new Bid(this.GetHossingPartner(playerId), BidValue.Hoss)));
+        this.Apply(new BidCompleteEvent(this.GameId, this.Id, this.WinningBid()));
     }
 
     internal override void SelectTrump(PlayerId playerId, Suit suit)
@@ -79,7 +82,8 @@ public sealed partial class ARound
     internal override void PlayCard(PlayerId playerId, Card card)
     {
         this.Apply(new CardPlayedEvent(this.GameId, this.Id, playerId, card));
-        if (this.CardsPlayed.Count == 4) this.Apply(new TrickPlayedEvent(this.GameId, this.Id, this.GetHandWinner()));
+        if (this.CardsPlayed.Count == this.RoundPlayers.Count)
+            this.Apply(new TrickPlayedEvent(this.GameId, this.Id, this.GetHandWinner()));
 
         if (this.tricks.Count != 6) return;
         var bidWinningTeam = this.GetBiddingTeam();
@@ -90,7 +94,9 @@ public sealed partial class ARound
 
     private (RoundPlayer, RoundPlayer) GetBiddingTeam()
     {
-        var biddingTeam = this.teamPlayers.First(t => t.PlayerId == this.WinningBid().PlayerId).TeamId;
+        var bidWinningPlayerId = this.WinningBid().PlayerId;
+        var biddingTeam = this.teamPlayers.FirstOrDefault(t => t.PlayerId == bidWinningPlayerId)?.TeamId ??
+                          this.GetHossingTeam(bidWinningPlayerId);
         var bidWinningTeam = (this.teamPlayers.First(t => t.TeamId == biddingTeam),
             this.teamPlayers.Last(t => t.TeamId == biddingTeam));
         return bidWinningTeam;
@@ -136,13 +142,12 @@ public sealed partial class ARound
 
     private void HandlePartnerHossCardGiven(PartnerHossCardGivenEvent e)
     {
-        this.stage = RoundStage.PlayingCards;
         var hossPartner = e.HossPartnerCard.PlayerId;
         var hossingPlayer = this.GetHossingPartner(hossPartner);
+        this.stage = RoundStage.Bidding;
         this.DealForPlayer(e.HossPartnerCard.PlayerId).GiveCard(e.HossPartnerCard.Card);
         this.DealForPlayer(hossingPlayer).ReceiveCard(e.HossPartnerCard.Card);
         this.RemovePlayerFromRound(hossPartner);
-
         this.MakeCurrentPlayer(hossingPlayer);
     }
 
@@ -162,7 +167,8 @@ public sealed partial class ARound
 
     private TeamId GetHossingTeam(PlayerId hossRequestPlayerId)
     {
-        return this.teamPlayers.First(t => t.PlayerId == hossRequestPlayerId).TeamId;
+        return this.teamPlayers.FirstOrDefault(t => t.PlayerId == hossRequestPlayerId)?.TeamId ??
+               this.teamPlayers.GroupBy(t => t.TeamId).OrderBy(g => g.Count()).First().First().TeamId;
     }
 
     private void HandleRoundPlayedEvent(RoundPlayedEvent roundPlayedEvent)

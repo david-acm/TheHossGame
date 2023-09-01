@@ -91,22 +91,40 @@ public class PlayCardShould
 
 
     [Theory]
-    [BidFinishedGameData]
+    [BidWithHossGameData]
     public void EndGameWhenGameReachesMaximumScore(AGame game)
     {
         var winner = game.CurrentPlayerId;
+        // First round is Hoss
+        game.SelectTrump(winner, SuitWithMostCards(game, winner));
+        // First hand ensures Player will fish the other trump
+        game.PlayerInTurnPlays(new(Jack, Hearts));
+        game.PlayerInTurnPlaysAValidCard();
+        game.PlayerInTurnPlaysAValidCard();
+
+        // Rest of the hands for the first round
+        for (var hand = 2; hand <= 6; hand++)
+        {
+            game.PlayerInTurnPlaysAValidCard();
+            game.PlayerInTurnPlaysAValidCard();
+            game.PlayerInTurnPlaysAValidCard();
+        }
+
+        var roundPlayed = game.Events.ShouldContain()
+            .SingleEventOfType<RoundPlayedEvent>();
+        roundPlayed.RoundScore.team1.Score.Should().Be(12);
+        roundPlayed.RoundScore.team2.Score.Should().Be(0);
+
+        for (var player = 1; player <= 4; player++)
+            game.Bid(game.CurrentPlayerId, game.CurrentPlayerId == winner ? BidValue.Six : BidValue.Pass);
+
         game.SelectTrump(winner, SuitWithMostCards(game, winner));
 
         // Round playing
-        for (var round = 1; round <= 6; round++)
+        for (var round = 2; round <= 6; round++)
         {
-            game.PlayerInTurnPlays(new(Jack, Hearts));
-            game.PlayerInTurnPlaysAValidCard();
-            game.PlayerInTurnPlaysAValidCard();
-            game.PlayerInTurnPlaysAValidCard();
-
             // Hand playing
-            for (var hand = 2; hand <= 6; hand++)
+            for (var hand = 1; hand <= 6; hand++)
             {
                 game.PlayerInTurnPlaysAValidCard();
                 game.PlayerInTurnPlaysAValidCard();
@@ -114,11 +132,18 @@ public class PlayCardShould
                 game.PlayerInTurnPlaysAValidCard();
             }
 
-            game.Events.ShouldContain().ManyEventsOfType<CardPlayedEvent>(24 * round);
-            game.Events.ShouldContain().ManyEventsOfType<TrickPlayedEvent>(6 * round);
+            const int playedCardsInFirstRound = 18;
+
+            int GetPlayedCardCount()
+            {
+                return 24 * (round - 1);
+            }
+
+            game.Events.ShouldContain()
+                .ManyEventsOfType<CardPlayedEvent>(playedCardsInFirstRound + GetPlayedCardCount());
             game.Events.ShouldContain().ManyEventsOfType<TrickPlayedEvent>(6 * round);
 
-            var roundPlayed = game.Events.ShouldContain()
+            roundPlayed = game.Events.ShouldContain()
                 .ManyEventsOfType<RoundPlayedEvent>(round).Last();
             roundPlayed.RoundScore.team1.Score.Should().Be(6);
             roundPlayed.RoundScore.team2.Score.Should().Be(0);

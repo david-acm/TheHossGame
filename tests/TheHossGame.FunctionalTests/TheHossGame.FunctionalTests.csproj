@@ -27,15 +27,15 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Ardalis.HttpClientTestExtensions" />
-    <PackageReference Include="StyleCop.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TheHossGame.Web\TheHossGame.Web.csproj" />
-    <ProjectReference Include="..\TheHossGame.UnitTests\TheHossGame.UnitTests.csproj" />
+    <ProjectReference Include="..\Hoss.UnitTests\Hoss.UnitTests.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ApiEndpoints\"/>
   </ItemGroup>
 
 </Project>

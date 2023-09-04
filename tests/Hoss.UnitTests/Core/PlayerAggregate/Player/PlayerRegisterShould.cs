@@ -50,11 +50,11 @@ public class RegisterShould
     [PlayerData]
     public void NotBeEqualByType(
         AGame game,
-        NoRound noRound,
+        NoRoundBase noRoundBase,
         Player player,
         NoBase noBase)
     {
-        game.Should().NotBe(noRound);
+        game.Should().NotBe(noRoundBase);
         player.Should().NotBe(noBase);
         game.Should().Be(game);
     }

@@ -28,4 +28,5 @@
         <ProjectReference Include="..\Hoss.SharedKernel\Hoss.SharedKernel.csproj"/>
 	</ItemGroup>
 
+
 </Project>

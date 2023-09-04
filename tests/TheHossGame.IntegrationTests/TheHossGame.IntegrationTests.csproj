@@ -25,15 +25,11 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
-    <PackageReference Include="StyleCop.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TheHossGame.Infrastructure\TheHossGame.Infrastructure.csproj" />
-    <ProjectReference Include="..\TheHossGame.UnitTests\TheHossGame.UnitTests.csproj" />
+    <ProjectReference Include="..\Hoss.UnitTests\Hoss.UnitTests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -183,12 +183,12 @@ public class PlayCardShould
     {
         var currentPlayerId = game.CurrentPlayerId;
         game.SelectTrump(currentPlayerId, Hearts);
-        var playedCard = game.CurrentRoundState.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
+        var playedCard = game.CurrentRoundView.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
         game.PlayCard(currentPlayerId, playedCard);
 
         game.Events.ShouldContain().SingleEventOfType<CardPlayedEvent>();
-        game.CurrentRoundState.TableCenter.Should().Contain(cp => cp.Card == playedCard);
-        game.CurrentRoundState.DealForPlayer(currentPlayerId).Cards.Should().NotContain(playedCard);
+        game.CurrentRoundView.TableCenter.Should().Contain(cp => cp.Card == playedCard);
+        game.CurrentRoundView.DealForPlayer(currentPlayerId).Cards.Should().NotContain(playedCard);
     }
 
     [Theory]
@@ -198,11 +198,11 @@ public class PlayCardShould
         var currentPlayerId = game.CurrentPlayerId;
         game.SelectTrump(currentPlayerId, SuitWithMostCards(game, currentPlayerId));
 
-        var leadCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards[0];
+        var leadCard = game.CurrentRoundView.DealForPlayer(game.CurrentPlayerId).Cards[0];
 
         game.PlayCard(currentPlayerId, leadCard);
 
-        var wrongSuitCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards[0];
+        var wrongSuitCard = game.CurrentRoundView.DealForPlayer(game.CurrentPlayerId).Cards[0];
 
         game.PlayCard(game.CurrentPlayerId, wrongSuitCard);
 
@@ -215,10 +215,10 @@ public class PlayCardShould
     {
         var currentPlayerId = game.CurrentPlayerId;
         game.SelectTrump(currentPlayerId, SuitWithMostCards(game, currentPlayerId));
-        var leadCard = game.CurrentRoundState.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
+        var leadCard = game.CurrentRoundView.PlayerDeals.First(p => p.PlayerId == currentPlayerId).Cards[0];
         game.PlayCard(currentPlayerId, leadCard);
 
-        var wrongSuitCard = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards
+        var wrongSuitCard = game.CurrentRoundView.DealForPlayer(game.CurrentPlayerId).Cards
             .First(c => c.Suit != leadCard.Suit);
         var action = () => game.PlayCard(game.CurrentPlayerId, wrongSuitCard);
 
@@ -231,7 +231,7 @@ public class PlayCardShould
     public void NotAllowToPlayACardNotPresentInThePlayersDeal(AGame game)
     {
         game.SelectTrump(game.CurrentPlayerId, Hearts);
-        var card = game.CurrentRoundState.PlayerDeals.First(pd => pd != game.CurrentPlayerId)!.Cards[0];
+        var card = game.CurrentRoundView.PlayerDeals.First(pd => pd != game.CurrentPlayerId)!.Cards[0];
         var action = () => game.PlayCard(game.CurrentPlayerId, card);
 
         action.Should().Throw<InvalidEntityStateException>();
@@ -262,7 +262,7 @@ public class PlayCardShould
 
     private static Suit SuitWithMostCards(AGame game, PlayerId currentPlayerId)
     {
-        return game.CurrentRoundState.DealForPlayer(currentPlayerId!).Cards.GroupBy(c => c.Suit)
+        return game.CurrentRoundView.DealForPlayer(currentPlayerId!).Cards.GroupBy(c => c.Suit)
             .OrderByDescending(s => s.Count()).First().Key;
     }
 }
@@ -276,9 +276,9 @@ public static class GameExtensions
 
     internal static void PlayerInTurnPlaysAValidCard(this AGame game)
     {
-        var currentPlayerCards = game.CurrentRoundState.DealForPlayer(game.CurrentPlayerId).Cards;
-        var lastPlayedCard = game.CurrentRoundState.TableCenter.LastOrDefault()?.Card;
-        var comparer = new Card.CardComparer(game.CurrentRoundState.TrumpSelected, lastPlayedCard?.Suit);
+        var currentPlayerCards = game.CurrentRoundView.DealForPlayer(game.CurrentPlayerId).Cards;
+        var lastPlayedCard = game.CurrentRoundView.TableCenter.LastOrDefault()?.Card;
+        var comparer = new Card.CardComparer(game.CurrentRoundView.TrumpSelected, lastPlayedCard?.Suit);
         var sameSuitCard = currentPlayerCards.OrderByDescending(c => c, comparer).First();
         game.PlayCard(game.CurrentPlayerId, sameSuitCard);
     }

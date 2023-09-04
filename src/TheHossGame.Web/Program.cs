@@ -1,6 +1,6 @@
 ﻿// 🃏 The HossGame 🃏
-// <copyright file="Program.cs" company="Reactive">
-// Copyright (c) Reactive. All rights reserved.
+// <copyright file="Program.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // 🃏 The HossGame 🃏
 
@@ -9,12 +9,9 @@ namespace TheHossGame.Web;
 using Ardalis.ListStartupServices;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Hoss.Infrastructure;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using TheHossGame.Core;
-using TheHossGame.Infrastructure;
-using TheHossGame.Infrastructure.Data;
-using ILogger = ILogger;
 
 internal static class Program
 {
@@ -34,14 +31,11 @@ internal static class Program
 
         var connectionString = builder.Configuration.GetConnectionString("SqliteConnection");
 
-        builder.Services.AddDbContext(connectionString);
-
-        builder.Services.AddControllersWithViews().AddNewtonsoftJson();
         builder.Services.AddRazorPages();
 
         builder.Services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo {Title = "My API", Version = "v1"});
             c.EnableAnnotations();
         });
 
@@ -56,8 +50,8 @@ internal static class Program
 
         builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         {
-            containerBuilder.RegisterModule(new DefaultCoreModule());
-            containerBuilder.RegisterModule(new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development"));
+            containerBuilder.RegisterModule(
+                new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development"));
         });
 
         var app = builder.Build();
@@ -90,30 +84,6 @@ internal static class Program
             endpoints.MapDefaultControllerRoute();
             endpoints.MapRazorPages();
         });
-
-        // Seed Database
-        using (var scope = app.Services.CreateScope())
-        {
-            var services = scope.ServiceProvider;
-
-            try
-            {
-                var context = services.GetRequiredService<AppDbContext>();
-                context.Database.EnsureCreated();
-                SeedData.Initialize(services);
-            }
-            catch (InvalidOperationException ex)
-            {
-                var logger = services.GetRequiredService<ILogger>();
-                logger.LogError($"An error occurred seeding the DB. {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                var logger = services.GetRequiredService<ILogger>();
-                logger.LogError($"An error occurred seeding the DB. {ex.Message}");
-                throw;
-            }
-        }
 
         app.Run();
     }

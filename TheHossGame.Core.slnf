@@ -2,9 +2,14 @@
   "solution": {
     "path": "TheHossGame.sln",
     "projects": [
+      "deploy\\TheHossGame.Cloud\\TheHossGame.Cloud.csproj",
       "src\\Hoss.Core\\Hoss.Core.csproj",
+      "src\\Hoss.SharedKernel\\Hoss.SharedKernel.csproj",
+      "src\\TheHossGame.Infrastructure\\TheHossGame.Infrastructure.csproj",
+      "src\\TheHossGame.Web\\TheHossGame.Web.csproj",
       "tests\\Hoss.UnitTests\\Hoss.UnitTests.csproj",
-      "src\\Hoss.SharedKernel\\Hoss.SharedKernel.csproj"
+      "tests\\TheHossGame.FunctionalTests\\TheHossGame.FunctionalTests.csproj",
+      "tests\\TheHossGame.IntegrationTests\\TheHossGame.IntegrationTests.csproj"
     ]
   }
 }

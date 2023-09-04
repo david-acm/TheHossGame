@@ -37,7 +37,7 @@ public sealed partial class AGame : Game
 
     private readonly List<GamePlayer> gamePlayers = new();
 
-    private readonly List<Round> rounds = new List<ARound>().Cast<Round>().ToList();
+    private readonly List<RoundBase> rounds = new List<Round>().Cast<RoundBase>().ToList();
 
     private AGame(IShufflingService shufflingService)
         : base(new AGameId())
@@ -45,13 +45,13 @@ public sealed partial class AGame : Game
         this.shufflingService = shufflingService;
     }
 
-    public RoundState CurrentRoundState => new(this.CurrentRound);
+    public RoundView CurrentRoundView => new(this.CurrentRoundBase);
 
-    public PlayerId CurrentPlayerId => this.CurrentRoundState.CurrentPlayerId;
+    public PlayerId CurrentPlayerId => this.CurrentRoundView.CurrentPlayerId;
 
     public GameState Stage { get; private set; }
 
-    private Round CurrentRound => this.rounds.LastOrDefault() ?? new NoRound();
+    private RoundBase CurrentRoundBase => this.rounds.LastOrDefault() ?? new NoRoundBase();
     public GameScore Score { get; private set; } = GameScore.New();
 
     public IReadOnlyCollection<GamePlayer> FindGamePlayers(TeamId teamId)

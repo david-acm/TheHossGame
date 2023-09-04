@@ -18,7 +18,7 @@ using static Hoss.Core.GameAggregate.RoundEntity.BidEntity.BidValue;
 
 #endregion
 
-public sealed partial class ARound
+public sealed partial class Round
 {
     private void EnsurePreconditions(RoundEventBase @event)
     {

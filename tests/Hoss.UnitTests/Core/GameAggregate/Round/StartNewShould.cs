@@ -31,10 +31,10 @@ public sealed class StartNewShould
     public void HaveValidState([Frozen] AGame sut)
     {
         var teamPlayers = sut.FindGamePlayers().Select(g => new RoundPlayer(g.PlayerId, g.TeamId));
-        sut.CurrentRoundState.Id.Should().NotBeNull();
-        sut.CurrentRoundState.RoundPlayers.Should().Contain(teamPlayers);
-        sut.CurrentRoundState.Stage.Should().Be(Round.RoundStage.Bidding);
-        sut.CurrentRoundState.PlayerDeals.Should().HaveCount(4);
+        sut.CurrentRoundView.Id.Should().NotBeNull();
+        sut.CurrentRoundView.RoundPlayers.Should().Contain(teamPlayers);
+        sut.CurrentRoundView.Stage.Should().Be(RoundBase.RoundStage.Bidding);
+        sut.CurrentRoundView.PlayerDeals.Should().HaveCount(4);
     }
 
     [Theory]
@@ -64,14 +64,14 @@ public sealed class StartNewShould
         gameId.Should().Be(game.Id);
         roundId.Should().NotBeNull();
 
-        game.CurrentRoundState.Stage.Should().Be(Round.RoundStage.Bidding);
+        game.CurrentRoundView.Stage.Should().Be(RoundBase.RoundStage.Bidding);
     }
 
     [Theory]
     [ReadyGameData]
     public void CallShuffleService([Frozen] Mock<IShufflingService> shuffleService, AGame sut)
     {
-        sut.CurrentRoundState.PlayerDeals.Should().HaveCount(4);
+        sut.CurrentRoundView.PlayerDeals.Should().HaveCount(4);
         shuffleService.Verify(s => s.Shuffle(It.IsAny<IList<ACard>>()), Times.Once);
     }
 }

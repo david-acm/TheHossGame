@@ -16,9 +16,9 @@ using Hoss.Core.PlayerAggregate;
 
 #endregion
 
-public sealed class NoRound : Round
+public sealed class NoRoundBase : RoundBase
 {
-    public NoRound()
+    public NoRoundBase()
         : base(new RoundId(), _ => { })
     {
         this.Apply(new RoundStartedEvent(new NoGameId(), new RoundId(), new List<RoundPlayer>()));

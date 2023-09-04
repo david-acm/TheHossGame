@@ -57,7 +57,7 @@ public sealed partial class AGame
         }
 
         var shuffledDeck = ADeck.ShuffleNew(this.shufflingService);
-        var round = ARound.StartNew(this.Id, this.GetTeamPlayers(), shuffledDeck, this.Apply);
+        var round = Round.StartNew(this.Id, this.GetTeamPlayers(), shuffledDeck, this.Apply);
 
         this.Apply(new GameStartedEvent(this.Id, round.Id, round.RoundPlayers, round.Deals, round.Bids));
     }
@@ -65,27 +65,27 @@ public sealed partial class AGame
     public void Bid(PlayerId playerId, BidValue value)
     {
         // TO DO: Hoss without help
-        this.CurrentRound.Bid(playerId, value);
+        this.CurrentRoundBase.Bid(playerId, value);
     }
 
     public void RequestHoss(PlayerId playerId, Card card)
     {
-        this.CurrentRound.RequestHoss(playerId, card);
+        this.CurrentRoundBase.RequestHoss(playerId, card);
     }
 
     public void GiveHossCard(PlayerId playerId, Card card)
     {
-        this.CurrentRound.GiveHossCard(playerId, card);
+        this.CurrentRoundBase.GiveHossCard(playerId, card);
     }
 
     public void SelectTrump(PlayerId currentPlayerId, Suit suit)
     {
-        this.CurrentRound.SelectTrump(currentPlayerId, suit);
+        this.CurrentRoundBase.SelectTrump(currentPlayerId, suit);
     }
 
     public void PlayCard(PlayerId playerId, Card card)
     {
-        this.CurrentRound.PlayCard(playerId, card);
+        this.CurrentRoundBase.PlayCard(playerId, card);
     }
 
     public void Finish()
@@ -151,7 +151,7 @@ public sealed partial class AGame
 
     private void HandleGameStartedEvent(GameStartedEvent @event)
     {
-        var round = ARound.FromStream(@event, this.Apply);
+        var round = Round.FromStream(@event, this.Apply);
         this.rounds.Add(round);
 
         this.Stage = GameState.Started;
@@ -166,7 +166,7 @@ public sealed partial class AGame
             return;
         }
 
-        this.rounds.Add(ARound.StartNew(this.Id, new Queue<RoundPlayer>(this.GetTeamPlayers()),
+        this.rounds.Add(Round.StartNew(this.Id, new Queue<RoundPlayer>(this.GetTeamPlayers()),
             ADeck.ShuffleNew(this.shufflingService), this.Apply, this.rounds.Count));
     }
 

@@ -32,7 +32,7 @@ public class SelectTrumpShould
 
         game.Events.ShouldContain().SingleEventOfType<TrumpSelectedEvent>().Should().BeAssignableTo<RoundEventBase>();
 
-        game.CurrentRoundState.TrumpSelected.Should().Be(cardSuit);
+        game.CurrentRoundView.TrumpSelected.Should().Be(cardSuit);
     }
 
     [Theory]
@@ -43,7 +43,7 @@ public class SelectTrumpShould
 
         game.Events.ShouldContain().NoEventsOfType<TrumpSelectedEvent>();
 
-        game.CurrentRoundState.TrumpSelected.Should().Be(Suit.None);
+        game.CurrentRoundView.TrumpSelected.Should().Be(Suit.None);
     }
 
     [Theory]
@@ -57,6 +57,6 @@ public class SelectTrumpShould
 
         game.Events.ShouldContain().NoEventsOfType<TrumpSelectedEvent>();
 
-        game.CurrentRoundState.TrumpSelected.Should().Be(Suit.None);
+        game.CurrentRoundView.TrumpSelected.Should().Be(Suit.None);
     }
 }

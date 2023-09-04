@@ -20,7 +20,7 @@ using Hoss.SharedKernel;
 /// <summary>
 ///    The state side.
 /// </summary>
-public sealed partial class ARound : Round
+public sealed partial class Round : RoundBase
 {
     private readonly Stack<Trick> tricks = new();
     private List<Bid> bids = new();
@@ -30,14 +30,14 @@ public sealed partial class ARound : Round
     private Queue<RoundPlayer> teamPlayers = new();
     private TrumpSelection trumpSelection = new(new NoPlayerId(), Suit.None);
 
-    private ARound(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Action<DomainEventBase> when,
+    private Round(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Action<DomainEventBase> when,
         int roundNumber = 0)
         : this(gameId, new RoundId(), when)
     {
         this.OrderPlayers(teamPlayers, roundNumber);
     }
 
-    private ARound(GameId gameId, RoundId roundId, Action<DomainEventBase> when)
+    private Round(GameId gameId, RoundId roundId, Action<DomainEventBase> when)
         : base(roundId, when)
     {
         this.GameId = gameId;

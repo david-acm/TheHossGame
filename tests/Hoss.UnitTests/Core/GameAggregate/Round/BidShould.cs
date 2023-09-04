@@ -38,7 +38,7 @@ public class BidShould
         var (gameId, roundId, winningBid) = game.Events.ShouldContain().SingleEventOfType<BidCompleteEvent>();
 
         gameId.Should().Be(game.Id);
-        roundId.Should().Be(game.CurrentRoundState.Id);
+        roundId.Should().Be(game.CurrentRoundView.Id);
         winningBid.Value.Should().Be(BidValue.Four);
         winningBid.PlayerId.Should().Be(winnerPlayerId);
         game.CurrentPlayerId.Should().Be(winnerPlayerId);
@@ -53,7 +53,7 @@ public class BidShould
         var (gameId, roundId, bid) = game.Events.ShouldContain().SingleEventOfType<BidEvent>();
 
         gameId.Should().Be(game.Id);
-        roundId.Should().Be(game.CurrentRoundState.Id);
+        roundId.Should().Be(game.CurrentRoundView.Id);
         bid.PlayerId.Should().Be(bidPlayerId);
         bid.Value.Should().Be(value);
     }
@@ -84,8 +84,8 @@ public class BidShould
     {
         var bidPlayerId = game.CurrentPlayerId;
         game.Bid(bidPlayerId, value);
-        game.CurrentRoundState.Stage.Should().Be(Round.RoundStage.Bidding);
-        var bid = game.CurrentRoundState.Bids.Should().ContainSingle().Subject;
+        game.CurrentRoundView.Stage.Should().Be(RoundBase.RoundStage.Bidding);
+        var bid = game.CurrentRoundView.Bids.Should().ContainSingle().Subject;
         bid.PlayerId.Should().Be(bidPlayerId);
         bid.Value.Should().Be(value);
     }
@@ -98,7 +98,7 @@ public class BidShould
         game.Bid(game.CurrentPlayerId, BidValue.Two);
         game.Bid(game.CurrentPlayerId, BidValue.Pass);
 
-        game.CurrentRoundState.Bids.Should().HaveCount(3);
+        game.CurrentRoundView.Bids.Should().HaveCount(3);
     }
 
     [Theory]
@@ -118,7 +118,7 @@ public class BidShould
         game.GiveHossCard(game.CurrentPlayerId, contributingCard);
 
         // Assert
-        game.CurrentRoundState.Bids.Should().HaveCount(3);
+        game.CurrentRoundView.Bids.Should().HaveCount(3);
         game.Events.ShouldContain().SingleEventOfType<HossRequestedEvent>();
         game.Events.ShouldContain().SingleEventOfType<PartnerHossCardGivenEvent>();
 
@@ -126,8 +126,8 @@ public class BidShould
         game.GetPlayerCards(hossingPartner).Should().NotContain(contributingCard);
         game.GetPlayerCards(playerHossing).Should().Contain(contributingCard);
 
-        game.CurrentRoundState.RoundPlayers.Should().NotContain(r => r.PlayerId == hossingPartner);
-        game.CurrentRoundState.RoundPlayers.Should().HaveCount(3);
+        game.CurrentRoundView.RoundPlayers.Should().NotContain(r => r.PlayerId == hossingPartner);
+        game.CurrentRoundView.RoundPlayers.Should().HaveCount(3);
         game.CurrentPlayerId.Should().Be(playerHossing);
     }
 
@@ -147,11 +147,11 @@ public class BidShould
     [ReadyGameData]
     public void PlayerOrderShouldBeCorrect(AGame game)
     {
-        game.CurrentRoundState.RoundPlayers.Should().ContainInOrder(
-            game.CurrentRoundState.RoundPlayers.First(p => p.TeamId == Team1),
-            game.CurrentRoundState.RoundPlayers.First(p => p.TeamId == Team2),
-            game.CurrentRoundState.RoundPlayers.Last(p => p.TeamId == Team1),
-            game.CurrentRoundState.RoundPlayers.Last(p => p.TeamId == Team2));
+        game.CurrentRoundView.RoundPlayers.Should().ContainInOrder(
+            game.CurrentRoundView.RoundPlayers.First(p => p.TeamId == Team1),
+            game.CurrentRoundView.RoundPlayers.First(p => p.TeamId == Team2),
+            game.CurrentRoundView.RoundPlayers.Last(p => p.TeamId == Team1),
+            game.CurrentRoundView.RoundPlayers.Last(p => p.TeamId == Team2));
     }
 
     [Theory]
@@ -179,6 +179,6 @@ public static class PlayerIdExtensions
 {
     public static IReadOnlyList<Card> GetPlayerCards(this AGame game, PlayerId playerId)
     {
-        return game.CurrentRoundState.PlayerDeals.First(d => d.PlayerId == playerId).Cards;
+        return game.CurrentRoundView.PlayerDeals.First(d => d.PlayerId == playerId).Cards;
     }
 }

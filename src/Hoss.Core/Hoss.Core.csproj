@@ -22,4 +22,28 @@
     </ItemGroup>
 
 
+    <ItemGroup>
+        <Compile Update="GameAggregate\RoundEntity\Round.Base.cs">
+            <DependentUpon>Round.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\RoundEntity\Round.Id.cs">
+            <DependentUpon>Round.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\RoundEntity\Round.Player.cs">
+            <DependentUpon>Round.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\RoundEntity\Round.State.cs">
+            <DependentUpon>Round.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\RoundEntity\Round.Validation.cs">
+            <DependentUpon>Round.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\RoundEntity\Round.View.cs">
+            <DependentUpon>Round.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\RoundEntity\NoRoundBase.cs">
+            <DependentUpon>Round.cs</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
 </Project>

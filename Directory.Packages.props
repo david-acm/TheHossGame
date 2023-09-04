@@ -3,12 +3,6 @@
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="$(SolutionDir).Sln Items/SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs">
-        </Compile>
-        <Compile Include="$(SolutionDir).Sln Items/GlobalSuppressions.cs" Link="Properties\GlobalSuppressions.cs">
-        </Compile>
-    </ItemGroup>
-    <ItemGroup>
         <PackageVersion Include="Ardalis.ApiEndpoints" Version="4.0.1"/>
         <PackageVersion Include="Ardalis.GuardClauses" Version="4.1.1"/>
         <PackageVersion Include="Ardalis.HttpClientTestExtensions" Version="3.0.0"/>

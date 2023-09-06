@@ -1,90 +1,71 @@
-﻿// 🃏 The HossGame 🃏
-// <copyright file="Program.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-// 🃏 The HossGame 🃏
-
-namespace TheHossGame.Web;
-
-using Ardalis.ListStartupServices;
+﻿using Ardalis.ListStartupServices;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using FastEndpoints;
+using FastEndpoints.Swagger;
 using Hoss.Infrastructure;
-using Microsoft.OpenApi.Models;
 using Serilog;
 
-internal static class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
+builder.Host.UseSerilog((_, config) => config.ReadFrom.Configuration(builder.Configuration));
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
 {
-    private static void Main(string[] args)
-    {
-        var builder = WebApplication.CreateBuilder(args);
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
 
-        builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
-        builder.Host.UseSerilog((_, config) => config.ReadFrom.Configuration(builder.Configuration));
+builder.Services.AddFastEndpoints();
+//builder.Services.AddFastEndpointsApiExplorer();
+builder.Services.SwaggerDocument(o => { o.ShortSchemaNames = true; });
 
-        builder.Services.Configure<CookiePolicyOptions>(options =>
-        {
-            options.CheckConsentNeeded = context => true;
-            options.MinimumSameSitePolicy = SameSiteMode.None;
-        });
 
-        var connectionString = builder.Configuration.GetConnectionString("SqliteConnection");
+// add list services for diagnostic purposes - see https://github.com/ardalis/AspNetCoreStartupServices
+builder.Services.Configure<ServiceConfig>(config =>
+{
+    config.Services = new List<ServiceDescriptor>(builder.Services);
 
-        builder.Services.AddRazorPages();
+    // optional - default path to view services is /listallservices - recommended to choose your own path
+    config.Path = "/listservices";
+});
 
-        builder.Services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo {Title = "My API", Version = "v1"});
-            c.EnableAnnotations();
-        });
 
-        // add list services for diagnostic purposes - see https://github.com/ardalis/AspNetCoreStartupServices
-        builder.Services.Configure<ServiceConfig>(config =>
-        {
-            config.Services = new List<ServiceDescriptor>(builder.Services);
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+{
+    // containerBuilder.RegisterModule(new DefaultCoreModule());
+    containerBuilder.RegisterModule(new DefaultInfrastructureModule(builder.Environment.IsDevelopment()));
+});
 
-            // optional - default path to view services is /listallservices - recommended to choose your own path
-            config.Path = "/listservices";
-        });
+var app = builder.Build();
 
-        builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
-        {
-            containerBuilder.RegisterModule(
-                new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development"));
-        });
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseShowAllServicesMiddleware(); // see https://github.com/ardalis/AspNetCoreStartupServices
+}
+else
+{
+    app.UseDefaultExceptionHandler(); // from FastEndpoints
+    app.UseHsts();
+}
 
-        var app = builder.Build();
+app.UseFastEndpoints();
+app.UseSwaggerGen(); // FastEndpoints middleware
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-            app.UseShowAllServicesMiddleware();
-        }
-        else
-        {
-            app.UseExceptionHandler("/Home/Error");
-            app.UseHsts();
-        }
+app.UseHttpsRedirection();
 
-        app.UseRouting();
+// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+//app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-        app.UseCookiePolicy();
+// Seed Database
 
-        // Enable middleware to serve generated Swagger as a JSON endpoint.
-        app.UseSwagger();
+app.Run();
 
-        // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapDefaultControllerRoute();
-            endpoints.MapRazorPages();
-        });
-
-        app.Run();
-    }
+// Make the implicit Program.cs class public, so integration tests can reference the correct assembly for host building
+public partial class Program
+{
 }

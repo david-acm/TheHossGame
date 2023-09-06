@@ -9,6 +9,7 @@ namespace Hoss.Infrastructure;
 using System.Reflection;
 using Autofac;
 using Hoss.Core.GameAggregate;
+using Hoss.Core.PlayerAggregate;
 using Hoss.SharedKernel;
 using Hoss.SharedKernel.Interfaces;
 using MediatR;
@@ -80,8 +81,8 @@ public class DefaultInfrastructureModule : Module
             .InstancePerLifetimeScope();
 
         builder
-            .RegisterType(typeof(DomainEventDispatcher<>))
-            .As(typeof(IDomainEventDispatcher<>))
+            .RegisterType(typeof(DomainEventDispatcher<IInternalEventHandler>))
+            .As(typeof(IDomainEventDispatcher<Player>))
             .InstancePerLifetimeScope();
 
         // builder.Register<ServiceFactory>(context =>

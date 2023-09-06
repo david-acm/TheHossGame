@@ -18,121 +18,125 @@ using System.ComponentModel.DataAnnotations.Schema;
 /// </summary>
 /// <typeparam name="T">The id type.</typeparam>
 public abstract class EntityBase<T> : IInternalEventHandler
-   where T : ValueObject
+    where T : ValueObject
 {
-   private readonly List<DomainEventBase> domainEvents = new ();
+    private readonly List<DomainEventBase> domainEvents = new();
 
-   /// <summary>
-   ///    Initializes a new instance of the <see cref="EntityBase{T}" /> class.
-   /// </summary>
-   /// <param name="id">The entity id.</param>
-   protected EntityBase(T id)
-   {
-      this.Id = id;
-      this.Applier = this.RaiseDomainEvent;
-   }
+    /// <summary>
+    ///    Initializes a new instance of the <see cref="EntityBase{T}" /> class.
+    /// </summary>
+    /// <param name="id">The entity id.</param>
+    protected EntityBase(T id)
+    {
+        this.Id = id;
+        this.Applier = this.RaiseDomainEvent;
+    }
 
-   /// <summary>
-   ///    Initializes a new instance of the <see cref="EntityBase{T}" /> class.
-   /// </summary>
-   /// <param name="id">The entity id.</param>
-   /// <param name="applier">The event applier.</param>
-   protected EntityBase(T id, Action<DomainEventBase> applier)
-   {
-      this.Id = id;
-      this.Applier = applier;
-   }
+    /// <summary>
+    ///    Initializes a new instance of the <see cref="EntityBase{T}" /> class.
+    /// </summary>
+    /// <param name="id">The entity id.</param>
+    /// <param name="applier">The event applier.</param>
+    protected EntityBase(T id, Action<DomainEventBase> applier)
+    {
+        this.Id = id;
+        this.Applier = applier;
+    }
 
-   /// <summary>
-   ///    Gets the id.
-   /// </summary>
-   public T Id { get; }
+    /// <summary>
+    ///    Gets the id.
+    /// </summary>
+    public T Id { get; }
 
-   /// <summary>
-   ///    Gets a readonly collection of domain events.
-   /// </summary>
-   [NotMapped]
-   public IEnumerable<DomainEventBase> Events => this.domainEvents.AsReadOnly();
+    /// <summary>
+    ///    Gets the event applier.
+    /// </summary>
+    protected Action<DomainEventBase> Applier { get; }
 
-   /// <summary>
-   ///    Gets the event applier.
-   /// </summary>
-   protected Action<DomainEventBase> Applier { get; }
+    #region IInternalEventHandler Members
 
-   /// <summary>
-   ///    Performs identity based comparison.
-   /// </summary>
-   /// <param name="obj">The object to compare.</param>
-   /// <returns>Whether the two objects are equal.</returns>
-   public override bool Equals(object? obj)
-   {
-      if (obj is not EntityBase<T> other)
-      {
-         return false;
-      }
+    /// <summary>
+    ///    Gets a readonly collection of domain events.
+    /// </summary>
+    [NotMapped]
+    public IEnumerable<DomainEventBase> Events => this.domainEvents.AsReadOnly();
 
-      if (ReferenceEquals(this, other))
-      {
-         return true;
-      }
+    /// <summary>
+    ///    Clears the collection of domain events.
+    /// </summary>
+    public void ClearDomainEvents()
+    {
+        this.domainEvents.Clear();
+    }
 
-      if (this.GetType() != other.GetType())
-      {
-         return false;
-      }
+    #endregion
 
-      return 
-         this.GetHashCode() == other.GetHashCode() &&
-         this.Id == other.Id;
-   }
+    /// <summary>
+    ///    Performs identity based comparison.
+    /// </summary>
+    /// <param name="obj">The object to compare.</param>
+    /// <returns>Whether the two objects are equal.</returns>
+    public override bool Equals(object? obj)
+    {
+        if (obj is not EntityBase<T> other)
+        {
+            return false;
+        }
 
-   /// <summary>
-   ///    Gets the hash code of other entity.
-   /// </summary>
-   /// <returns>The hash code of the entity.</returns>
-   public override int GetHashCode()
-   {
-      return (this.GetType().ToString() + this.Id).GetHashCode(StringComparison.InvariantCulture);
-   }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
 
-   /// <summary>
-   ///    Clears the collection of domain events.
-   /// </summary>
-   internal void ClearDomainEvents()
-   {
-      this.domainEvents.Clear();
-   }
+        if (this.GetType() != other.GetType())
+        {
+            return false;
+        }
 
-   /// <summary>
-   ///    Applies an event to an entity.
-   /// </summary>
-   /// <param name="event">The event to apply.</param>
-   protected virtual void Apply(DomainEventBase @event)
-   {
-      this.When(@event);
-      this.EnsureValidState();
-      this.Applier(@event);
-   }
+        return
+            this.GetHashCode() == other.GetHashCode() &&
+            this.Id == other.Id;
+    }
 
-   /// <summary>
-   ///    Applies concrete event to entity.
-   /// </summary>
-   /// <param name="event">The event to apply.</param>
-   protected abstract void When(DomainEventBase @event);
+    /// <summary>
+    ///    Gets the hash code of other entity.
+    /// </summary>
+    /// <returns>The hash code of the entity.</returns>
+    public override int GetHashCode()
+    {
+        return (this.GetType().ToString() + this.Id).GetHashCode(StringComparison.InvariantCulture);
+    }
 
-   /// <summary>
-   ///    Ensures the entity is in a valid state.
-   /// </summary>
-   protected abstract void EnsureValidState();
+    /// <summary>
+    ///    Applies an event to an entity.
+    /// </summary>
+    /// <param name="event">The event to apply.</param>
+    protected virtual void Apply(DomainEventBase @event)
+    {
+        this.When(@event);
+        this.EnsureValidState();
+        this.Applier(@event);
+    }
 
-   /// <summary>
-   ///    Adds a new domain event to the collection.
-   /// </summary>
-   /// <param name="domainEvent">The domain event to be added.</param>
+    /// <summary>
+    ///    Applies concrete event to entity.
+    /// </summary>
+    /// <param name="event">The event to apply.</param>
+    protected abstract void When(DomainEventBase @event);
+
+    /// <summary>
+    ///    Ensures the entity is in a valid state.
+    /// </summary>
+    protected abstract void EnsureValidState();
+
+    /// <summary>
+    ///    Adds a new domain event to the collection.
+    /// </summary>
+    /// <param name="domainEvent">The domain event to be added.</param>
 #pragma warning disable CA1030
-   protected void RaiseDomainEvent(DomainEventBase domainEvent)
+    protected void RaiseDomainEvent(DomainEventBase domainEvent)
 #pragma warning restore CA1030
-   {
-      this.domainEvents.Add(domainEvent);
-   }
+    {
+        this.domainEvents.Add(domainEvent);
+    }
 }

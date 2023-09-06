@@ -2,7 +2,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.1.3" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Xunit.DependencyInjection"/>
+    <PackageReference Include="Xunit.DependencyInjection.Logging"/>
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -29,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TheHossGame.Infrastructure\TheHossGame.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\TheHossGame.Web\TheHossGame.Web.csproj"/>
     <ProjectReference Include="..\Hoss.UnitTests\Hoss.UnitTests.csproj"/>
   </ItemGroup>
 

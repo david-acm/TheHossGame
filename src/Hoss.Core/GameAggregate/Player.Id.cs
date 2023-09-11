@@ -5,13 +5,7 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.PlayerAggregate;
-
-#region
-
-using Hoss.SharedKernel;
-
-#endregion
+namespace Hoss.Core.GameAggregate;
 
 public record APlayerId : PlayerId
 {

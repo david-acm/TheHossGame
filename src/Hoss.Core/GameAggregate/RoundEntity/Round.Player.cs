@@ -9,8 +9,6 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using Hoss.Core.PlayerAggregate;
-using Hoss.SharedKernel;
 using static Game;
 
 #endregion

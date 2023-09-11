@@ -12,12 +12,12 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.GameAggregate.Events;
-using Hoss.Core.PlayerAggregate;
+using Hoss.SharedKernel;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
 using static Hoss.Core.GameAggregate.Game.TeamId;
+using static Hoss.Core.GameAggregate.GameEvents;
 
 #endregion
 
@@ -34,12 +34,12 @@ public class JoinGameShould
 
     [Theory]
     [PlayerData]
-    public void RaiseTeamsFormedEvent(IEnumerable<Player> players, AGame game)
+    public void RaiseTeamsFormedEvent(IEnumerable<PlayerId> playerIds, AGame game)
     {
-        var playerList = players.ToList();
-        game.JoinPlayerToTeam(playerList[0].Id, Team1);
-        game.JoinPlayerToTeam(playerList[1].Id, Team2);
-        game.JoinPlayerToTeam(playerList[2].Id, Team2);
+        var playerIdList = playerIds.ToList();
+        game.JoinPlayerToTeam(playerIdList[0], Team1);
+        game.JoinPlayerToTeam(playerIdList[1], Team2);
+        game.JoinPlayerToTeam(playerIdList[2], Team2);
 
         var @event = game.Events.ShouldContain().SingleEventOfType<TeamsFormedEvent>();
         @event.GameId.Should().Be(game.Id);
@@ -48,9 +48,9 @@ public class JoinGameShould
 
     [Theory]
     [PlayerData]
-    public void RaisePlayerJoinedEvent(Player player, AGame game)
+    public void RaisePlayerJoinedEvent(PlayerId playerId, AGame game)
     {
-        game.JoinPlayerToTeam(player.Id, Team1);
+        game.JoinPlayerToTeam(playerId, Team1);
 
         game.Events.Where(e => e is PlayerJoinedEvent).Should().HaveCount(2);
     }

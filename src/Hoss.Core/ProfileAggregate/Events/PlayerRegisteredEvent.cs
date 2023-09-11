@@ -9,8 +9,7 @@ namespace Hoss.Core.PlayerAggregate.Events;
 
 #region
 
-using Hoss.SharedKernel;
-
 #endregion
 
-public record PlayerRegisteredEvent(PlayerId PlayerId, PlayerName PlayerName) : DomainEventBase(PlayerId);
+public record PlayerRegisteredEvent
+    (ProfileId PlayerId, ProfileEmail Email, PlayerName PlayerName) : DomainEventBase(PlayerId);

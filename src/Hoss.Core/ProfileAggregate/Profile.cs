@@ -9,32 +9,33 @@ namespace Hoss.Core.PlayerAggregate;
 
 #region
 
-using Hoss.Core.GameAggregate;
-using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.PlayerAggregate.Events;
-using Hoss.SharedKernel;
 
 #endregion
 
-public sealed class Player : Base
+public sealed class Profile : Base
 {
-    private Player(PlayerId id)
+    private Profile(ProfileId id)
         : base(id)
     {
     }
 
     private PlayerState State { get; set; } = PlayerState.NotPlaying;
 
-    public static Player FromRegister(PlayerId playerId, PlayerName playerName)
+    public ProfileEmailBase Email { get; private set; } = new NoProfileEmail();
+
+    public NameBase Name { get; private set; } = new NoName();
+
+    public static Profile FromNewRegister(ProfileEmail profileEmail, PlayerName playerName)
     {
-        var player = new Player(playerId);
-        var @event = new PlayerRegisteredEvent(playerId, playerName);
-        player.RaiseDomainEvent(@event);
+        var id = new AProfileId();
+        var player = new Profile(id);
+        player.Apply(new PlayerRegisteredEvent(id, profileEmail, playerName));
 
         return player;
     }
 
-    public void RequestJoinGame(GameId gameId)
+    public void RequestJoinGame(ValueId gameId)
     {
         /*This should be checked both by the client before sending the command and by a domain service after hydrating the player aggregate and before calling this method. There is a race condition where a player can join a game and tries to join another game after the condition is checked. Allowing a player to briefly join two games. This edge and rare case could be solved by:
         - Defining an SLA (?)
@@ -42,10 +43,10 @@ public sealed class Player : Base
         - Decoupling the request event from the actual joining to a game. Allowing some time to catch on. Or by sending the id of the last event used to perform the check? */
 
         // Preconditions
-        if (this.IsJoiningGame) this.Apply(new CannotJoinGameEvent(this.Id, "APlayer already in a game"));
-
-        // Post conditions
-        this.Apply(new RequestedJoinGameEvent(this.Id, gameId));
+        if (this.CanJoinNewGame)
+            this.Apply(new RequestedJoinGameEvent(this.Id, gameId));
+        else
+            this.Apply(new CannotJoinGameEvent(this.Id, "APlayer already in a game"));
 
         this.EnsureValidState(); // Invariants
     }
@@ -56,25 +57,32 @@ public sealed class Player : Base
         var valid = this.State switch
 #pragma warning restore CS8509
         {
-            PlayerState.Playing => this.JoiningGameId is not NoGameId,
+            PlayerState.Playing => this.JoiningGameId is not NoValueId,
+            _ => true,
         };
 
-        if (!valid) throw new InvalidEntityStateException($"Failed to validate entity {nameof(Player)}");
+        if (!valid) throw new InvalidEntityStateException($"Failed to validate entity {nameof(Profile)}");
     }
 
     protected override void When(DomainEventBase @event)
     {
-#pragma warning disable CS8509
         (@event switch
-#pragma warning restore CS8509
         {
-            CannotJoinGameEvent => (Action) (() => { }),
+            // CannotJoinGameEvent => () => { },
+            PlayerRegisteredEvent e => (Action) (() => this.HandlePlayerRegisteredEvent(e)),
             RequestedJoinGameEvent e => () =>
             {
                 this.State = PlayerState.Playing;
                 this.JoiningGameId = e.GameId;
             },
+            _ => () => { },
         }).Invoke();
+    }
+
+    private void HandlePlayerRegisteredEvent(PlayerRegisteredEvent @event)
+    {
+        this.Name = @event.PlayerName;
+        this.Email = @event.Email;
     }
 
     #region Nested type: PlayerState
@@ -88,14 +96,26 @@ public sealed class Player : Base
     #endregion
 }
 
+public record AProfileId : ProfileId
+{
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return this.Id.ToString();
+    }
+}
+
+public record NoProfileId : ProfileId;
+
+public abstract record ProfileId : ValueId;
+
 public sealed class NoBase : Base
 {
     /// <inheritdoc />
-    public NoBase(PlayerId id)
+    public NoBase(ProfileId id)
         : base(id)
     {
         this.EnsureValidState();
-        this.When(new PlayerReadyEvent(new NoGameId(), id));
     }
 
     /// <inheritdoc />

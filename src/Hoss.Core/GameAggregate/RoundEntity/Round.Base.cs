@@ -11,8 +11,7 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.PlayerAggregate;
-using Hoss.SharedKernel;
+using Hoss.Core.GameAggregate.RoundEntity.RoundScoreValueObject;
 
 #endregion
 

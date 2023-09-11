@@ -12,7 +12,6 @@ namespace TheHossGame.UnitTests.SharedKernel;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.GameAggregate.Events;
 using Hoss.SharedKernel;
 using MediatR;
 using Moq;
@@ -33,7 +32,7 @@ public class DomainEventDispatcherShould
         await dispatcher.DispatchAndClearEvents(new[] {game});
 
         var eventCount = game.Events.Count();
-        mediator.Verify(m => m.Publish(It.IsAny<GameEventBase>(), default!), Times.Exactly(eventCount));
+        mediator.Verify(m => m.Publish(It.IsAny<GameEvents.GameEventBase>(), default!), Times.Exactly(eventCount));
         game.Events.Should().BeEmpty();
     }
 

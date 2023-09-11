@@ -9,19 +9,17 @@ namespace Hoss.Core.PlayerAggregate.Events;
 
 #region
 
-using Hoss.SharedKernel;
-
 #endregion
 
-public record CannotJoinGameEvent(PlayerId PlayerId, string Reason) : PlayerEventBase(PlayerId);
+public record CannotJoinGameEvent(ProfileId ProfileId, string Reason) : ProfileEventBase(ProfileId);
 
-public abstract record PlayerEventBase : DomainEventBase
+public abstract record ProfileEventBase : DomainEventBase
 {
-   protected PlayerEventBase(PlayerId playerId)
-      : base(playerId)
-   {
-      this.PlayerId = playerId;
-   }
+    protected ProfileEventBase(ProfileId profileId)
+        : base(profileId)
+    {
+        this.ProfileId = profileId;
+    }
 
-   public PlayerId PlayerId { get; }
+    public ProfileId ProfileId { get; }
 }

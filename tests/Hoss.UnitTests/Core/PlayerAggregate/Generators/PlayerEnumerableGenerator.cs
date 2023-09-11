@@ -10,6 +10,7 @@ namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 #region
 
 using AutoFixture.Kernel;
+using Hoss.Core.GameAggregate;
 using Hoss.Core.PlayerAggregate;
 
 #endregion
@@ -44,5 +45,40 @@ public class PlayerEnumerableGenerator : ISpecimenBuilder
     private Base GeneratePLayer()
     {
         return (Base) new PlayerGenerator().Create(typeof(Base), this.specimenContext!);
+    }
+}
+
+public class PlayerIdEnumerableGenerator : ISpecimenBuilder
+{
+    private ISpecimenContext? specimenContext;
+
+    #region ISpecimenBuilder Members
+
+    public object Create(object request, ISpecimenContext context)
+    {
+        this.specimenContext = context;
+        if (typeof(IEnumerable<APlayerId>).Equals(request))
+            return this.GeneratePlayerList();
+        return new NoSpecimen();
+    }
+
+    #endregion
+
+    private List<APlayerId> GeneratePlayerList()
+    {
+        var playerList = new List<APlayerId>
+        {
+            this.GeneratePlayerId(),
+            this.GeneratePlayerId(),
+            this.GeneratePlayerId(),
+            this.GeneratePlayerId(),
+        };
+
+        return playerList;
+    }
+
+    private APlayerId GeneratePlayerId()
+    {
+        return new APlayerId();
     }
 }

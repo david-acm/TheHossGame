@@ -25,9 +25,9 @@ public class RegisterShould
 {
     [Theory]
     [PlayerData]
-    public void RaisePlayerRegisteredEvent(APlayerId playerId, PlayerName playerName)
+    public void RaisePlayerRegisteredEvent(ProfileEmail email, PlayerName name)
     {
-        var player = Player.FromRegister(playerId, playerName);
+        var player = Profile.FromNewRegister(email, name);
 
         var @event = player.Events.Should().ContainSingle().Subject.As<PlayerRegisteredEvent>();
         @event = @event.Should().BeOfType<PlayerRegisteredEvent>().Subject;
@@ -50,12 +50,12 @@ public class RegisterShould
     [PlayerData]
     public void NotBeEqualByType(
         AGame game,
-        NoRoundBase noRoundBase,
-        Player player,
+        NoRound noRound,
+        Profile profile,
         NoBase noBase)
     {
-        game.Should().NotBe(noRoundBase);
-        player.Should().NotBe(noBase);
+        game.Should().NotBe(noRound);
+        profile.Should().NotBe(noBase);
         game.Should().Be(game);
     }
 }

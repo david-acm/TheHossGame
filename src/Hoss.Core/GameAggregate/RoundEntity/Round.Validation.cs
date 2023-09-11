@@ -9,12 +9,10 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.GameAggregate.RoundEntity.Events;
-using Hoss.Core.PlayerAggregate;
 using static Hoss.Core.GameAggregate.RoundEntity.BidEntity.BidValue;
+using static RoundEvents;
 
 #endregion
 
@@ -22,9 +20,7 @@ public sealed partial class Round
 {
     private void EnsurePreconditions(RoundEventBase @event)
     {
-#pragma warning disable CS8509
         var valid = @event switch
-#pragma warning restore CS8509
         {
             CardPlayedEvent e => this.ValidateCardPlayed(e),
             TrumpSelectedEvent e => this.ValidateTrumpSelected(e),

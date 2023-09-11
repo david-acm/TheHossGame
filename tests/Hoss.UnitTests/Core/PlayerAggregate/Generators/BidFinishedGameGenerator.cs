@@ -14,7 +14,6 @@ using AutoFixture.Kernel;
 using Hoss.Core.GameAggregate;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.Interfaces;
-using Hoss.Core.PlayerAggregate;
 using Moq;
 using TheHossGame.UnitTests.Core.GameAggregate.Round;
 
@@ -42,15 +41,15 @@ public class BidFinishedGameGenerator : ISpecimenBuilder
     private AGame GenerateBidFinishedGame()
     {
         var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
-        var players = this.specimenContext.Create<IEnumerable<Base>>().ToList();
+        var playerIds = this.specimenContext.Create<IEnumerable<APlayerId>>().ToList();
 
-        var game = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
+        var game = AGame.CreateForPlayer(playerIds.First(), shufflingService.Object);
 
-        game.JoinPlayerToTeam(players[1].Id, Game.TeamId.Team1);
-        game.JoinPlayerToTeam(players[2].Id, Game.TeamId.Team2);
-        game.JoinPlayerToTeam(players[3].Id, Game.TeamId.Team2);
+        game.JoinPlayerToTeam(playerIds[1], Game.TeamId.Team1);
+        game.JoinPlayerToTeam(playerIds[2], Game.TeamId.Team2);
+        game.JoinPlayerToTeam(playerIds[3], Game.TeamId.Team2);
 
-        players.ForEach(player => game.TeamPlayerReady(player.Id));
+        playerIds.ForEach(playerId => game.TeamPlayerReady(playerId));
 
         game.Bid(game.CurrentPlayerId, BidValue.One);
         game.Bid(game.CurrentPlayerId, BidValue.Two);
@@ -80,20 +79,24 @@ public class BidWithHossGameGenerator : ISpecimenBuilder
     private AGame GenerateBidWithHossGame()
     {
         var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
-        var players = this.specimenContext.Create<IEnumerable<Base>>().ToList();
+        var playerIds = this.specimenContext.Create<IEnumerable<APlayerId>>().ToList();
 
-        var game = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
+        var game = AGame.CreateForPlayer(playerIds.First(), shufflingService.Object);
 
-        game.JoinPlayerToTeam(players[1].Id, Game.TeamId.Team1);
-        game.JoinPlayerToTeam(players[2].Id, Game.TeamId.Team2);
-        game.JoinPlayerToTeam(players[3].Id, Game.TeamId.Team2);
+        game.JoinPlayerToTeam(playerIds[1], Game.TeamId.Team1);
+        game.JoinPlayerToTeam(playerIds[2], Game.TeamId.Team2);
+        game.JoinPlayerToTeam(playerIds[3], Game.TeamId.Team2);
 
-        players.ForEach(player => game.TeamPlayerReady(player.Id));
+        playerIds.ForEach(id => game.TeamPlayerReady(id));
 
         game.Bid(game.CurrentPlayerId, BidValue.One);
         game.Bid(game.CurrentPlayerId, BidValue.Two);
-        game.RequestHoss(game.CurrentPlayerId, game.GetPlayerCards(game.CurrentPlayerId).First());
-        game.GiveHossCard(game.CurrentPlayerId, game.GetPlayerCards(game.CurrentPlayerId).First());
+
+        var discardCard = game.GetPlayerCards(game.CurrentPlayerId).First();
+        game.RequestHoss(game.CurrentPlayerId, discardCard);
+
+        var bestCard = game.GetPlayerCards(game.CurrentPlayerId).First();
+        game.GiveHossCard(game.CurrentPlayerId, bestCard);
 
         return game;
     }

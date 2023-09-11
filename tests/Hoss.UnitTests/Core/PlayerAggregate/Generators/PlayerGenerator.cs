@@ -9,6 +9,7 @@ namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 #region
 
+using System.Net.Mail;
 using AutoFixture;
 using AutoFixture.Kernel;
 using Hoss.Core.PlayerAggregate;
@@ -29,10 +30,10 @@ public class PlayerGenerator : ISpecimenBuilder
 
     #endregion
 
-    private Player RandomPlayerEmail()
+    private Profile RandomPlayerEmail()
     {
-        var playerId = this.specimenContext.Create<APlayerId>();
         var playerName = this.specimenContext.Create<PlayerName>();
-        return Player.FromRegister(playerId, playerName);
+        var playerEmail = this.specimenContext.Create<MailAddress>().Address;
+        return Profile.FromNewRegister(ProfileEmail.FromString(playerEmail), playerName);
     }
 }

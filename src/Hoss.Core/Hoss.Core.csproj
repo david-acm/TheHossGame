@@ -41,9 +41,25 @@
         <Compile Update="GameAggregate\RoundEntity\Round.View.cs">
             <DependentUpon>Round.cs</DependentUpon>
         </Compile>
-        <Compile Update="GameAggregate\RoundEntity\NoRoundBase.cs">
+        <Compile Update="GameAggregate\RoundEntity\NoRound.cs">
             <DependentUpon>Round.cs</DependentUpon>
         </Compile>
+        <Compile Update="GameAggregate\AGameId.cs">
+            <DependentUpon>Game.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\AGame.State.cs">
+            <DependentUpon>Game.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\AGame.Behaviour.cs">
+            <DependentUpon>Game.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\TeamGameScore.cs">
+            <DependentUpon>GameScore.cs</DependentUpon>
+        </Compile>
+        <Compile Update="GameAggregate\RoundEntity\BidValueObject\BidValue.cs">
+            <DependentUpon>Bid.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
+
 
 </Project>

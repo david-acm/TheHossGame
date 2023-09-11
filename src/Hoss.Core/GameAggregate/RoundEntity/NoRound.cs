@@ -11,14 +11,13 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.GameAggregate.RoundEntity.Events;
-using Hoss.Core.PlayerAggregate;
+using static RoundEvents;
 
 #endregion
 
-public sealed class NoRoundBase : RoundBase
+public sealed class NoRound : RoundBase
 {
-    public NoRoundBase()
+    public NoRound()
         : base(new RoundId(), _ => { })
     {
         this.Apply(new RoundStartedEvent(new NoGameId(), new RoundId(), new List<RoundPlayer>()));

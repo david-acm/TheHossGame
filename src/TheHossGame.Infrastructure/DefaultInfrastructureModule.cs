@@ -14,6 +14,7 @@ using Hoss.SharedKernel;
 using Hoss.SharedKernel.Interfaces;
 using MediatR;
 using MediatR.Pipeline;
+using TheHossGame.Infrastructure;
 using Module = Autofac.Module;
 
 public class DefaultInfrastructureModule : Module
@@ -82,8 +83,12 @@ public class DefaultInfrastructureModule : Module
 
         builder
             .RegisterType(typeof(DomainEventDispatcher<IInternalEventHandler>))
-            .As(typeof(IDomainEventDispatcher<Player>))
+            .As(typeof(IDomainEventDispatcher<Profile>))
             .InstancePerLifetimeScope();
+
+        builder
+            .RegisterType<EntityStore>()
+            .As<IEntityStore>();
 
         // builder.Register<ServiceFactory>(context =>
         // {

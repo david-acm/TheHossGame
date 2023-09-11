@@ -13,9 +13,19 @@
 namespace TheHossGame.Web.Endpoints;
 
 using FastEndpoints;
+using FluentValidation;
+using Hoss.Core.PlayerAggregate;
+using TheHossGame.Infrastructure;
 
 public class RegistrationHandler : Endpoint<RegisterPlayerCommand, RegisterPlayerResponse>
 {
+    private readonly IEntityStore entityStore;
+
+    public RegistrationHandler(IEntityStore entityStore)
+    {
+        this.entityStore = entityStore;
+    }
+
     public override void Configure()
     {
         this.Post("/registrations");
@@ -24,10 +34,36 @@ public class RegistrationHandler : Endpoint<RegisterPlayerCommand, RegisterPlaye
 
     public override async Task HandleAsync(RegisterPlayerCommand request, CancellationToken _)
     {
-        await this.SendAsync(new RegisterPlayerResponse());
+        await this.entityStore.SaveAsync(
+            Profile.FromNewRegister(
+                ProfileEmail.FromString(request.Email),
+                PlayerName.FromString(request.Name)));
+
+        await this.SendAsync(new RegisterPlayerResponse(request));
     }
 }
 
-public record RegisterPlayerResponse;
+public record RegisterPlayerResponse(RegisterPlayerCommand command);
 
-public record RegisterPlayerCommand;
+public record RegisterPlayerCommand([property: FromClaim] string Name, [property: FromClaim] string Email);
+
+public class RegisterCommandValidator : Validator<RegisterPlayerCommand>
+{
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="RegisterCommandValidator" /> class.
+    /// </summary>
+    public RegisterCommandValidator()
+    {
+        this.RuleFor(r => r.Email)
+            .EmailAddress()
+            .WithMessage("Invalid Email Address");
+
+        this.RuleFor(r => r.Name)
+            .NotEmpty()
+            .WithMessage("Name is required")
+            .MinimumLength(2)
+            .WithMessage("Name must be at least two characters long")
+            .MaximumLength(40)
+            .WithMessage("Name cannot be longer that 40 characters");
+    }
+}

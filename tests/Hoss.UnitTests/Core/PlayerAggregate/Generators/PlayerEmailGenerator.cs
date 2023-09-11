@@ -18,26 +18,26 @@ using Hoss.Core.PlayerAggregate;
 
 internal class PlayerEmailGenerator : ISpecimenBuilder
 {
-   private ISpecimenContext? specimenContext;
+    private ISpecimenContext? specimenContext;
 
-   #region ISpecimenBuilder Members
+    #region ISpecimenBuilder Members
 
-   public object Create(object request, ISpecimenContext context)
-   {
-      this.specimenContext = context;
-      if (!typeof(PlayerEmail).Equals(request))
-      {
-         return new NoSpecimen();
-      }
+    public object Create(object request, ISpecimenContext context)
+    {
+        this.specimenContext = context;
+        if (!typeof(ProfileEmail).Equals(request))
+        {
+            return new NoSpecimen();
+        }
 
-      return this.RandomPlayerEmail();
-   }
+        return this.RandomPlayerEmail();
+    }
 
-   #endregion
+    #endregion
 
-   private object RandomPlayerEmail()
-   {
-      var address = this.specimenContext.Create<MailAddress>().Address;
-      return PlayerEmail.FromString(address);
-   }
+    private object RandomPlayerEmail()
+    {
+        var address = this.specimenContext.Create<MailAddress>().Address;
+        return ProfileEmail.FromString(address);
+    }
 }

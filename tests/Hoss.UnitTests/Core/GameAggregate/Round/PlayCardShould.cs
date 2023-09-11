@@ -9,16 +9,16 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.PlayerAggregate;
+using Hoss.SharedKernel;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
 using static Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects.Rank;
 using static Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects.Suit;
+using static Hoss.Core.GameAggregate.RoundEntity.RoundEvents;
 
 public class PlayCardShould
 {
@@ -157,7 +157,7 @@ public class PlayCardShould
             game.SelectTrump(winner, SuitWithMostCards(game, winner));
         }
 
-        game.Events.ShouldContain().SingleEventOfType<GameFinishedEvent>();
+        game.Events.ShouldContain().SingleEventOfType<GameEvents.GameFinishedEvent>();
     }
 
     [Theory]
@@ -277,8 +277,8 @@ public static class GameExtensions
     internal static void PlayerInTurnPlaysAValidCard(this AGame game)
     {
         var currentPlayerCards = game.CurrentRoundView.DealForPlayer(game.CurrentPlayerId).Cards;
-        var lastPlayedCard = game.CurrentRoundView.TableCenter.LastOrDefault()?.Card;
-        var comparer = new Card.CardComparer(game.CurrentRoundView.TrumpSelected, lastPlayedCard?.Suit);
+        var cardAsked = game.CurrentRoundView.TableCenter.LastOrDefault()?.Card;
+        var comparer = new Card.CardComparer(game.CurrentRoundView.TrumpSelected, cardAsked?.Suit);
         var sameSuitCard = currentPlayerCards.OrderByDescending(c => c, comparer).First();
         game.PlayCard(game.CurrentPlayerId, sameSuitCard);
     }

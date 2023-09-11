@@ -11,13 +11,16 @@ namespace Hoss.Core.PlayerAggregate;
 
 using System.ComponentModel.DataAnnotations;
 using Ardalis.GuardClauses;
-using Hoss.SharedKernel;
 
 #endregion
 
-public record PlayerEmail : ValueObject
+public record ProfileEmailBase : ValueObject;
+
+public record NoProfileEmail : ProfileEmailBase;
+
+public record ProfileEmail : ProfileEmailBase
 {
-    private PlayerEmail(string address)
+    private ProfileEmail(string address)
     {
         Guard.Against.NullOrEmpty(address, nameof(address));
         Guard.Against.InvalidInput(address, nameof(address), _ => new EmailAddressAttribute().IsValid(address));
@@ -27,8 +30,8 @@ public record PlayerEmail : ValueObject
 
     public string Address { get; }
 
-    public static PlayerEmail FromString(string email)
+    public static ProfileEmail FromString(string email)
     {
-        return new PlayerEmail(email);
+        return new ProfileEmail(email);
     }
 }

@@ -12,35 +12,56 @@
 
 namespace TheHossGame.FunctionalTests;
 
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Ardalis.HttpClientTestExtensions;
-using AutoFixture;
-using AutoFixture.Xunit2;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using TheHossGame.Web;
-using TheHossGame.Web.Endpoints;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 [Collection("Sequential")]
 public class RegisterShould : IClassFixture<CustomWebApplicationFactory<WebMarker>>
 {
+    private readonly ITestOutputHelper outputHelper;
+
+    public RegisterShould(ITestOutputHelper outputHelper)
+    {
+        this.outputHelper = outputHelper;
+    }
+
     [Theory]
     [CommandApiData]
-    public async Task RegisterANewPlayer(CommandApiFactory commandApi)
+    public async Task RegisterANewPlayer(CommandApiFactory apiClientFactory)
     {
-        var apiClient = commandApi.CreateClient();
-        var content = StringContentHelpers.FromModelAsJson(new RegisterPlayerCommand());
+        var apiClient = apiClientFactory.CreateClient();
+        var tokenResponse = await apiClient.GetStringAsync("/login");
 
-        var result = await apiClient.PostAsJsonAsync(Routes.Register, new RegisterPlayerCommand());
+        dynamic jsonObject = JObject.Parse(tokenResponse);
 
-        result.IsSuccessStatusCode.Should().BeTrue();
+        var authorizationHeader = $"{jsonObject.accessToken}";
+        this.outputHelper.WriteLine($"Using authentication header: {authorizationHeader}");
+
+        apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", authorizationHeader);
+
+        var result = await apiClient
+            .PostAsJsonAsync<object>(Routes.Register, default!);
+
+        var body = await result.Content.ReadAsStringAsync();
+        try
+        {
+            result.IsSuccessStatusCode.Should().BeTrue();
+        }
+        catch (Exception)
+        {
+            this.outputHelper.WriteLine($"Response status code was: {result.StatusCode}");
+            throw;
+        }
+        finally
+        {
+            this.outputHelper.WriteLine($"Response body was: {body}");
+        }
 
         await Task.CompletedTask;
     }
@@ -60,56 +81,4 @@ public class RegisterShould : IClassFixture<CustomWebApplicationFactory<WebMarke
 public static class Routes
 {
     public static string Register => "/registrations";
-}
-
-public class CommandApiFactory : WebApplicationFactory<WebMarker>
-{
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public CommandApiFactory(ITestOutputHelper testOutputHelper)
-    {
-        this._testOutputHelper = testOutputHelper;
-    }
-
-    protected override IHost CreateHost(IHostBuilder builder)
-    {
-        builder.UseEnvironment("Development");
-
-        builder.ConfigureLogging(loggingBuilder =>
-            loggingBuilder.Services.AddLogging(b => b.AddXUnit()));
-
-        var host = builder.Build();
-
-        host.Start();
-
-        return host;
-    }
-}
-
-public class CommandApiDataAttribute : AutoDataAttribute
-{
-    public CommandApiDataAttribute()
-        : base(() => new Fixture()
-            .Customize(new CompositeCustomization(
-                new CommandApiCustomization())))
-    {
-    }
-}
-
-public class CommandApiCustomization : ICustomization
-{
-    #region ICustomization Members
-
-    public void Customize(IFixture fixture)
-    {
-        var helper = new TestOutputHelper();
-        fixture.Customize<CommandApiFactory>(f => f.FromFactory(() =>
-        {
-            var commandApiFactory = new CommandApiFactory(helper);
-            commandApiFactory.WithWebHostBuilder(b => b.UseEnvironment(""));
-            return commandApiFactory;
-        }));
-    }
-
-    #endregion
 }

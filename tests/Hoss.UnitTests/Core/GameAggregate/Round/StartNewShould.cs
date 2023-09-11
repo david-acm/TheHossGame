@@ -12,15 +12,14 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.GameAggregate.RoundEntity.Events;
 using Hoss.Core.Interfaces;
 using Moq;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
+using static Hoss.Core.GameAggregate.RoundEntity.RoundEvents;
 
 #endregion
 

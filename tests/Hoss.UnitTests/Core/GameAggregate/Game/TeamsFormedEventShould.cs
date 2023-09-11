@@ -10,7 +10,7 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 #region
 
 using FluentAssertions;
-using Hoss.Core.GameAggregate.Events;
+using Hoss.Core.GameAggregate;
 using Hoss.SharedKernel;
 using TheHossGame.UnitTests.Core.Services;
 using Xunit;
@@ -19,10 +19,10 @@ using Xunit;
 
 public class TeamsFormedEventShould
 {
-   [Theory]
-   [AutoMoqData]
-   public void ShouldBeImmutable(TeamsFormedEvent @event)
-   {
-      @event.Should().BeAssignableTo<DomainEventBase>();
-   }
+    [Theory]
+    [AutoMoqData]
+    public void ShouldBeImmutable(GameEvents.TeamsFormedEvent @event)
+    {
+        @event.Should().BeAssignableTo<DomainEventBase>();
+    }
 }

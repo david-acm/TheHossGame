@@ -11,13 +11,12 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.GameAggregate.RoundEntity.Events;
-using Hoss.Core.PlayerAggregate;
+using Hoss.SharedKernel;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
+using static Hoss.Core.GameAggregate.RoundEntity.RoundEvents;
 
 #endregion
 

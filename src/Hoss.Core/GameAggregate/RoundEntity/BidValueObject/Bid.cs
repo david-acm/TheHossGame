@@ -10,7 +10,6 @@ namespace Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 #region
 
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.PlayerAggregate;
 
 #endregion
 

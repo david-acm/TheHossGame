@@ -9,11 +9,9 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.PlayerAggregate;
-using Hoss.SharedKernel;
+using static RoundEvents;
 
 #endregion
 

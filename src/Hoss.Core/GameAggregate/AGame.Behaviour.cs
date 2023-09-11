@@ -9,15 +9,13 @@ namespace Hoss.Core.GameAggregate;
 
 #region
 
-using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.PlayerEntity;
 using Hoss.Core.GameAggregate.RoundEntity;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using Hoss.Core.Interfaces;
-using Hoss.Core.PlayerAggregate;
-using Hoss.SharedKernel;
 using static Game.TeamId;
+using static Hoss.Core.GameAggregate.RoundEntity.RoundEvents;
 
 #endregion
 
@@ -43,7 +41,7 @@ public sealed partial class AGame
 
         if (this.TeamsAreComplete())
         {
-            this.Apply(new TeamsFormedEvent(this.Id));
+            this.Apply(new GameEvents.TeamsFormedEvent(this.Id));
         }
     }
 
@@ -59,7 +57,7 @@ public sealed partial class AGame
         var shuffledDeck = ADeck.ShuffleNew(this.shufflingService);
         var round = Round.StartNew(this.Id, this.GetTeamPlayers(), shuffledDeck, this.Apply);
 
-        this.Apply(new GameStartedEvent(this.Id, round.Id, round.RoundPlayers, round.Deals, round.Bids));
+        this.Apply(new GameEvents.GameStartedEvent(this.Id, round.Id, round.RoundPlayers, round.Deals, round.Bids));
     }
 
     public void Bid(PlayerId playerId, BidValue value)
@@ -90,7 +88,7 @@ public sealed partial class AGame
 
     public void Finish()
     {
-        this.Apply(new GameFinishedEvent(this.Id));
+        this.Apply(new GameEvents.GameFinishedEvent(this.Id));
     }
 
     protected override void EnsureValidState()
@@ -115,11 +113,11 @@ public sealed partial class AGame
     {
         (@event switch
         {
-            PlayerJoinedEvent e => (Action) (() => this.HandleJoin(e)),
-            NewGameCreatedEvent => HandleGameCreated,
-            TeamsFormedEvent => this.HandleTeamsFormedEvent,
-            GameStartedEvent e => () => this.HandleGameStartedEvent(e),
-            GameFinishedEvent => () => this.HandleGameFinishedEvent(),
+            GameEvents.PlayerJoinedEvent e => (Action) (() => this.HandleJoin(e)),
+            GameEvents.NewGameCreatedEvent => HandleGameCreated,
+            GameEvents.TeamsFormedEvent => this.HandleTeamsFormedEvent,
+            GameEvents.GameStartedEvent e => () => this.HandleGameStartedEvent(e),
+            GameEvents.GameFinishedEvent => () => this.HandleGameFinishedEvent(),
             RoundPlayedEvent e => () => this.HandleRoundPlayedEvent(e),
             _ => () => { },
         }).Invoke();
@@ -136,7 +134,7 @@ public sealed partial class AGame
 
     private void CreateNewGame(PlayerId playerId)
     {
-        this.Apply(new NewGameCreatedEvent(this.Id, playerId));
+        this.Apply(new GameEvents.NewGameCreatedEvent(this.Id, playerId));
     }
 
     private bool TeamsAreComplete()
@@ -149,7 +147,7 @@ public sealed partial class AGame
         return !this.FindGamePlayers().All(p => p.IsReady) || !this.TeamComplete(Team1) || !this.TeamComplete(Team2);
     }
 
-    private void HandleGameStartedEvent(GameStartedEvent @event)
+    private void HandleGameStartedEvent(GameEvents.GameStartedEvent @event)
     {
         var round = Round.FromStream(@event, this.Apply);
         this.rounds.Add(round);
@@ -162,7 +160,7 @@ public sealed partial class AGame
         this.Score = this.Score.AddRoundScore(e.RoundScore);
         if (this.Score >= MaxScore)
         {
-            this.Apply(new GameFinishedEvent(this.Id));
+            this.Apply(new GameEvents.GameFinishedEvent(this.Id));
             return;
         }
 
@@ -180,7 +178,7 @@ public sealed partial class AGame
         this.Stage = GameState.TeamsFormed;
     }
 
-    private void HandleJoin(PlayerJoinedEvent e)
+    private void HandleJoin(GameEvents.PlayerJoinedEvent e)
     {
         var teamPlayer = AGamePlayer.FromStream(e, this.Apply);
         this.gamePlayers.Add(teamPlayer);

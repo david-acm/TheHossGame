@@ -16,16 +16,16 @@ using Hoss.SharedKernel.Interfaces;
 
 public abstract class PlayerRegistrationService
 {
-    private readonly IRepository<Player> repository;
-    private readonly IEventStore<Player> store;
+    private readonly IRepository<Profile> repository;
+    private readonly IEventStore<Profile> store;
 
-    protected PlayerRegistrationService(IRepository<Player> repository, IEventStore<Player> store)
+    protected PlayerRegistrationService(IRepository<Profile> repository, IEventStore<Profile> store)
     {
         this.repository = repository;
         this.store = store;
     }
 
-    public async Task RegisterAsync(Player player)
+    public async Task RegisterAsync(Profile profile)
     {
         var playerIsRegistered = await this.PlayerIsRegistered();
         if (playerIsRegistered)
@@ -41,7 +41,7 @@ public abstract class PlayerRegistrationService
 #pragma warning restore S3626 // Jump statements should not be redundant
         }
 
-        await this.store.PushEventsAsync(player.Events);
+        await this.store.PushEventsAsync(profile.Events);
     }
 
     private async Task<bool> UserNameIsNotUniqueAsync()

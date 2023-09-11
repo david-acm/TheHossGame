@@ -9,8 +9,6 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using Hoss.SharedKernel;
-
 #endregion
 
 public record RoundId : ValueId;

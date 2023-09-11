@@ -11,7 +11,6 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.GameAggregate.Events;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
@@ -26,9 +25,9 @@ public class FinishShould
     {
         game.Finish();
 
-        var @event = game.Events.ShouldContain().SingleEventOfType<GameFinishedEvent>();
+        var @event = game.Events.ShouldContain().SingleEventOfType<GameEvents.GameFinishedEvent>();
 
-        @event.Should().BeAssignableTo<GameEventBase>();
+        @event.Should().BeAssignableTo<GameEvents.GameEventBase>();
         @event.GameId.Should().Be(game.Id);
     }
 }

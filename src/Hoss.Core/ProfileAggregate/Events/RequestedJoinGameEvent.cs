@@ -7,10 +7,10 @@
 
 namespace Hoss.Core.PlayerAggregate.Events;
 
-   #region
+#region
 
-using Hoss.Core.GameAggregate;
+
 
 #endregion
 
-public record RequestedJoinGameEvent(PlayerId Id, GameId GameId) : PlayerEventBase(Id);
+public record RequestedJoinGameEvent(ProfileId Id, ValueId GameId) : ProfileEventBase(Id);

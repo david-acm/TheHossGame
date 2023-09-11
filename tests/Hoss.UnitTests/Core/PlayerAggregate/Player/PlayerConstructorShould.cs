@@ -22,13 +22,13 @@ public class PlayerConstructorShould
     [Fact]
     public void DeriveFromEntityBase()
     {
-        typeof(Player).Should().BeDerivedFrom<EntityBase<PlayerId>>();
+        typeof(Profile).Should().BeDerivedFrom<EntityBase<ProfileId>>();
     }
 
     [Theory]
     [PlayerData]
-    public void CreateNewPlayer(Player player)
+    public void CreateNewPlayer(Profile profile)
     {
-        player.Should().NotBeNull();
+        profile.Should().NotBeNull();
     }
 }

@@ -13,7 +13,6 @@ using AutoFixture;
 using AutoFixture.Kernel;
 using Hoss.Core.GameAggregate;
 using Hoss.Core.Interfaces;
-using Hoss.Core.PlayerAggregate;
 using Moq;
 
 #endregion
@@ -40,15 +39,15 @@ public class ReadyGameGenerator : ISpecimenBuilder
     private AGame GenerateReadyGame()
     {
         var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
-        var players = this.specimenContext.Create<IEnumerable<Base>>().ToList();
+        var playerIds = this.specimenContext.Create<IEnumerable<APlayerId>>().ToList();
 
-        var readyGame = AGame.CreateForPlayer(players.First().Id, shufflingService.Object);
+        var readyGame = AGame.CreateForPlayer(playerIds.First(), shufflingService.Object);
 
-        readyGame.JoinPlayerToTeam(players[1].Id, Game.TeamId.Team1);
-        readyGame.JoinPlayerToTeam(players[2].Id, Game.TeamId.Team2);
-        readyGame.JoinPlayerToTeam(players[3].Id, Game.TeamId.Team2);
+        readyGame.JoinPlayerToTeam(playerIds[1], Game.TeamId.Team1);
+        readyGame.JoinPlayerToTeam(playerIds[2], Game.TeamId.Team2);
+        readyGame.JoinPlayerToTeam(playerIds[3], Game.TeamId.Team2);
 
-        players.ForEach(player => readyGame.TeamPlayerReady(player.Id));
+        playerIds.ForEach(id => readyGame.TeamPlayerReady(id));
 
         return readyGame;
     }

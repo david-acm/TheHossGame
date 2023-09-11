@@ -12,9 +12,7 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.GameAggregate.Events;
-using Hoss.Core.GameAggregate.RoundEntity.Events;
-using Hoss.Core.PlayerAggregate;
+using Hoss.Core.GameAggregate.RoundEntity;
 using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using TheHossGame.UnitTests.Extensions;
 using Xunit;
@@ -28,7 +26,7 @@ public class PlayerReadyShould
     [ReadyGameData]
     public void RaiseStartEvent([Frozen] AGame game)
     {
-        var (gameId, roundId, _) = game.Events.ShouldContain().SingleEventOfType<RoundStartedEvent>();
+        var (gameId, roundId, _) = game.Events.ShouldContain().SingleEventOfType<RoundEvents.RoundStartedEvent>();
 
         gameId.Should().Be(game.Id);
         roundId.Should().NotBeNull();
@@ -38,12 +36,12 @@ public class PlayerReadyShould
     [ReadyGameData]
     public void RaiseGameStartedEventWhenAllPlayersHaveJoined(AGame readyGame)
     {
-        readyGame.Events.ShouldContain().ManyEventsOfType<PlayerReadyEvent>(4);
-        readyGame.Events.ShouldContain().SingleEventOfType<TeamsFormedEvent>();
-        var startedEvent = readyGame.Events.ShouldContain().SingleEventOfType<GameStartedEvent>();
+        readyGame.Events.ShouldContain().ManyEventsOfType<GameEvents.PlayerReadyEvent>(4);
+        readyGame.Events.ShouldContain().SingleEventOfType<GameEvents.TeamsFormedEvent>();
+        var startedEvent = readyGame.Events.ShouldContain().SingleEventOfType<GameEvents.GameStartedEvent>();
 
         startedEvent.Should().NotBeNull();
-        startedEvent.Should().BeAssignableTo<GameEventBase>();
+        startedEvent.Should().BeAssignableTo<GameEvents.GameEventBase>();
         startedEvent.GameId.Should().Be(readyGame.Id);
         readyGame.Stage.Should().Be(Started);
     }
@@ -54,7 +52,7 @@ public class PlayerReadyShould
     {
         game.TeamPlayerReady(playerId);
 
-        var readyEvent = game.Events.ShouldContain().SingleEventOfType<PlayerReadyEvent>();
+        var readyEvent = game.Events.ShouldContain().SingleEventOfType<GameEvents.PlayerReadyEvent>();
 
         readyEvent.Should().NotBeNull();
         readyEvent.PlayerId.Should().Be(playerId);
@@ -69,7 +67,7 @@ public class PlayerReadyShould
     {
         game.TeamPlayerReady(playerId);
 
-        game.Events.Where(e => e is PlayerReadyEvent).Should().BeEmpty();
+        game.Events.Where(e => e is GameEvents.PlayerReadyEvent).Should().BeEmpty();
 
         game.FindPlayer(playerId).IsReady.Should().BeFalse();
     }

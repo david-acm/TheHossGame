@@ -12,7 +12,6 @@ namespace Hoss.Core.GameAggregate;
 using Hoss.Core.GameAggregate.PlayerEntity;
 using Hoss.Core.GameAggregate.RoundEntity;
 using Hoss.Core.Interfaces;
-using Hoss.Core.PlayerAggregate;
 
 #endregion
 
@@ -51,7 +50,7 @@ public sealed partial class AGame : Game
 
     public GameState Stage { get; private set; }
 
-    private RoundBase CurrentRoundBase => this.rounds.LastOrDefault() ?? new NoRoundBase();
+    private RoundBase CurrentRoundBase => this.rounds.LastOrDefault() ?? new NoRound();
     public GameScore Score { get; private set; } = GameScore.New();
 
     public IReadOnlyCollection<GamePlayer> FindGamePlayers(TeamId teamId)

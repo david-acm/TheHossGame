@@ -10,7 +10,7 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 #region
 
 using FluentAssertions;
-using Hoss.Core.GameAggregate.Events;
+using Hoss.Core.GameAggregate;
 using TheHossGame.UnitTests.Core.Services;
 using Xunit;
 
@@ -18,10 +18,10 @@ using Xunit;
 
 public class PlayerJoinedEventShould
 {
-   [Theory]
-   [AutoMoqData]
-   public void ShouldBeImmutable(PlayerJoinedEvent @event)
-   {
-      @event.Should().BeAssignableTo<GameEventBase>();
-   }
+    [Theory]
+    [AutoMoqData]
+    public void ShouldBeImmutable(GameEvents.PlayerJoinedEvent @event)
+    {
+        @event.Should().BeAssignableTo<GameEvents.GameEventBase>();
+    }
 }

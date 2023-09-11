@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FastEndpoints;
+using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using Hoss.Infrastructure;
 using Serilog;
@@ -20,6 +21,8 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 
 builder.Services.AddFastEndpoints();
+builder.Services.AddJWTBearerAuth(
+    "TokenSigningKeyTokenSigningKeyTokenSigningKeyTokenSigningKeyTokenSigningKeyTokenSigningKey");
 //builder.Services.AddFastEndpointsApiExplorer();
 builder.Services.SwaggerDocument(o => { o.ShortSchemaNames = true; });
 
@@ -54,6 +57,8 @@ else
 }
 
 app.UseFastEndpoints();
+app.UseAuthentication(); //add this
+app.UseAuthorization();
 app.UseSwaggerGen(); // FastEndpoints middleware
 
 app.UseHttpsRedirection();

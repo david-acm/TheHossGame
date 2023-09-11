@@ -24,9 +24,9 @@ public class PlayerEmailShould
 {
     [Theory]
     [PlayerData]
-    public void HaveValueComparison(PlayerEmail email)
+    public void HaveValueComparison(ProfileEmail email)
     {
-        var otherEmail = PlayerEmail.FromString(email.Address);
+        var otherEmail = ProfileEmail.FromString(email.Address);
 
         (email == otherEmail).Should().BeTrue();
     }
@@ -34,17 +34,17 @@ public class PlayerEmailShould
     [Fact]
     public void BeImmutable()
     {
-        var customAttributes = typeof(PlayerEmail).GetTypeInfo().DeclaredProperties
+        var customAttributes = typeof(ProfileEmail).GetTypeInfo().DeclaredProperties
             .SelectMany(p => p.GetCustomAttributes(true));
         var isRecord = customAttributes.FirstOrDefault() is CompilerGeneratedAttribute;
 
         isRecord.Should().BeTrue();
-        typeof(PlayerEmail).Should().BeAssignableTo<ValueObject>();
+        typeof(ProfileEmail).Should().BeAssignableTo<ValueObject>();
     }
 
     [Theory]
     [PlayerData]
-    public void NotBeNull(PlayerEmail email)
+    public void NotBeNull(ProfileEmail email)
     {
         email.Should().NotBeNull();
     }
@@ -53,7 +53,7 @@ public class PlayerEmailShould
     [AutoData]
     public void ThrowArgumentExceptionWhenEmailIsNotValid(string emailAddress)
     {
-        var playerEmail = () => PlayerEmail.FromString(emailAddress);
+        var playerEmail = () => ProfileEmail.FromString(emailAddress);
 
         playerEmail.Should().Throw<ArgumentException>();
     }
@@ -61,7 +61,7 @@ public class PlayerEmailShould
     [Fact]
     public void ThrowArgumentNullExceptionWhenEmailIsEmpty()
     {
-        var playerEmail = () => PlayerEmail.FromString(string.Empty);
+        var playerEmail = () => ProfileEmail.FromString(string.Empty);
 
         playerEmail.Should().Throw<ArgumentException>();
     }

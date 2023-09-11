@@ -9,13 +9,11 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using Hoss.Core.GameAggregate.Events;
 using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.GameAggregate.RoundEntity.Events;
-using Hoss.Core.PlayerAggregate;
-using Hoss.SharedKernel;
+using Hoss.Core.GameAggregate.RoundEntity.RoundScoreValueObject;
 using static Game;
+using static RoundEvents;
 
 #endregion
 
@@ -41,7 +39,7 @@ public sealed partial class Round
         return round;
     }
 
-    internal static Round FromStream(GameStartedEvent @event, Action<DomainEventBase> when)
+    internal static Round FromStream(GameEvents.GameStartedEvent @event, Action<DomainEventBase> when)
     {
         return new Round(@event.GameId, @event.RoundId, when)
         {

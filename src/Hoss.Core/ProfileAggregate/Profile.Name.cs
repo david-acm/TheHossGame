@@ -10,11 +10,10 @@ namespace Hoss.Core.PlayerAggregate;
 #region
 
 using Ardalis.GuardClauses;
-using Hoss.SharedKernel;
 
 #endregion
 
-public record PlayerName
+public record PlayerName : NameBase
 {
     public PlayerName(string name)
     {
@@ -25,4 +24,13 @@ public record PlayerName
     }
 
     public string Name { get; }
+
+    public static PlayerName FromString(string name)
+    {
+        return new PlayerName(name);
+    }
 }
+
+public record NameBase;
+
+public record NoName : NameBase;

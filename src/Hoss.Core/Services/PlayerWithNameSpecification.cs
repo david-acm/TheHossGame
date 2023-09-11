@@ -14,6 +14,6 @@ using Hoss.Core.PlayerAggregate;
 
 #endregion
 
-public class PlayerWithNameSpec : Specification<Player>
+public class PlayerWithNameSpec : Specification<Profile>
 {
 }

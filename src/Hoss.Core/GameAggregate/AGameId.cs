@@ -7,12 +7,6 @@
 
 namespace Hoss.Core.GameAggregate;
 
-#region
-
-using Hoss.SharedKernel;
-
-#endregion
-
 public abstract record GameId : ValueId;
 
 public record AGameId : GameId;

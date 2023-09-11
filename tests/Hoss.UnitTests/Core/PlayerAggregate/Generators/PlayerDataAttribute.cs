@@ -49,8 +49,8 @@ internal class ReadyGameCustomization : ICustomization
     public void Customize(IFixture fixture)
     {
         fixture.Customizations.Add(new PlayerNameGenerator());
-        fixture.Customizations.Add(new PlayerGenerator());
-        fixture.Customizations.Add(new PlayerEnumerableGenerator());
+        fixture.Customizations.Add(new PlayerIdEnumerableGenerator());
+        // fixture.Customizations.Add(new PlayerEnumerableGenerator());
         fixture.Customizations.Add(new ReadyGameGenerator());
         fixture.Customize(new BidValueCustomization());
     }
@@ -83,7 +83,7 @@ internal class ReadyBidFinishedGameCustomization : ICustomization
     {
         fixture.Customizations.Add(new PlayerNameGenerator());
         fixture.Customizations.Add(new PlayerGenerator());
-        fixture.Customizations.Add(new PlayerEnumerableGenerator());
+        fixture.Customizations.Add(new PlayerIdEnumerableGenerator());
         fixture.Customizations.Add(new BidFinishedGameGenerator());
     }
 
@@ -98,7 +98,7 @@ internal class BidWithHossGameCustomization : ICustomization
     {
         fixture.Customizations.Add(new PlayerNameGenerator());
         fixture.Customizations.Add(new PlayerGenerator());
-        fixture.Customizations.Add(new PlayerEnumerableGenerator());
+        fixture.Customizations.Add(new PlayerIdEnumerableGenerator());
         fixture.Customizations.Add(new BidWithHossGameGenerator());
     }
 

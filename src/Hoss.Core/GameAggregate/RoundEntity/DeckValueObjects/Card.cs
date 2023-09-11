@@ -9,8 +9,6 @@ namespace Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
 #region
 
-using Hoss.SharedKernel;
-
 #endregion
 
 public record ACard(Rank Rank, Suit Suit) : Card

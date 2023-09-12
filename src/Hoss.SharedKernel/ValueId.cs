@@ -23,6 +23,12 @@ public abstract record ValueId : ValueObject
     /// <summary>
     /// </summary>
     public Guid Id { get; }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return this.Id.ToString();
+    }
 }
 
 /// <summary>

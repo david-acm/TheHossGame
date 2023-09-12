@@ -17,9 +17,9 @@ using Hoss.SharedKernel.Interfaces;
 public abstract class PlayerRegistrationService
 {
     private readonly IRepository<Profile> repository;
-    private readonly IEventStore<Profile> store;
+    private readonly IAggregateStore store;
 
-    protected PlayerRegistrationService(IRepository<Profile> repository, IEventStore<Profile> store)
+    protected PlayerRegistrationService(IRepository<Profile> repository, IAggregateStore store)
     {
         this.repository = repository;
         this.store = store;
@@ -36,12 +36,10 @@ public abstract class PlayerRegistrationService
         var playerNameNotIsUnique = await this.UserNameIsNotUniqueAsync();
         if (playerNameNotIsUnique)
         {
-#pragma warning disable S3626 // Jump statements should not be redundant
             return;
-#pragma warning restore S3626 // Jump statements should not be redundant
         }
 
-        await this.store.PushEventsAsync(profile.Events);
+        await this.store.Save<Profile, ProfileId>(profile);
     }
 
     private async Task<bool> UserNameIsNotUniqueAsync()

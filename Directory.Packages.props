@@ -18,6 +18,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageVersion>
+        <PackageVersion Include="EventStore.Client" Version="22.0.0"/>
         <PackageVersion Include="FastEndpoints" Version="5.17.1.1"/>
         <PackageVersion Include="FastEndpoints.ApiExplorer" Version="2.2.0"/>
         <PackageVersion Include="FastEndpoints.Security" Version="5.17.1.1"/>

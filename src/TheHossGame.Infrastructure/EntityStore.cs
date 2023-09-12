@@ -12,21 +12,60 @@
 
 namespace TheHossGame.Infrastructure;
 
+using System.Text.Json;
 using Hoss.SharedKernel;
+using Hoss.SharedKernel.Interfaces;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using static System.Text.Encoding;
 
-public class EntityStore : IEntityStore
+public class EntityStore : IAggregateStore
 {
-    #region IEntityStore Members
+    #region IAggregateStore Members
 
-    public Task SaveAsync<T>(T aggregate)
+    /// <inheritdoc />
+    public Task<T> LoadAsync<T, TId>(TId id)
+        where TId : ValueId
+        where T : AggregateRoot<TId>
     {
-        return Task.CompletedTask;
+        return null;
     }
 
-    public Task Load<T>(ValueId id)
+    /// <inheritdoc />
+    public Task<bool> Exists<T, TId>(TId id)
+        where TId : ValueId
+        where T : AggregateRoot<TId>
     {
-        return Task.CompletedTask;
+        return null;
+    }
+
+    /// <inheritdoc />
+    public Task Save<T, TId>(T aggregate)
+        where TId : ValueId
+        where T : AggregateRoot<TId>
+    {
+        var events = aggregate.Events.Select(@event => new EventData());
+        return null;
     }
 
     #endregion
+
+    private static string GetStreamName<T, TId>(TId id)
+        where TId : ValueId
+        where T : AggregateRoot<TId>
+    {
+        return $"{typeof(T).Name}_{id}";
+    }
+
+
+    private static string GetStreamName<T, TId>(T aggregate)
+        where TId : ValueId
+        where T : AggregateRoot<TId>
+    {
+        return $"{typeof(T).Name}_{aggregate.Id}";
+    }
+
+    private static byte[] Serialize(object data)
+    {
+        return UTF8.GetBytes(JsonSerializer.Serialize(data));
+    }
 }

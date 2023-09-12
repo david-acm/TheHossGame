@@ -13,7 +13,7 @@ using Hoss.SharedKernel.Interfaces;
 
 #endregion
 
-public abstract class Base : EntityBase<ProfileId>, IAggregateRoot
+public abstract class Base : AggregateRoot<ProfileId>, IAggregateRoot
 {
     protected Base(ProfileId id)
         : base(id)

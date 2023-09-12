@@ -18,7 +18,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 /// </summary>
 /// <typeparam name="T">The id type.</typeparam>
 public abstract class EntityBase<T> : IInternalEventHandler
-    where T : ValueObject
+    where T : ValueId
 {
     private readonly List<DomainEventBase> domainEvents = new();
 

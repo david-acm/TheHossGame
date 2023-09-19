@@ -9,7 +9,7 @@ namespace Hoss.Core.GameAggregate.PlayerEntity;
 
 #region
 
-using static Game;
+
 
 #endregion
 
@@ -22,10 +22,10 @@ public sealed class NoGamePlayer : GamePlayer
 
     internal override void Join(TeamId teamId)
     {
-        var player = new AGamePlayer(this.GameId, this.Id, this.Applier);
+        var player = new AGamePlayer(GameId, Id, Applier);
         player.Join(teamId);
-        this.When(new GameEvents.PlayerJoinedEvent(this.GameId, this.Id, teamId));
-        this.EnsureValidState();
+        When(new GameEvents.PlayerJoinedEvent(GameId, Id, teamId));
+        EnsureValidState();
     }
 
     internal override void Ready()

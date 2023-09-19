@@ -5,18 +5,19 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using FluentAssertions;
+
 namespace TheHossGame.UnitTests.SharedKernel;
 
 #region
 
 using AutoFixture.Xunit2;
-using FluentAssertions;
 using Hoss.Core.GameAggregate;
 using Hoss.SharedKernel;
 using MediatR;
 using Moq;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
-using TheHossGame.UnitTests.Core.Services;
+using Core.PlayerAggregate.Generators;
+using Core.Services;
 using Xunit;
 
 #endregion
@@ -27,7 +28,7 @@ public class DomainEventDispatcherShould
     [ReadyGameData]
     [AutoMoqData]
     public async Task ShouldPublishEventsAsync([Frozen] Mock<IMediator> mediator, AGame game,
-        DomainEventDispatcher<Game> dispatcher)
+        DomainEventDispatcher<AGame> dispatcher)
     {
         await dispatcher.DispatchAndClearEvents(new[] {game});
 

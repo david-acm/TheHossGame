@@ -9,7 +9,7 @@ namespace Hoss.Core.GameAggregate.PlayerEntity;
 
 #region
 
-using static Game;
+
 
 #endregion
 
@@ -20,7 +20,7 @@ public class AGamePlayer : GamePlayer
     {
     }
 
-    private bool HasJoinedGame => this.TeamId != TeamId.NoTeamId;
+    private bool HasJoinedGame => TeamId != TeamId.NoTeamId;
 
     internal static AGamePlayer FromStream(GameEvents.PlayerJoinedEvent @event, Action<DomainEventBase> applier)
     {
@@ -33,20 +33,20 @@ public class AGamePlayer : GamePlayer
 
     internal override void Join(TeamId teamId)
     {
-        if (this.HasJoinedGame)
+        if (HasJoinedGame)
         {
-            this.Apply(new GameEvents.PlayerAlreadyInGameEvent(this.Id));
+            Apply(new GameEvents.PlayerAlreadyInGameEvent(Id));
             return;
         }
 
-        var @event = new GameEvents.PlayerJoinedEvent(this.GameId, this.Id, teamId);
-        this.Apply(@event);
+        var @event = new GameEvents.PlayerJoinedEvent(GameId, Id, teamId);
+        Apply(@event);
     }
 
     internal override void Ready()
     {
-        var @event = new GameEvents.PlayerReadyEvent(this.GameId, this.Id);
-        this.Apply(@event);
+        var @event = new GameEvents.PlayerReadyEvent(GameId, Id);
+        Apply(@event);
     }
 
     protected override void EnsureValidState()
@@ -58,11 +58,11 @@ public class AGamePlayer : GamePlayer
         switch (@event)
         {
             case GameEvents.PlayerJoinedEvent(_, var playerId, var teamId):
-                this.PlayerId = playerId;
-                this.TeamId = teamId;
+                PlayerId = playerId;
+                TeamId = teamId;
                 break;
             case GameEvents.PlayerReadyEvent:
-                this.IsReady = true;
+                IsReady = true;
                 break;
         }
     }

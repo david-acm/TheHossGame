@@ -5,6 +5,8 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using TheHossGame.UnitTests.Extensions;
+
 namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 
 #region
@@ -13,8 +15,7 @@ using AutoFixture.Xunit2;
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
 using Hoss.Core.GameAggregate.RoundEntity;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
-using TheHossGame.UnitTests.Extensions;
+using PlayerAggregate.Generators;
 using Xunit;
 using static Hoss.Core.GameAggregate.AGame.GameState;
 
@@ -28,7 +29,7 @@ public class PlayerReadyShould
     {
         var (gameId, roundId, _) = game.Events.ShouldContain().SingleEventOfType<RoundEvents.RoundStartedEvent>();
 
-        gameId.Should().Be(game.Id);
+        gameId.Id.Should().Be(game.Id);
         roundId.Should().NotBeNull();
     }
 
@@ -42,7 +43,7 @@ public class PlayerReadyShould
 
         startedEvent.Should().NotBeNull();
         startedEvent.Should().BeAssignableTo<GameEvents.GameEventBase>();
-        startedEvent.GameId.Should().Be(readyGame.Id);
+        startedEvent.GameId.Id.Should().Be(readyGame.Id);
         readyGame.Stage.Should().Be(Started);
     }
 
@@ -56,7 +57,7 @@ public class PlayerReadyShould
 
         readyEvent.Should().NotBeNull();
         readyEvent.PlayerId.Should().Be(playerId);
-        readyEvent.GameId.Should().Be(game.Id);
+        readyEvent.GameId.Id.Should().Be(game.Id);
         game.FindPlayer(playerId).IsReady.Should().BeTrue();
         game.Stage.Should().Be(Created);
     }

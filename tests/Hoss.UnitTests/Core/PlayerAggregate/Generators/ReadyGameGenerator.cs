@@ -25,27 +25,27 @@ public class ReadyGameGenerator : ISpecimenBuilder
 
     public object Create(object request, ISpecimenContext context)
     {
-        this.specimenContext = context;
+        specimenContext = context;
         if (!typeof(AGame).Equals(request))
         {
             return new NoSpecimen();
         }
 
-        return this.GenerateReadyGame();
+        return GenerateReadyGame();
     }
 
     #endregion
 
     private AGame GenerateReadyGame()
     {
-        var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
-        var playerIds = this.specimenContext.Create<IEnumerable<APlayerId>>().ToList();
+        var shufflingService = specimenContext!.Create<Mock<IShufflingService>>();
+        var playerIds = specimenContext.Create<IEnumerable<APlayerId>>().ToList();
+        
+        var readyGame = AGame.CreateForPlayer(new AGameId(Guid.NewGuid()), playerIds.First(), shufflingService.Object);
 
-        var readyGame = AGame.CreateForPlayer(playerIds.First(), shufflingService.Object);
-
-        readyGame.JoinPlayerToTeam(playerIds[1], Game.TeamId.Team1);
-        readyGame.JoinPlayerToTeam(playerIds[2], Game.TeamId.Team2);
-        readyGame.JoinPlayerToTeam(playerIds[3], Game.TeamId.Team2);
+        readyGame.JoinPlayerToTeam(playerIds[1], TeamId.NorthSouth);
+        readyGame.JoinPlayerToTeam(playerIds[2], TeamId.EastWest);
+        readyGame.JoinPlayerToTeam(playerIds[3], TeamId.EastWest);
 
         playerIds.ForEach(id => readyGame.TeamPlayerReady(id));
 

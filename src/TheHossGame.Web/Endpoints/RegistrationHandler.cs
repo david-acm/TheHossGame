@@ -10,42 +10,48 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+using Hoss.SharedKernel.Interfaces;
+
 namespace TheHossGame.Web.Endpoints;
 
 using FastEndpoints;
 using FluentValidation;
-using Hoss.Core.PlayerAggregate;
-using TheHossGame.Infrastructure;
 
-public class RegistrationHandler : Endpoint<RegisterPlayerCommand, RegisterPlayerResponse>
+public class RegistrationHandler : Endpoint<RegisterPlayerCommand>
 {
-    private readonly IEntityStore entityStore;
+    private readonly IAggregateStore entityStore;
 
-    public RegistrationHandler(IEntityStore entityStore)
+    public RegistrationHandler(IAggregateStore entityStore)
     {
         this.entityStore = entityStore;
     }
 
     public override void Configure()
     {
-        this.Post("/registrations");
-        this.AllowAnonymous();
+        Post("/registrations");
+        AllowAnonymous();
     }
 
-    public override async Task HandleAsync(RegisterPlayerCommand request, CancellationToken _)
+    public override async Task HandleAsync(
+        RegisterPlayerCommand request,
+        CancellationToken _)
     {
-        await this.entityStore.SaveAsync(
-            Profile.FromNewRegister(
-                ProfileEmail.FromString(request.Email),
-                PlayerName.FromString(request.Name)));
-
-        await this.SendAsync(new RegisterPlayerResponse(request));
+        var newProfile = Profile.FromNewRegister(
+            ProfileEmail.FromString(request.Email),
+            PlayerName.FromString(request.Name),
+            new AProfileId(request.PlayerId));
+        await entityStore.SaveAsync(
+            newProfile);
     }
 }
 
-public record RegisterPlayerResponse(RegisterPlayerCommand command);
+public record RegisterPlayerResponse(Profile Profile);
 
-public record RegisterPlayerCommand([property: FromClaim] string Name, [property: FromClaim] string Email);
+public record RegisterPlayerCommand([property: FromClaim] string Name, [property: FromClaim] string Email)
+{
+    public Guid PlayerId { get; set; }
+}
 
 public class RegisterCommandValidator : Validator<RegisterPlayerCommand>
 {
@@ -54,11 +60,11 @@ public class RegisterCommandValidator : Validator<RegisterPlayerCommand>
     /// </summary>
     public RegisterCommandValidator()
     {
-        this.RuleFor(r => r.Email)
+        RuleFor(r => r.Email)
             .EmailAddress()
             .WithMessage("Invalid Email Address");
 
-        this.RuleFor(r => r.Name)
+        RuleFor(r => r.Name)
             .NotEmpty()
             .WithMessage("Name is required")
             .MinimumLength(2)

@@ -10,6 +10,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using static TheHossGame.FunctionalTests.Routes;
+
 namespace TheHossGame.FunctionalTests;
 
 using System.Net.Http.Headers;
@@ -17,7 +19,7 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
-using TheHossGame.Web;
+using Web;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -32,7 +34,7 @@ public class RegisterShould : IClassFixture<CustomWebApplicationFactory<WebMarke
     }
 
     [Theory]
-    [CommandApiData]
+    [PlayerRegisteredClientData]
     public async Task RegisterANewPlayer(CommandApiFactory apiClientFactory)
     {
         var apiClient = apiClientFactory.CreateClient();
@@ -41,12 +43,12 @@ public class RegisterShould : IClassFixture<CustomWebApplicationFactory<WebMarke
         dynamic jsonObject = JObject.Parse(tokenResponse);
 
         var authorizationHeader = $"{jsonObject.accessToken}";
-        this.outputHelper.WriteLine($"Using authentication header: {authorizationHeader}");
+        outputHelper.WriteLine($"Using authentication header: {authorizationHeader}");
 
         apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", authorizationHeader);
 
         var result = await apiClient
-            .PostAsJsonAsync<object>(Routes.Register, default!);
+            .PostAsJsonAsync<object>(Registries, default!);
 
         var body = await result.Content.ReadAsStringAsync();
         try
@@ -55,12 +57,12 @@ public class RegisterShould : IClassFixture<CustomWebApplicationFactory<WebMarke
         }
         catch (Exception)
         {
-            this.outputHelper.WriteLine($"Response status code was: {result.StatusCode}");
+            outputHelper.WriteLine($"Response status code was: {result.StatusCode}");
             throw;
         }
         finally
         {
-            this.outputHelper.WriteLine($"Response body was: {body}");
+            outputHelper.WriteLine($"Response body was: {body}");
         }
 
         await Task.CompletedTask;
@@ -76,9 +78,4 @@ public class RegisterShould : IClassFixture<CustomWebApplicationFactory<WebMarke
     }
 
     #endregion
-}
-
-public static class Routes
-{
-    public static string Register => "/registrations";
 }

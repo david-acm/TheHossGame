@@ -10,20 +10,20 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.GameAggregate.RoundEntity.RoundScoreValueObject;
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
 
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
+namespace Hoss.Core.GameAggregate.RoundEntity.RoundScoreValueObject;
 
 public record RoundScore
 {
     private RoundScore(TeamRoundScore team1, TeamRoundScore team2)
     {
-        this.team1 = team1;
-        this.team2 = team2;
+        this.Team1 = team1;
+        this.Team2 = team2;
     }
 
-    public TeamRoundScore team1 { get; }
-    public TeamRoundScore team2 { get; }
+    public TeamRoundScore Team1 { get; }
+    public TeamRoundScore Team2 { get; }
 
     internal static RoundScore FromRound((RoundPlayer, RoundPlayer) bidWinningTeam, Stack<Trick> tricks, Bid winningBid)
     {
@@ -35,7 +35,7 @@ public record RoundScore
 
         return new RoundScore(
             new TeamRoundScore(winningTeamId, score),
-            new TeamRoundScore(winningTeamId == Game.TeamId.Team1 ? Game.TeamId.Team2 : Game.TeamId.Team1, 0));
+            new TeamRoundScore(winningTeamId == TeamId.NorthSouth ? TeamId.EastWest : TeamId.NorthSouth, 0));
     }
 
     private static int CalculateScore(Bid winningBid, int tricksWonByBiddingTeam)
@@ -55,16 +55,16 @@ public record RoundScore
 
     internal static RoundScore New()
     {
-        return new RoundScore(new TeamRoundScore(Game.TeamId.Team1, 0), new TeamRoundScore(Game.TeamId.Team2, 0));
+        return new RoundScore(new TeamRoundScore(TeamId.NorthSouth, 0), new TeamRoundScore(TeamId.EastWest, 0));
     }
 
     public static RoundScore operator +(RoundScore a, RoundScore b)
     {
-        return new RoundScore(a.team1 + b.team1, a.team2 + b.team2);
+        return new RoundScore(a.Team1 + b.Team1, a.Team2 + b.Team2);
     }
 
     public static implicit operator int(RoundScore score)
     {
-        return Math.Max(score.team1, score.team2);
+        return Math.Max(score.Team1, score.Team2);
     }
 }

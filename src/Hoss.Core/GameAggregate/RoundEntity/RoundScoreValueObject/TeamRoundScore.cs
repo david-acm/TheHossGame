@@ -16,13 +16,13 @@ using Ardalis.GuardClauses;
 
 public record TeamRoundScore
 {
-    private readonly Game.TeamId id;
+    private readonly TeamId id;
 
-    internal TeamRoundScore(Game.TeamId id, int score)
+    internal TeamRoundScore(TeamId id, int score)
     {
         this.id = id;
         Guard.Against.OutOfRange(score, nameof(score), -24, 24);
-        this.Score = score;
+        Score = score;
     }
 
     public int Score { get; }

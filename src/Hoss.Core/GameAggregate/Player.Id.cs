@@ -9,13 +9,16 @@ namespace Hoss.Core.GameAggregate;
 
 public record APlayerId : PlayerId
 {
-    /// <inheritdoc />
-    public override string ToString()
+    public APlayerId(Guid playerId) 
+        : base (playerId)
     {
-        return this.Id.ToString();
     }
 }
 
-public record NoPlayerId : PlayerId;
+public record NoPlayerId() : PlayerId(Guid.Empty);
 
-public abstract record PlayerId : ValueId;
+public record PlayerId(Guid Id) : ValueId
+{
+    public static implicit operator PlayerId(Guid s) => new(s);
+    public static implicit operator Guid(PlayerId s) => s.Id;
+}

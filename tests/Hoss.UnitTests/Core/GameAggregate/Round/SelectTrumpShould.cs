@@ -5,6 +5,8 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using TheHossGame.UnitTests.Extensions;
+
 namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 #region
@@ -13,8 +15,7 @@ using FluentAssertions;
 using Hoss.Core.GameAggregate;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using Hoss.SharedKernel;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
-using TheHossGame.UnitTests.Extensions;
+using PlayerAggregate.Generators;
 using Xunit;
 using static Hoss.Core.GameAggregate.RoundEntity.RoundEvents;
 
@@ -49,7 +50,7 @@ public class SelectTrumpShould
     [BidFinishedGameData]
     public void ThrowInvalidOperationExceptionWhenPlayerIsNotBidWinner(AGame game)
     {
-        var outOfTurnPlayer = game.FindGamePlayers(Game.TeamId.Team2).First().PlayerId;
+        var outOfTurnPlayer = game.FindGamePlayers(TeamId.EastWest).First().PlayerId;
         var selectTrumpAction = () => game.SelectTrump(outOfTurnPlayer, Suit.Hearts);
 
         selectTrumpAction.Should().Throw<InvalidEntityStateException>();

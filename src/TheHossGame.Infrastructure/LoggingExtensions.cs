@@ -4,9 +4,9 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace Hoss.Infrastructure;
-
 using Microsoft.Extensions.Logging;
+
+namespace TheHossGame.Infrastructure;
 
 public static class LoggingExtensions
 {

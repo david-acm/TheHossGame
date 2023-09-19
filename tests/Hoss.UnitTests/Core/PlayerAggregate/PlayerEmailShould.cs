@@ -5,6 +5,8 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+
 namespace TheHossGame.UnitTests.Core.PlayerAggregate;
 
 #region
@@ -13,9 +15,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using AutoFixture.Xunit2;
 using FluentAssertions;
-using Hoss.Core.PlayerAggregate;
 using Hoss.SharedKernel;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using Generators;
 using Xunit;
 
 #endregion

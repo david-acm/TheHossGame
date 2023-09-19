@@ -5,16 +5,16 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using FluentAssertions;
+
 namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 
 #region
 
-using FluentAssertions;
 using Hoss.Core.GameAggregate;
 using Hoss.Core.Interfaces;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using PlayerAggregate.Generators;
 using Xunit;
-using static Hoss.Core.GameAggregate.Game.TeamId;
 
 #endregion
 
@@ -24,7 +24,7 @@ public class CreateNewGameShould
     [PlayerData]
     public void RaiseGameStartedEvent(APlayerId playerId, IShufflingService shuffleService)
     {
-        var game = AGame.CreateForPlayer(playerId, shuffleService);
+        var game = AGame.CreateForPlayer(new AGameId(Guid.NewGuid()), playerId, shuffleService);
 
         var newGameEvent = game.Events.Should().ContainSingle(e => e is GameEvents.NewGameCreatedEvent).Subject
             .As<GameEvents.NewGameCreatedEvent>();
@@ -34,9 +34,9 @@ public class CreateNewGameShould
 
         newGameEvent.StartedBy.Should().Be(playerId);
         newGameEvent.StartedBy.Should().BeOfType<APlayerId>();
-        newGameEvent.Should().BeAssignableTo<GameEvents.GameEventBase>().Subject.GameId.Should().Be(game.Id);
-        joinedEvent.PlayerId.Should().Be(playerId);
-        joinedEvent.TeamId.Should().Be(Team1);
+        newGameEvent.Should().BeAssignableTo<GameEvents.GameEventBase>().Subject.GameId.Id.Should().Be(game.Id);
+        joinedEvent.PlayerId.Id.Should().Be(playerId.Id);
+        joinedEvent.TeamId.Should().Be(TeamId.NorthSouth);
         joinedEvent.Should().BeAssignableTo<GameEvents.GameEventBase>();
     }
 }

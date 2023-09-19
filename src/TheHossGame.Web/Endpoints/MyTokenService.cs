@@ -19,7 +19,7 @@ public class MyTokenService : RefreshTokenService<TokenRequest, TokenResponse>
 {
     public MyTokenService(IConfiguration config)
     {
-        this.Setup(o =>
+        Setup(o =>
         {
             o.TokenSigningKey =
                 "TokenSigningKeyTokenSigningKeyTokenSigningKeyTokenSigningKeyTokenSigningKeyTokenSigningKey";
@@ -42,7 +42,7 @@ public class MyTokenService : RefreshTokenService<TokenRequest, TokenResponse>
     public override async Task RefreshRequestValidationAsync(TokenRequest req)
     {
         if (!await RefreshTokenRepo.TokenIsValid(req.UserId, req.RefreshToken))
-            this.AddError(r => r.RefreshToken, "Refresh token is invalid!");
+            AddError(r => r.RefreshToken, "Refresh token is invalid!");
 
         // validate the incoming refresh request by checking the token and expiry against the
         // previously stored data. if the token is not valid and a new token pair should

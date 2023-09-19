@@ -5,16 +5,17 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+using Hoss.Core.ProfileAggregate.Events;
+
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Player;
 
 #region
 
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.PlayerAggregate;
-using Hoss.Core.PlayerAggregate.Events;
 using Hoss.SharedKernel;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using Generators;
 using Xunit;
 
 #endregion
@@ -40,7 +41,7 @@ public class RequestJoinGameShould
 
         var @event = profile.Events.Should().ContainSingle(e => e is CannotJoinGameEvent);
         @event.Which.Should().BeOfType<CannotJoinGameEvent>();
-        @event.Subject.Should().BeAssignableTo<ProfileEventBase>().Which.ProfileId.Should().Be(profile.Id);
+        @event.Subject.Should().BeAssignableTo<ProfileEventBase>().Which.ProfileId.Id.Should().Be(profile.Id);
     }
 
     [Theory]

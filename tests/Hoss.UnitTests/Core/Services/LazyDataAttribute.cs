@@ -25,7 +25,7 @@ public abstract class LazyDataAttribute : AutoDataAttribute
    private static Func<IFixture> ApplyCustomizations { get; } = () =>
    {
       var fixture = new Fixture();
-      Customizations!.ToList().ForEach(c => fixture.Customize(c));
+      Customizations?.ToList().ForEach(c => fixture.Customize(c));
       return fixture;
    };
 

@@ -27,8 +27,8 @@ namespace TheHossGame.Cloud
          var appServicePlan = servicePlanBuilder.BuildAppServicePlan(resourceGroup);
          var webApp = webAppBuilder.BuildWebApp(GroupName, WebAppName, appServicePlan);
 
-         this.PublishingUserName = GetWebAppPublishingKeys(resourceGroup, webApp);
-         this.ResourceGroupName = resourceGroup.Name.Apply(resource => resource);
+         PublishingUserName = GetWebAppPublishingKeys(resourceGroup, webApp);
+         ResourceGroupName = resourceGroup.Name.Apply(resource => resource);
       }
 
       [Output]

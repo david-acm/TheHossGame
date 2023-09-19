@@ -5,6 +5,8 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using TheHossGame.UnitTests.Extensions;
+
 namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 #region
@@ -16,8 +18,7 @@ using Hoss.Core.GameAggregate.RoundEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using Hoss.Core.Interfaces;
 using Moq;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
-using TheHossGame.UnitTests.Extensions;
+using PlayerAggregate.Generators;
 using Xunit;
 using static Hoss.Core.GameAggregate.RoundEntity.RoundEvents;
 
@@ -60,7 +61,7 @@ public sealed class StartNewShould
     {
         var (gameId, roundId) = game.Events.ShouldContain().SingleEventOfType<AllCardsDealtEvent>();
 
-        gameId.Should().Be(game.Id);
+        gameId.Id.Should().Be(game.Id);
         roundId.Should().NotBeNull();
 
         game.CurrentRoundView.Stage.Should().Be(RoundBase.RoundStage.Bidding);

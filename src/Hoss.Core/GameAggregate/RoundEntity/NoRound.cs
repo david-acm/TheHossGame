@@ -5,12 +5,13 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
+using DeckValueObjects;
 using static RoundEvents;
 
 #endregion
@@ -20,7 +21,7 @@ public sealed class NoRound : RoundBase
     public NoRound()
         : base(new RoundId(), _ => { })
     {
-        this.Apply(new RoundStartedEvent(new NoGameId(), new RoundId(), new List<RoundPlayer>()));
+        Apply(new RoundStartedEvent(new NoGameId(), new RoundId(), new List<RoundPlayer>()));
     }
 
     internal override RoundStage Stage => RoundStage.None;

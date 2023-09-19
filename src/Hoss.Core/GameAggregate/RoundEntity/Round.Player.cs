@@ -9,7 +9,7 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using static Game;
+
 
 #endregion
 

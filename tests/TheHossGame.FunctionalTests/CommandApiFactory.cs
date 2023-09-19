@@ -17,16 +17,16 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using TheHossGame.Web;
+using Web;
 using Xunit.Abstractions;
 
 public class CommandApiFactory : WebApplicationFactory<WebMarker>
 {
-    private readonly ITestOutputHelper _testOutputHelper;
+    private readonly ITestOutputHelper testOutputHelper;
 
     public CommandApiFactory(ITestOutputHelper testOutputHelper)
     {
-        this._testOutputHelper = testOutputHelper;
+        this.testOutputHelper = testOutputHelper;
     }
 
     protected override IHost CreateHost(IHostBuilder builder)

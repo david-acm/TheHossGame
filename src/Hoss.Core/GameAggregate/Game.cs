@@ -9,25 +9,31 @@ namespace Hoss.Core.GameAggregate;
 
 #region
 
-using Hoss.SharedKernel.Interfaces;
-
 #endregion
 
-public abstract class Game : AggregateRoot<GameId>, IAggregateRoot
-{
-    #region TeamId enum
-
-    public enum TeamId
-    {
-        NoTeamId,
-        Team1,
-        Team2,
-    }
-
-    #endregion
-
-    protected Game(GameId id)
-        : base(id)
-    {
-    }
-}
+     public enum TeamId
+     {
+         NoTeamId,
+         NorthSouth,
+         EastWest,
+     }
+// public abstract class Game : AggregateRoot<GameId>, IAggregateRoot
+// {
+//     #region TeamId enum
+//
+//     public enum TeamId
+//     {
+//         NoTeamId,
+//         NorthSouth,
+//         EastWest,
+//     }
+//
+//     #endregion
+//
+//     protected Game(GameId id)
+//         : base(id)
+//     {
+//     }
+//
+//     public abstract void JoinPlayerToTeam(PlayerId playerId, TeamId teamId);
+// }

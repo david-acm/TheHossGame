@@ -9,17 +9,17 @@ namespace Hoss.Core.GameAggregate.PlayerEntity;
 
 #region
 
-using static Game;
+
 
 #endregion
 
-public abstract class GamePlayer : EntityBase<PlayerId>
+public abstract class GamePlayer : EntityBase
 {
     protected GamePlayer(GameId gameId, PlayerId playerId, Action<DomainEventBase> applier)
         : base(playerId, applier)
     {
-        this.GameId = gameId;
-        this.PlayerId = playerId;
+        GameId = gameId;
+        PlayerId = playerId;
     }
 
     public bool IsReady { get; protected set; }

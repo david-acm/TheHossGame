@@ -5,7 +5,7 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.PlayerAggregate.Events;
+namespace Hoss.Core.ProfileAggregate.Events;
 
 #region
 
@@ -16,9 +16,9 @@ public record CannotJoinGameEvent(ProfileId ProfileId, string Reason) : ProfileE
 public abstract record ProfileEventBase : DomainEventBase
 {
     protected ProfileEventBase(ProfileId profileId)
-        : base(profileId)
+        : base()
     {
-        this.ProfileId = profileId;
+        ProfileId = profileId;
     }
 
     public ProfileId ProfileId { get; }

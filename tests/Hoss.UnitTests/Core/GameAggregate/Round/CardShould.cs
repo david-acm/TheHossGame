@@ -9,7 +9,7 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 using FluentAssertions;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using PlayerAggregate.Generators;
 using Xunit;
 using static Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects.Rank;
 using static Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects.Suit;

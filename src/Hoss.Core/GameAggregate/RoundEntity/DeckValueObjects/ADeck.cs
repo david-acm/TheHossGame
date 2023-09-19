@@ -9,7 +9,7 @@ namespace Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
 #region
 
-using Hoss.Core.Interfaces;
+using Interfaces;
 
 #endregion
 
@@ -22,12 +22,12 @@ public sealed record ADeck : Deck
         var cardList = new List<ACard>();
         cardList.AddRange(Suit.List.SelectMany(suit => Rank.List.Select(rank => new ACard(rank, suit))));
         shufflingService.Shuffle(cardList);
-        this.cards = new Stack<ACard>(cardList);
+        cards = new Stack<ACard>(cardList);
     }
 
-    public IReadOnlyList<ACard> Cards => this.cards.ToList().AsReadOnly();
+    public IReadOnlyList<ACard> Cards => cards.ToList().AsReadOnly();
 
-    public override bool HasCards => this.cards.Any();
+    public override bool HasCards => cards.Any();
 
     public static ADeck ShuffleNew(IShufflingService shufflingService)
     {
@@ -36,6 +36,6 @@ public sealed record ADeck : Deck
 
     public override Card Deal()
     {
-        return this.cards.Pop();
+        return cards.Pop();
     }
 }

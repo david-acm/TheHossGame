@@ -11,7 +11,7 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using TheHossGame.UnitTests.Core.Services;
+using Services;
 using Xunit;
 
 #endregion

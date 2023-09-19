@@ -5,29 +5,20 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Text.Json.Serialization;
+
 namespace Hoss.SharedKernel;
 
 /// <summary>
 ///    A value object with guid identity.
 /// </summary>
-public abstract record ValueId : ValueObject
+public record ValueId : ValueObject
 {
     /// <summary>
     ///    Initializes a new instance of the <see cref="ValueId" /> class.
     /// </summary>
-    protected ValueId(Guid? guid = null)
+    public ValueId()
     {
-        this.Id = guid ?? Guid.NewGuid();
-    }
-
-    /// <summary>
-    /// </summary>
-    public Guid Id { get; }
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return this.Id.ToString();
     }
 }
 
@@ -38,7 +29,7 @@ public record NoValueId : ValueId
     /// <summary>
     ///     Initializes a new instance of the <see cref="ValueId" /> class.
     /// </summary>
-    public NoValueId() : base(Guid.Empty)
+    public NoValueId()
     {
     }
 }

@@ -15,9 +15,9 @@ namespace TheHossGame.FunctionalTests;
 using AutoFixture;
 using AutoFixture.Xunit2;
 
-public class CommandApiDataAttribute : AutoDataAttribute
+public class PlayerRegisteredClientData : AutoDataAttribute
 {
-    public CommandApiDataAttribute()
+    public PlayerRegisteredClientData()
         : base(() => new Fixture()
             .Customize(new CompositeCustomization(
                 new CommandApiCustomization())))

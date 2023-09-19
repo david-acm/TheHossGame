@@ -4,17 +4,17 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace Hoss.Infrastructure;
-
 using System.Reflection;
 using Autofac;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.PlayerAggregate;
+using Hoss.Core.ProfileAggregate;
 using Hoss.SharedKernel;
 using Hoss.SharedKernel.Interfaces;
 using MediatR;
 using MediatR.Pipeline;
-using TheHossGame.Infrastructure;
+
+namespace TheHossGame.Infrastructure;
+
 using Module = Autofac.Module;
 
 public class DefaultInfrastructureModule : Module
@@ -26,27 +26,27 @@ public class DefaultInfrastructureModule : Module
     {
         this.isDevelopment = isDevelopment;
         var coreAssembly =
-            Assembly.GetAssembly(typeof(Game)); // TO DO: Replace "Project" with any type from your Core project
+            Assembly.GetAssembly(typeof(AGame)); // TO DO: Replace "Project" with any type from your Core project
         var infrastructureAssembly = Assembly.GetAssembly(typeof(StartupSetup));
         if (coreAssembly != null)
         {
-            this.assemblies.Add(coreAssembly);
+            assemblies.Add(coreAssembly);
         }
 
         if (infrastructureAssembly != null)
         {
-            this.assemblies.Add(infrastructureAssembly);
+            assemblies.Add(infrastructureAssembly);
         }
 
         if (callingAssembly != null)
         {
-            this.assemblies.Add(callingAssembly);
+            assemblies.Add(callingAssembly);
         }
     }
 
     protected override void Load(ContainerBuilder builder)
     {
-        if (this.isDevelopment)
+        if (isDevelopment)
         {
             RegisterDevelopmentOnlyDependencies(builder);
         }
@@ -55,7 +55,7 @@ public class DefaultInfrastructureModule : Module
             RegisterProductionOnlyDependencies(builder);
         }
 
-        this.RegisterCommonDependencies(builder);
+        RegisterCommonDependencies(builder);
     }
 
 #pragma warning disable S1172 // Unused method parameters should be removed
@@ -87,8 +87,8 @@ public class DefaultInfrastructureModule : Module
             .InstancePerLifetimeScope();
 
         builder
-            .RegisterType<EntityStore>()
-            .As<IEntityStore>();
+            .RegisterType<AggregateStore>()
+            .As<IAggregateStore>();
 
         // builder.Register<ServiceFactory>(context =>
         // {
@@ -108,7 +108,7 @@ public class DefaultInfrastructureModule : Module
         foreach (var mediatrOpenType in mediatrOpenTypes)
         {
             builder
-                .RegisterAssemblyTypes(this.assemblies.ToArray())
+                .RegisterAssemblyTypes(assemblies.ToArray())
                 .AsClosedTypesOf(mediatrOpenType)
                 .AsImplementedInterfaces();
         }

@@ -1,11 +1,12 @@
 ﻿using Ardalis.ListStartupServices;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using EventStore.Client;
 using FastEndpoints;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
-using Hoss.Infrastructure;
 using Serilog;
+using TheHossGame.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,24 @@ builder.Services.Configure<ServiceConfig>(config =>
     config.Path = "/listservices";
 });
 
+var settings = EventStoreClientSettings
+    .Create("esdb://localhost:2113?tls=false");
+var client = new EventStoreClient(settings);
+
+// var eventData = new EventData(
+//     Uuid.NewUuid(),
+//     "some-event",
+//     Encoding.UTF8.GetBytes("{\"id\": \"1\" \"value\": \"some value\"}")
+// );t
+//
+// await client.AppendToStreamAsync(
+//     "some-stream",
+//     StreamState.NoStream,
+//     new List<EventData> {
+//         eventData
+//     });
+//
+builder.Services.AddSingleton(client);
 
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
@@ -48,7 +67,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseShowAllServicesMiddleware(); // see https://github.com/ardalis/AspNetCoreStartupServices
+    // app.UseShowAllServicesMiddleware(); // see https://github.com/ardalis/AspNetCoreStartupServices
 }
 else
 {
@@ -68,9 +87,13 @@ app.UseHttpsRedirection();
 
 // Seed Database
 
+
 app.Run();
 
 // Make the implicit Program.cs class public, so integration tests can reference the correct assembly for host building
-public partial class Program
+namespace TheHossGame.Web
 {
+    public partial class Program
+    {
+    }
 }

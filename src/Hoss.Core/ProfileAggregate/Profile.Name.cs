@@ -5,11 +5,13 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.PlayerAggregate;
+using Ardalis.GuardClauses;
+
+namespace Hoss.Core.ProfileAggregate;
 
 #region
 
-using Ardalis.GuardClauses;
+
 
 #endregion
 
@@ -20,7 +22,7 @@ public record PlayerName : NameBase
         Guard.Against.NullOrEmpty(name, nameof(name));
         GuardExtensions.InvalidLength(name, nameof(name), 1, 30);
 
-        this.Name = name;
+        Name = name;
     }
 
     public string Name { get; }

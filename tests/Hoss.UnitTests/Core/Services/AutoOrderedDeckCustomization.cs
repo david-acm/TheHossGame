@@ -10,7 +10,7 @@ namespace TheHossGame.UnitTests.Core.Services;
    #region
 
 using AutoFixture;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using PlayerAggregate.Generators;
 
 #endregion
 

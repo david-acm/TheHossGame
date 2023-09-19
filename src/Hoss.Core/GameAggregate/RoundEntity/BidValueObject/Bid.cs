@@ -5,11 +5,13 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.GameAggregate.RoundEntity.BidEntity;
+using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
+
+namespace Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
 
 #region
 
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
+
 
 #endregion
 

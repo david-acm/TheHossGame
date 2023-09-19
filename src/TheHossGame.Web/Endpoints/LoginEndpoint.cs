@@ -19,15 +19,15 @@ public class LoginEndpoint : EndpointWithoutRequest<TokenResponse>
 {
     public override void Configure()
     {
-        this.Get("/login");
-        this.AllowAnonymous();
+        Get("/login");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken c)
     {
         //user credential checking has been omitted for brevity
 
-        this.Response = await this.CreateTokenWith<MyTokenService>("user-id-001", u =>
+        Response = await CreateTokenWith<MyTokenService>("user-id-001", u =>
         {
             // u.Roles.AddRange(new[] { "Admin", "Manager" });
             // u.Permissions.Add("Update_Something");

@@ -34,22 +34,22 @@ public record ADeal(PlayerId PlayerId) : Deal(PlayerId)
 {
     private readonly List<Card> cards = new();
 
-    public override IReadOnlyList<Card> Cards => this.cards.AsReadOnly();
+    public override IReadOnlyList<Card> Cards => cards.AsReadOnly();
 
     internal override void ReceiveCard(Card card)
     {
-        this.cards.Add(card);
+        cards.Add(card);
         base.ReceiveCard(card);
     }
 
     internal override void GiveCard(Card card)
     {
-        this.cards.Remove(card);
+        cards.Remove(card);
     }
 
     internal override void PlayCard(Card card)
     {
-        this.cards.Remove(card);
+        cards.Remove(card);
         base.PlayCard(card);
     }
 }

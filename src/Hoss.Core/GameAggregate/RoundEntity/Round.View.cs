@@ -5,12 +5,13 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
+using DeckValueObjects;
 
 #endregion
 
@@ -18,29 +19,29 @@ public record RoundView(RoundBase currentRoundBase) : ValueObject
 {
     private readonly RoundBase currentRoundBase = currentRoundBase;
 
-    public IReadOnlyList<ADeal> PlayerDeals => this.currentRoundBase.Deals;
+    public IReadOnlyList<ADeal> PlayerDeals => currentRoundBase.Deals;
 
-    internal PlayerId CurrentPlayerId => this.currentRoundBase.CurrentPlayerId;
+    internal PlayerId CurrentPlayerId => currentRoundBase.CurrentPlayerId;
 
-    public RoundId Id => this.currentRoundBase.Id;
+    public RoundId Id => currentRoundBase.Id;
 
-    public RoundBase.RoundStage Stage => this.currentRoundBase.Stage;
+    public RoundBase.RoundStage Stage => currentRoundBase.Stage;
 
-    public IReadOnlyList<Bid> Bids => this.currentRoundBase.Bids;
+    public IReadOnlyList<Bid> Bids => currentRoundBase.Bids;
 
-    public IReadOnlyList<RoundPlayer> RoundPlayers => this.currentRoundBase.RoundPlayers;
+    public IReadOnlyList<RoundPlayer> RoundPlayers => currentRoundBase.RoundPlayers;
 
-    public Suit TrumpSelected => this.currentRoundBase.SelectedTrump;
+    public Suit TrumpSelected => currentRoundBase.SelectedTrump;
 
-    public IReadOnlyList<CardPlay> TableCenter => this.currentRoundBase.CardsPlayed;
+    public IReadOnlyList<CardPlay> TableCenter => currentRoundBase.CardsPlayed;
 
     public Deal DealForPlayer(PlayerId playerId)
     {
-        return this.currentRoundBase.DealForPlayer(playerId);
+        return currentRoundBase.DealForPlayer(playerId);
     }
 
     public Deal DealForCurrentPlayer()
     {
-        return this.currentRoundBase.DealForPlayer(this.CurrentPlayerId);
+        return currentRoundBase.DealForPlayer(CurrentPlayerId);
     }
 }

@@ -5,14 +5,15 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Player;
 
 #region
 
 using FluentAssertions;
-using Hoss.Core.PlayerAggregate;
 using Hoss.SharedKernel;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using Generators;
 using Xunit;
 
 #endregion
@@ -22,7 +23,7 @@ public class PlayerConstructorShould
     [Fact]
     public void DeriveFromEntityBase()
     {
-        typeof(Profile).Should().BeDerivedFrom<EntityBase<ProfileId>>();
+        typeof(Profile).Should().BeDerivedFrom<EntityBase>();
     }
 
     [Theory]

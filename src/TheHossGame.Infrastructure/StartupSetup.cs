@@ -4,7 +4,7 @@
 // </copyright>
 // 🃏 The HossGame 🃏
 
-namespace Hoss.Infrastructure;
+namespace TheHossGame.Infrastructure;
 
 public static class StartupSetup
 {

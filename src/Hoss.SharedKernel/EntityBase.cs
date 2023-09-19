@@ -16,37 +16,35 @@ using System.ComponentModel.DataAnnotations.Schema;
 /// <summary>
 ///    Base class for entities.
 /// </summary>
-/// <typeparam name="T">The id type.</typeparam>
-public abstract class EntityBase<T> : IInternalEventHandler
-    where T : ValueId
+public abstract class EntityBase : IInternalEventHandler
 {
     private readonly List<DomainEventBase> domainEvents = new();
 
     /// <summary>
-    ///    Initializes a new instance of the <see cref="EntityBase{T}" /> class.
+    ///    Initializes a new instance of the <see cref="EntityBase" /> class.
     /// </summary>
     /// <param name="id">The entity id.</param>
-    protected EntityBase(T id)
+    protected EntityBase(Guid? id = null)
     {
-        this.Id = id;
-        this.Applier = this.RaiseDomainEvent;
+        Id = id ?? Guid.NewGuid();
+        Applier = RaiseDomainEvent;
     }
 
     /// <summary>
-    ///    Initializes a new instance of the <see cref="EntityBase{T}" /> class.
+    ///    Initializes a new instance of the <see cref="EntityBase" /> class.
     /// </summary>
     /// <param name="id">The entity id.</param>
     /// <param name="applier">The event applier.</param>
-    protected EntityBase(T id, Action<DomainEventBase> applier)
+    protected EntityBase(Guid? id, Action<DomainEventBase> applier)
     {
-        this.Id = id;
-        this.Applier = applier;
+        Id = id ?? Guid.Empty;
+        Applier = applier;
     }
 
     /// <summary>
     ///    Gets the id.
     /// </summary>
-    public T Id { get; }
+    public Guid Id { get; }
 
     /// <summary>
     ///    Gets the event applier.
@@ -59,14 +57,14 @@ public abstract class EntityBase<T> : IInternalEventHandler
     ///    Gets a readonly collection of domain events.
     /// </summary>
     [NotMapped]
-    public IEnumerable<DomainEventBase> Events => this.domainEvents.AsReadOnly();
+    public IEnumerable<DomainEventBase> Events => domainEvents.AsReadOnly();
 
     /// <summary>
     ///    Clears the collection of domain events.
     /// </summary>
     public void ClearDomainEvents()
     {
-        this.domainEvents.Clear();
+        domainEvents.Clear();
     }
 
     #endregion
@@ -78,7 +76,7 @@ public abstract class EntityBase<T> : IInternalEventHandler
     /// <returns>Whether the two objects are equal.</returns>
     public override bool Equals(object? obj)
     {
-        if (obj is not EntityBase<T> other)
+        if (obj is not EntityBase other)
         {
             return false;
         }
@@ -88,14 +86,14 @@ public abstract class EntityBase<T> : IInternalEventHandler
             return true;
         }
 
-        if (this.GetType() != other.GetType())
+        if (GetType() != other.GetType())
         {
             return false;
         }
 
         return
-            this.GetHashCode() == other.GetHashCode() &&
-            this.Id == other.Id;
+            GetHashCode() == other.GetHashCode() &&
+            Id == other.Id;
     }
 
     /// <summary>
@@ -104,7 +102,7 @@ public abstract class EntityBase<T> : IInternalEventHandler
     /// <returns>The hash code of the entity.</returns>
     public override int GetHashCode()
     {
-        return (this.GetType().ToString() + this.Id).GetHashCode(StringComparison.InvariantCulture);
+        return (GetType().ToString() + Id).GetHashCode(StringComparison.InvariantCulture);
     }
 
     /// <summary>
@@ -113,9 +111,9 @@ public abstract class EntityBase<T> : IInternalEventHandler
     /// <param name="event">The event to apply.</param>
     protected virtual void Apply(DomainEventBase @event)
     {
-        this.When(@event);
-        this.EnsureValidState();
-        this.Applier(@event);
+        When(@event);
+        EnsureValidState();
+        Applier(@event);
     }
 
     /// <summary>
@@ -137,6 +135,6 @@ public abstract class EntityBase<T> : IInternalEventHandler
     protected void RaiseDomainEvent(DomainEventBase domainEvent)
 #pragma warning restore CA1030
     {
-        this.domainEvents.Add(domainEvent);
+        domainEvents.Add(domainEvent);
     }
 }

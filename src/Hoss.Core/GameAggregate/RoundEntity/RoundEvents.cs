@@ -5,11 +5,12 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.GameAggregate.RoundEntity.RoundScoreValueObject;
+using DeckValueObjects;
+using RoundScoreValueObject;
 
 public static class RoundEvents
 {

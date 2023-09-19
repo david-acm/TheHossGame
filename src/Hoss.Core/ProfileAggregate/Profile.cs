@@ -5,11 +5,13 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.PlayerAggregate;
+using Hoss.Core.ProfileAggregate.Events;
+
+namespace Hoss.Core.ProfileAggregate;
 
 #region
 
-using Hoss.Core.PlayerAggregate.Events;
+
 
 #endregion
 
@@ -22,15 +24,10 @@ public sealed class Profile : Base
 
     private PlayerState State { get; set; } = PlayerState.NotPlaying;
 
-    public ProfileEmailBase Email { get; private set; } = new NoProfileEmail();
-
-    public NameBase Name { get; private set; } = new NoName();
-
-    public static Profile FromNewRegister(ProfileEmail profileEmail, PlayerName playerName)
+    public static Profile FromNewRegister(ProfileEmail profileEmail, PlayerName playerName, AProfileId profileId)
     {
-        var id = new AProfileId();
-        var player = new Profile(id);
-        player.Apply(new PlayerRegisteredEvent(id, profileEmail, playerName));
+        var player = new Profile(profileId);
+        player.Apply(new PlayerRegisteredEvent(profileId, profileEmail, playerName));
 
         return player;
     }
@@ -43,21 +40,21 @@ public sealed class Profile : Base
         - Decoupling the request event from the actual joining to a game. Allowing some time to catch on. Or by sending the id of the last event used to perform the check? */
 
         // Preconditions
-        if (this.CanJoinNewGame)
-            this.Apply(new RequestedJoinGameEvent(this.Id, gameId));
+        if (CanJoinNewGame)
+            Apply(new RequestedJoinGameEvent(Id, gameId));
         else
-            this.Apply(new CannotJoinGameEvent(this.Id, "APlayer already in a game"));
+            Apply(new CannotJoinGameEvent(Id, "APlayer already in a game"));
 
-        this.EnsureValidState(); // Invariants
+        EnsureValidState(); // Invariants
     }
 
     protected override void EnsureValidState()
     {
 #pragma warning disable CS8509
-        var valid = this.State switch
+        var valid = State switch
 #pragma warning restore CS8509
         {
-            PlayerState.Playing => this.JoiningGameId is not NoValueId,
+            PlayerState.Playing => JoiningGameId is not NoValueId,
             _ => true,
         };
 
@@ -69,20 +66,18 @@ public sealed class Profile : Base
         (@event switch
         {
             // CannotJoinGameEvent => () => { },
-            PlayerRegisteredEvent e => (Action) (() => this.HandlePlayerRegisteredEvent(e)),
+            PlayerRegisteredEvent e => (Action)(() => HandlePlayerRegisteredEvent()),
             RequestedJoinGameEvent e => () =>
             {
-                this.State = PlayerState.Playing;
-                this.JoiningGameId = e.GameId;
+                State = PlayerState.Playing;
+                JoiningGameId = e.GameId;
             },
             _ => () => { },
         }).Invoke();
     }
 
-    private void HandlePlayerRegisteredEvent(PlayerRegisteredEvent @event)
+    private void HandlePlayerRegisteredEvent()
     {
-        this.Name = @event.PlayerName;
-        this.Email = @event.Email;
     }
 
     #region Nested type: PlayerState
@@ -96,18 +91,16 @@ public sealed class Profile : Base
     #endregion
 }
 
-public record AProfileId : ProfileId
+public record AProfileId(Guid? ValueId = null) : ProfileId(ValueId)
 {
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return this.Id.ToString();
-    }
 }
 
 public record NoProfileId : ProfileId;
 
-public abstract record ProfileId : ValueId;
+public record ProfileId(Guid? Id = null)  : ValueId
+{
+    public static implicit operator ProfileId(Guid s) => new(s);
+}
 
 public sealed class NoBase : Base
 {
@@ -115,7 +108,7 @@ public sealed class NoBase : Base
     public NoBase(ProfileId id)
         : base(id)
     {
-        this.EnsureValidState();
+        EnsureValidState();
     }
 
     /// <inheritdoc />

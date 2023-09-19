@@ -12,7 +12,7 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Game;
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
 using Hoss.SharedKernel.Interfaces;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using PlayerAggregate.Generators;
 using Xunit;
 
 #endregion

@@ -5,12 +5,14 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.PlayerAggregate;
+using System.ComponentModel.DataAnnotations;
+using Ardalis.GuardClauses;
+
+namespace Hoss.Core.ProfileAggregate;
 
 #region
 
-using System.ComponentModel.DataAnnotations;
-using Ardalis.GuardClauses;
+
 
 #endregion
 
@@ -25,7 +27,7 @@ public record ProfileEmail : ProfileEmailBase
         Guard.Against.NullOrEmpty(address, nameof(address));
         Guard.Against.InvalidInput(address, nameof(address), _ => new EmailAddressAttribute().IsValid(address));
 
-        this.Address = address;
+        Address = address;
     }
 
     public string Address { get; }

@@ -5,11 +5,11 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.PlayerAggregate.Events;
+namespace Hoss.Core.ProfileAggregate.Events;
 
 #region
 
 #endregion
 
 public record PlayerRegisteredEvent
-    (ProfileId PlayerId, ProfileEmail Email, PlayerName PlayerName) : DomainEventBase(PlayerId);
+    (ProfileId PlayerId, ProfileEmail Email, PlayerName PlayerName) : DomainEventBase;

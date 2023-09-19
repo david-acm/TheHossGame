@@ -5,14 +5,15 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 #region
 
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-using TheHossGame.UnitTests.Core.Services;
+using Services;
 
 #endregion
 

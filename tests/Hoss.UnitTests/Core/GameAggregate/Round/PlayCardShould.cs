@@ -5,16 +5,17 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+using TheHossGame.UnitTests.Extensions;
+
 namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
 using Hoss.Core.GameAggregate.RoundEntity;
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using Hoss.SharedKernel;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
-using TheHossGame.UnitTests.Extensions;
+using PlayerAggregate.Generators;
 using Xunit;
 using static Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects.Rank;
 using static Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects.Suit;
@@ -66,8 +67,8 @@ public class PlayCardShould
             .ToList()
             .ForEach(c => c.HandWinner.PlayerId.Should().Be(winner));
         var roundPlayed = game.Events.ShouldContain().SingleEventOfType<RoundPlayedEvent>();
-        roundPlayed.RoundScore.team1.Score.Should().Be(6);
-        roundPlayed.RoundScore.team2.Score.Should().Be(0);
+        roundPlayed.RoundScore.Team1.Score.Should().Be(6);
+        roundPlayed.RoundScore.Team2.Score.Should().Be(0);
 
         game.CurrentPlayerId.Should().Be(nextRoundFirstPlayer);
     }
@@ -112,8 +113,8 @@ public class PlayCardShould
 
         var roundPlayed = game.Events.ShouldContain()
             .SingleEventOfType<RoundPlayedEvent>();
-        roundPlayed.RoundScore.team1.Score.Should().Be(12);
-        roundPlayed.RoundScore.team2.Score.Should().Be(0);
+        roundPlayed.RoundScore.Team1.Score.Should().Be(12);
+        roundPlayed.RoundScore.Team2.Score.Should().Be(0);
 
         for (var player = 1; player <= 4; player++)
             game.Bid(game.CurrentPlayerId, game.CurrentPlayerId == winner ? BidValue.Six : BidValue.Pass);
@@ -145,8 +146,8 @@ public class PlayCardShould
 
             roundPlayed = game.Events.ShouldContain()
                 .ManyEventsOfType<RoundPlayedEvent>(round).Last();
-            roundPlayed.RoundScore.team1.Score.Should().Be(6);
-            roundPlayed.RoundScore.team2.Score.Should().Be(0);
+            roundPlayed.RoundScore.Team1.Score.Should().Be(6);
+            roundPlayed.RoundScore.Team2.Score.Should().Be(0);
 
             if (game.Stage == AGame.GameState.Finished)
                 break;
@@ -231,7 +232,7 @@ public class PlayCardShould
     public void NotAllowToPlayACardNotPresentInThePlayersDeal(AGame game)
     {
         game.SelectTrump(game.CurrentPlayerId, Hearts);
-        var card = game.CurrentRoundView.PlayerDeals.First(pd => pd != game.CurrentPlayerId)!.Cards[0];
+        var card = game.CurrentRoundView.PlayerDeals.First(pd => pd != game.CurrentPlayerId).Cards[0];
         var action = () => game.PlayCard(game.CurrentPlayerId, card);
 
         action.Should().Throw<InvalidEntityStateException>();
@@ -253,7 +254,7 @@ public class PlayCardShould
     public void NotAllowAPlayerNotInTurnToPlay(AGame game)
     {
         game.SelectTrump(game.CurrentPlayerId, Hearts);
-        var playerNotInTurn = game.FindGamePlayers().FirstOrDefault(p => p.Id != game.CurrentPlayerId);
+        var playerNotInTurn = game.FindGamePlayers().FirstOrDefault(p => p.Id != game.CurrentPlayerId.Id);
 
         var playAction = () => game.PlayCard(playerNotInTurn!.PlayerId, new ACard(King, Clubs));
 
@@ -262,7 +263,7 @@ public class PlayCardShould
 
     private static Suit SuitWithMostCards(AGame game, PlayerId currentPlayerId)
     {
-        return game.CurrentRoundView.DealForPlayer(currentPlayerId!).Cards.GroupBy(c => c.Suit)
+        return game.CurrentRoundView.DealForPlayer(currentPlayerId).Cards.GroupBy(c => c.Suit)
             .OrderByDescending(s => s.Count()).First().Key;
     }
 }

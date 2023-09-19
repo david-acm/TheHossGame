@@ -26,7 +26,7 @@ public class EventCollectionAssertions<TEvent> : GenericCollectionAssertions<IEn
     public TExpectedEvent SingleEventOfType<TExpectedEvent>(string because = "", params object[] becauseArgs)
         where TExpectedEvent : DomainEventBase
     {
-        var @event = this.Subject.Should().ContainSingle(e => e is TExpectedEvent).Subject.As<TExpectedEvent>();
+        var @event = Subject.Should().ContainSingle(e => e is TExpectedEvent).Subject.As<TExpectedEvent>();
 
         return @event;
     }
@@ -34,7 +34,7 @@ public class EventCollectionAssertions<TEvent> : GenericCollectionAssertions<IEn
     public void NoEventsOfType<TExpectedEvent>(string because = "", params object[] becauseArgs)
         where TExpectedEvent : DomainEventBase
     {
-        this.Subject.Where(e => e is TExpectedEvent).Should()
+        Subject.Where(e => e is TExpectedEvent).Should()
             .NotContain(e => e is TExpectedEvent, because, becauseArgs);
     }
 
@@ -42,7 +42,7 @@ public class EventCollectionAssertions<TEvent> : GenericCollectionAssertions<IEn
         params object[] becauseArgs)
         where TExpectedEvent : DomainEventBase
     {
-        var @event = this.Subject.Where(e => e is TExpectedEvent).Should().HaveCount(count, because, becauseArgs).And
+        var @event = Subject.Where(e => e is TExpectedEvent).Should().HaveCount(count, because, becauseArgs).And
             .Subject.Cast<TExpectedEvent>().As<IEnumerable<TExpectedEvent>>();
 
         return @event;

@@ -5,12 +5,13 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+
 namespace Hoss.Core.Services;
 
 #region
 
 using Ardalis.Specification;
-using Hoss.Core.PlayerAggregate;
 
 #endregion
 

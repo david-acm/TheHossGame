@@ -5,12 +5,13 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 #region
 
 using AutoFixture.Kernel;
-using Hoss.Core.PlayerAggregate;
 
 #endregion
 

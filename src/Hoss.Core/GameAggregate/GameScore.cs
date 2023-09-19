@@ -12,34 +12,34 @@
 
 namespace Hoss.Core.GameAggregate;
 
-using Hoss.Core.GameAggregate.RoundEntity.RoundScoreValueObject;
+using RoundEntity.RoundScoreValueObject;
 
 public record GameScore
 {
     private GameScore(TeamGameScore team1, TeamGameScore team2)
     {
-        this.team1Score = team1;
-        this.team2Score = team2;
+        Team1Score = team1;
+        Team2Score = team2;
     }
 
-    public TeamGameScore team1Score { get; }
-    public TeamGameScore team2Score { get; }
+    public TeamGameScore Team1Score { get; }
+    public TeamGameScore Team2Score { get; }
 
     internal GameScore AddRoundScore(RoundScore roundScores)
     {
-        return new GameScore(this.team1Score.AddTeamRoundScore(roundScores.team1),
-            this.team2Score.AddTeamRoundScore(roundScores.team2));
+        return new GameScore(Team1Score.AddTeamRoundScore(roundScores.Team1),
+            Team2Score.AddTeamRoundScore(roundScores.Team2));
     }
 
     internal static GameScore New()
     {
         return new GameScore(
-            TeamGameScore.New(Game.TeamId.Team1),
-            TeamGameScore.New(Game.TeamId.Team2));
+            TeamGameScore.New(TeamId.NorthSouth),
+            TeamGameScore.New(TeamId.EastWest));
     }
 
     public static implicit operator int(GameScore score)
     {
-        return Math.Max(score.team1Score, score.team2Score);
+        return Math.Max(score.Team1Score, score.Team2Score);
     }
 }

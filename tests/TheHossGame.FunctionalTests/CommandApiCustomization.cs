@@ -22,12 +22,19 @@ public class CommandApiCustomization : ICustomization
     public void Customize(IFixture fixture)
     {
         var helper = new TestOutputHelper();
-        fixture.Customize<CommandApiFactory>(f => f.FromFactory(() =>
+        fixture.Customize<PlayerClient>(f => f.FromFactory(() =>
         {
             var commandApiFactory = new CommandApiFactory(helper);
-            // commandApiFactory.WithWebHostBuilder(b => b.UseEnvironment(""));
-            return commandApiFactory;
+
+            var playerClient = new PlayerClient(
+                commandApiFactory.CreateClient(), 
+                Guid.NewGuid().ToString());
+            playerClient.AuthorizeAsync().GetAwaiter().GetResult();
+            return playerClient;
         }));
+        fixture.Customize<IEnumerable<PlayerClient>>(f => f
+            .FromFactory(() => 
+                fixture.CreateMany<PlayerClient>(count: 4)));
     }
 
     #endregion

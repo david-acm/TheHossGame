@@ -5,14 +5,15 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using FluentAssertions;
+using TheHossGame.UnitTests.Extensions;
+
 namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 #region
 
-using FluentAssertions;
 using Hoss.Core.GameAggregate;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
-using TheHossGame.UnitTests.Extensions;
+using PlayerAggregate.Generators;
 using Xunit;
 
 #endregion
@@ -28,6 +29,6 @@ public class FinishShould
         var @event = game.Events.ShouldContain().SingleEventOfType<GameEvents.GameFinishedEvent>();
 
         @event.Should().BeAssignableTo<GameEvents.GameEventBase>();
-        @event.GameId.Should().Be(game.Id);
+        @event.GameId.Id.Should().Be(game.Id);
     }
 }

@@ -5,6 +5,8 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+
 namespace TheHossGame.UnitTests.Core;
 
 #region
@@ -13,7 +15,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using FluentAssertions;
 using FluentAssertions.Types;
-using Hoss.Core.PlayerAggregate;
 using Hoss.SharedKernel;
 using Xunit;
 
@@ -62,6 +63,6 @@ public class ValueObjectShould
    private static bool IsRecord(Type t)
    {
       var customAttributes = t.GetTypeInfo().DeclaredProperties.SelectMany(p => p.GetCustomAttributes(true));
-      return customAttributes.FirstOrDefault() is CompilerGeneratedAttribute;
+      return customAttributes.LastOrDefault() is CompilerGeneratedAttribute;
    }
 }

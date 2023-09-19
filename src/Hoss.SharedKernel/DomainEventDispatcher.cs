@@ -9,7 +9,7 @@ namespace Hoss.SharedKernel;
 
 #region
 
-using Hoss.SharedKernel.Interfaces;
+using Interfaces;
 using MediatR;
 
 #endregion
@@ -39,7 +39,7 @@ public class DomainEventDispatcher<T> : IDomainEventDispatcher<T>
         {
             var events = entity.Events.ToArray();
             entity.ClearDomainEvents();
-            await this.PublishEventsAsync(events).ConfigureAwait(false);
+            await PublishEventsAsync(events).ConfigureAwait(false);
         }
     }
 
@@ -47,6 +47,6 @@ public class DomainEventDispatcher<T> : IDomainEventDispatcher<T>
 
     private async Task PublishEventsAsync(IEnumerable<DomainEventBase> events)
     {
-        foreach (var domainEvent in events) await this.mediator.Publish(domainEvent).ConfigureAwait(false);
+        foreach (var domainEvent in events) await mediator.Publish(domainEvent).ConfigureAwait(false);
     }
 }

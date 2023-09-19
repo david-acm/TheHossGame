@@ -10,7 +10,7 @@ namespace Hoss.Core.Interfaces;
 #region
 
 using System.Security.Cryptography;
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
+using GameAggregate.RoundEntity.DeckValueObjects;
 
 #endregion
 
@@ -19,11 +19,11 @@ public interface IShufflingService
    void Shuffle(IList<ACard> cards);
 }
 
-public abstract class ShufflingService : IShufflingService
+public class ShufflingService : IShufflingService
 {
    private readonly IRandomNumberProvider provider;
 
-   protected ShufflingService(IRandomNumberProvider provider)
+   public ShufflingService(IRandomNumberProvider provider)
    {
       this.provider = provider;
    }
@@ -37,7 +37,7 @@ public abstract class ShufflingService : IShufflingService
       while (swap > 1)
       {
          swap--;
-         var roll = this.provider.NextInt(swap + 1);
+         var roll = provider.NextInt(swap + 1);
          (cards[swap], cards[roll]) = (cards[roll], cards[swap]);
       }
    }
@@ -50,7 +50,7 @@ public interface IRandomNumberProvider
    int NextInt(int maxValue);
 }
 
-public abstract class RandomNumberProvider : IRandomNumberProvider
+public class RandomNumberProvider : IRandomNumberProvider
 {
    #region IRandomNumberProvider Members
 

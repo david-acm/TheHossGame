@@ -5,23 +5,23 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.PlayerAggregate;
+namespace Hoss.Core.ProfileAggregate;
 
 #region
 
-using Hoss.SharedKernel.Interfaces;
+
 
 #endregion
 
-public abstract class Base : AggregateRoot<ProfileId>, IAggregateRoot
+public abstract class Base : AggregateRoot
 {
     protected Base(ProfileId id)
-        : base(id)
+        : base(id.Id ?? Guid.Empty)
     {
-        this.JoiningGameId = new NoValueId();
+        JoiningGameId = new NoValueId();
     }
 
-    protected bool CanJoinNewGame => this.JoiningGameId is NoValueId;
+    protected bool CanJoinNewGame => JoiningGameId is NoValueId;
 
     protected ValueId JoiningGameId { get; set; }
 }

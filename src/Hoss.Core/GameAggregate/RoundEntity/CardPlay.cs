@@ -7,7 +7,6 @@
 
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.PlayerAggregate;
+using DeckValueObjects;
 
 public record CardPlay(PlayerId PlayerId, Card Card) : Play(PlayerId);

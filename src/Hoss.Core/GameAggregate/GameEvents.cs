@@ -5,14 +5,14 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+
 namespace Hoss.Core.GameAggregate;
 
 #region
 
-using Hoss.Core.GameAggregate.RoundEntity;
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using static Game;
+using RoundEntity;
+using RoundEntity.DeckValueObjects;
 
 #endregion
 
@@ -20,7 +20,7 @@ public static class GameEvents
 {
     #region Nested type: GameEventBase
 
-    public abstract record GameEventBase(GameId GameId) : DomainEventBase(GameId);
+    public abstract record GameEventBase(GameId GameId) : DomainEventBase;
 
     #endregion
 
@@ -45,7 +45,7 @@ public static class GameEvents
 
     #region Nested type: PlayerAlreadyInGameEvent
 
-    public record PlayerAlreadyInGameEvent(PlayerId PlayerId) : DomainEventBase(PlayerId);
+    public record PlayerAlreadyInGameEvent(PlayerId PlayerId) : DomainEventBase;
 
     #endregion
 
@@ -57,7 +57,7 @@ public static class GameEvents
 
     #region Nested type: PlayerReadyEvent
 
-    public record PlayerReadyEvent(GameId GameId, PlayerId PlayerId) : DomainEventBase(GameId);
+    public record PlayerReadyEvent(GameId GameId, PlayerId PlayerId) : DomainEventBase;
 
     #endregion
 

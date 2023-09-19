@@ -5,6 +5,9 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+using Hoss.Core.ProfileAggregate.Events;
+
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Player;
 
 #region
@@ -14,9 +17,7 @@ using FluentAssertions;
 using Hoss.Core.GameAggregate;
 using Hoss.Core.GameAggregate.PlayerEntity;
 using Hoss.Core.GameAggregate.RoundEntity;
-using Hoss.Core.PlayerAggregate;
-using Hoss.Core.PlayerAggregate.Events;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
+using Generators;
 using Xunit;
 
 #endregion
@@ -27,7 +28,7 @@ public class RegisterShould
     [PlayerData]
     public void RaisePlayerRegisteredEvent(ProfileEmail email, PlayerName name)
     {
-        var player = Profile.FromNewRegister(email, name);
+        var player = Profile.FromNewRegister(email, name, new AProfileId());
 
         var @event = player.Events.Should().ContainSingle().Subject.As<PlayerRegisteredEvent>();
         @event = @event.Should().BeOfType<PlayerRegisteredEvent>().Subject;

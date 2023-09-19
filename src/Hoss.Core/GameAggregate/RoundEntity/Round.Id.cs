@@ -11,4 +11,8 @@ namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #endregion
 
-public record RoundId : ValueId;
+public record RoundId(Guid? Id = null) : ValueId
+{
+  public static implicit operator RoundId(Guid s) => new((Guid?)s);
+  public static implicit operator Guid?(RoundId s) => s.Id;
+}

@@ -5,17 +5,18 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+using static Hoss.Core.GameAggregate.TeamId;
+
 namespace Hoss.Core.GameAggregate;
 
 #region
 
-using Hoss.Core.GameAggregate.PlayerEntity;
-using Hoss.Core.GameAggregate.RoundEntity;
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.Interfaces;
-using static Game.TeamId;
-using static Hoss.Core.GameAggregate.RoundEntity.RoundEvents;
+using PlayerEntity;
+using RoundEntity;
+using RoundEntity.DeckValueObjects;
+using Interfaces;
+using static RoundEntity.RoundEvents;
 
 #endregion
 
@@ -26,81 +27,81 @@ public sealed partial class AGame
 {
     private readonly IShufflingService shufflingService;
 
-    public static AGame CreateForPlayer(PlayerId playerId, IShufflingService shufflingService)
+    public static AGame CreateForPlayer(AGameId gameId, PlayerId playerId, IShufflingService shufflingService)
     {
-        AGame game = new(shufflingService);
+        AGame game = new(gameId, shufflingService);
         game.CreateNewGame(playerId);
-        game.JoinPlayerToTeam(playerId, Team1);
+        game.JoinPlayerToTeam(playerId, NorthSouth);
 
         return game;
     }
 
     public void JoinPlayerToTeam(PlayerId playerId, TeamId teamId)
     {
-        this.FindPlayer(playerId).Join(teamId);
+        FindPlayer(playerId).Join(teamId);
 
-        if (this.TeamsAreComplete())
+        if (TeamsAreComplete())
         {
-            this.Apply(new GameEvents.TeamsFormedEvent(this.Id));
+            Apply(new GameEvents.TeamsFormedEvent(Id));
         }
     }
 
     public void TeamPlayerReady(PlayerId playerId)
     {
-        this.FindPlayer(playerId).Ready();
+        FindPlayer(playerId).Ready();
 
-        if (this.PlayersNotReady())
+        if (PlayersNotReady())
         {
             return;
         }
 
-        var shuffledDeck = ADeck.ShuffleNew(this.shufflingService);
-        var round = Round.StartNew(this.Id, this.GetTeamPlayers(), shuffledDeck, this.Apply);
+        var shuffledDeck = ADeck.ShuffleNew(shufflingService);
+        var round = Round.StartNew(Id, GetTeamPlayers(), shuffledDeck, Apply);
 
-        this.Apply(new GameEvents.GameStartedEvent(this.Id, round.Id, round.RoundPlayers, round.Deals, round.Bids));
+        Apply(new GameEvents.GameStartedEvent(Id, round.Id, round.RoundPlayers, round.Deals, round.Bids));
     }
 
     public void Bid(PlayerId playerId, BidValue value)
     {
         // TO DO: Hoss without help
-        this.CurrentRoundBase.Bid(playerId, value);
+        CurrentRoundBase.Bid(playerId, value);
     }
 
     public void RequestHoss(PlayerId playerId, Card card)
     {
-        this.CurrentRoundBase.RequestHoss(playerId, card);
+        CurrentRoundBase.RequestHoss(playerId, card);
     }
 
     public void GiveHossCard(PlayerId playerId, Card card)
     {
-        this.CurrentRoundBase.GiveHossCard(playerId, card);
+        CurrentRoundBase.GiveHossCard(playerId, card);
     }
 
     public void SelectTrump(PlayerId currentPlayerId, Suit suit)
     {
-        this.CurrentRoundBase.SelectTrump(currentPlayerId, suit);
+        CurrentRoundBase.SelectTrump(currentPlayerId, suit);
     }
 
     public void PlayCard(PlayerId playerId, Card card)
     {
-        this.CurrentRoundBase.PlayCard(playerId, card);
+        CurrentRoundBase.PlayCard(playerId, card);
     }
 
     public void Finish()
     {
-        this.Apply(new GameEvents.GameFinishedEvent(this.Id));
+        Apply(new GameEvents.GameFinishedEvent(Id));
     }
 
     protected override void EnsureValidState()
     {
 #pragma warning disable CS8524
-        var valid = this.Stage switch
+        var valid = Stage switch
 #pragma warning restore CS8524
         {
-            GameState.Created => this.TeamValid(Team1) && this.TeamValid(Team2),
-            GameState.TeamsFormed => this.TeamComplete(Team1) && this.TeamComplete(Team2),
-            GameState.Started => this.FindGamePlayers().All(t => t.IsReady),
-            GameState.Finished => this.Stage == GameState.Finished,
+            GameState.Created => TeamValid(NorthSouth) && TeamValid(EastWest),
+            GameState.TeamsFormed => TeamComplete(NorthSouth) && TeamComplete(EastWest),
+            GameState.Started => FindGamePlayers().All(t => t.IsReady),
+            GameState.Finished => Stage == GameState.Finished,
         };
 
         if (!valid)
@@ -113,19 +114,19 @@ public sealed partial class AGame
     {
         (@event switch
         {
-            GameEvents.PlayerJoinedEvent e => (Action) (() => this.HandleJoin(e)),
+            GameEvents.PlayerJoinedEvent e => (Action) (() => HandleJoin(e)),
             GameEvents.NewGameCreatedEvent => HandleGameCreated,
-            GameEvents.TeamsFormedEvent => this.HandleTeamsFormedEvent,
-            GameEvents.GameStartedEvent e => () => this.HandleGameStartedEvent(e),
-            GameEvents.GameFinishedEvent => () => this.HandleGameFinishedEvent(),
-            RoundPlayedEvent e => () => this.HandleRoundPlayedEvent(e),
+            GameEvents.TeamsFormedEvent => HandleTeamsFormedEvent,
+            GameEvents.GameStartedEvent e => () => HandleGameStartedEvent(e),
+            GameEvents.GameFinishedEvent => () => HandleGameFinishedEvent(),
+            RoundPlayedEvent e => () => HandleRoundPlayedEvent(e),
             _ => () => { },
         }).Invoke();
     }
 
     private GameState HandleGameFinishedEvent()
     {
-        return this.Stage = GameState.Finished;
+        return Stage = GameState.Finished;
     }
 
     private static void HandleGameCreated()
@@ -134,63 +135,63 @@ public sealed partial class AGame
 
     private void CreateNewGame(PlayerId playerId)
     {
-        this.Apply(new GameEvents.NewGameCreatedEvent(this.Id, playerId));
+        Apply(new GameEvents.NewGameCreatedEvent(Id, playerId));
     }
 
     private bool TeamsAreComplete()
     {
-        return this.TeamComplete(Team1) && this.TeamComplete(Team2);
+        return TeamComplete(NorthSouth) && TeamComplete(EastWest);
     }
 
     private bool PlayersNotReady()
     {
-        return !this.FindGamePlayers().All(p => p.IsReady) || !this.TeamComplete(Team1) || !this.TeamComplete(Team2);
+        return !FindGamePlayers().All(p => p.IsReady) || !TeamComplete(NorthSouth) || !TeamComplete(EastWest);
     }
 
     private void HandleGameStartedEvent(GameEvents.GameStartedEvent @event)
     {
-        var round = Round.FromStream(@event, this.Apply);
-        this.rounds.Add(round);
+        var round = Round.FromStream(@event, Apply);
+        rounds.Add(round);
 
-        this.Stage = GameState.Started;
+        Stage = GameState.Started;
     }
 
     private void HandleRoundPlayedEvent(RoundPlayedEvent e)
     {
-        this.Score = this.Score.AddRoundScore(e.RoundScore);
-        if (this.Score >= MaxScore)
+        Score = Score.AddRoundScore(e.RoundScore);
+        if (Score >= MaxScore)
         {
-            this.Apply(new GameEvents.GameFinishedEvent(this.Id));
+            Apply(new GameEvents.GameFinishedEvent(Id));
             return;
         }
 
-        this.rounds.Add(Round.StartNew(this.Id, new Queue<RoundPlayer>(this.GetTeamPlayers()),
-            ADeck.ShuffleNew(this.shufflingService), this.Apply, this.rounds.Count));
+        rounds.Add(Round.StartNew(Id, new Queue<RoundPlayer>(GetTeamPlayers()),
+            ADeck.ShuffleNew(shufflingService), Apply, rounds.Count));
     }
 
     private IEnumerable<RoundPlayer> GetTeamPlayers()
     {
-        return this.FindGamePlayers().Select(g => new RoundPlayer(g.Id, g.TeamId));
+        return FindGamePlayers().Select(g => new RoundPlayer(g.Id, g.TeamId));
     }
 
     private void HandleTeamsFormedEvent()
     {
-        this.Stage = GameState.TeamsFormed;
+        Stage = GameState.TeamsFormed;
     }
 
     private void HandleJoin(GameEvents.PlayerJoinedEvent e)
     {
-        var teamPlayer = AGamePlayer.FromStream(e, this.Apply);
-        this.gamePlayers.Add(teamPlayer);
+        var teamPlayer = AGamePlayer.FromStream(e, Apply);
+        gamePlayers.Add(teamPlayer);
     }
 
     private bool TeamValid(TeamId team1)
     {
-        return this.FindGamePlayers(team1).Count <= 2;
+        return FindGamePlayers(team1).Count <= 2;
     }
 
     private bool TeamComplete(TeamId team1)
     {
-        return this.FindGamePlayers(team1).Count == 2;
+        return FindGamePlayers(team1).Count == 2;
     }
 }

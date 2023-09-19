@@ -5,6 +5,8 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 #region
@@ -12,7 +14,6 @@ namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using System.Net.Mail;
 using AutoFixture;
 using AutoFixture.Kernel;
-using Hoss.Core.PlayerAggregate;
 
 #endregion
 
@@ -24,20 +25,20 @@ internal class PlayerEmailGenerator : ISpecimenBuilder
 
     public object Create(object request, ISpecimenContext context)
     {
-        this.specimenContext = context;
+        specimenContext = context;
         if (!typeof(ProfileEmail).Equals(request))
         {
             return new NoSpecimen();
         }
 
-        return this.RandomPlayerEmail();
+        return RandomPlayerEmail();
     }
 
     #endregion
 
     private object RandomPlayerEmail()
     {
-        var address = this.specimenContext.Create<MailAddress>().Address;
+        var address = specimenContext.Create<MailAddress>().Address;
         return ProfileEmail.FromString(address);
     }
 }

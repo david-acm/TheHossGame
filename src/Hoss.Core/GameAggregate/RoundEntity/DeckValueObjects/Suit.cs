@@ -57,8 +57,8 @@ public sealed class Suit : SmartEnum<Suit, char>
             if (x.GetType() != y.GetType()) return false;
 
             return x.Suit.Equals(y.Suit) ||
-                   (this.IsTrump(x) && this.IsLeftBar(y)) ||
-                   (this.IsTrump(y) && this.IsLeftBar(x));
+                   (IsTrump(x) && IsLeftBar(y)) ||
+                   (IsTrump(y) && IsLeftBar(x));
         }
 
         public int GetHashCode(Card obj)
@@ -71,15 +71,15 @@ public sealed class Suit : SmartEnum<Suit, char>
         private bool IsLeftBar(Card? x)
         {
             return x!.Rank == Rank.Jack &&
-                   ((x!.Suit == Spades && this.trump == Clubs) ||
-                    (x!.Suit == Clubs && this.trump == Spades) ||
-                    (x!.Suit == Hearts && this.trump == Diamonds) ||
-                    (x!.Suit == Diamonds && this.trump == Hearts));
+                   ((x.Suit == Spades && trump == Clubs) ||
+                    (x.Suit == Clubs && trump == Spades) ||
+                    (x.Suit == Hearts && trump == Diamonds) ||
+                    (x.Suit == Diamonds && trump == Hearts));
         }
 
         private bool IsTrump(Card? x)
         {
-            return x!.Suit == this.trump || this.IsLeftBar(x);
+            return x!.Suit == trump || IsLeftBar(x);
         }
     }
 

@@ -13,24 +13,24 @@
 namespace Hoss.Core.GameAggregate;
 
 using Ardalis.GuardClauses;
-using Hoss.Core.GameAggregate.RoundEntity.RoundScoreValueObject;
+using RoundEntity.RoundScoreValueObject;
 
 public record TeamGameScore
 {
-    private readonly Game.TeamId id;
+    private readonly TeamId id;
 
-    private TeamGameScore(Game.TeamId id, int score)
+    private TeamGameScore(TeamId id, int score)
     {
         this.id = id;
         Guard.Against.OutOfRange(score, nameof(score), 0, 54);
-        this.Score = score;
+        Score = score;
     }
 
     public int Score { get; }
 
     public TeamGameScore AddTeamRoundScore(TeamRoundScore roundScore)
     {
-        return new TeamGameScore(this.id, this + roundScore);
+        return new TeamGameScore(id, this + roundScore);
     }
 
     public static TeamGameScore operator +(TeamGameScore a, TeamGameScore b)
@@ -40,7 +40,7 @@ public record TeamGameScore
         return new TeamGameScore(a.id, a.Score + b.Score);
     }
 
-    public static TeamGameScore New(Game.TeamId id)
+    public static TeamGameScore New(TeamId id)
     {
         return new TeamGameScore(id, 0);
     }

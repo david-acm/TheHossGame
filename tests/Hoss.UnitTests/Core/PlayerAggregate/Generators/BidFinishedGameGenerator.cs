@@ -5,6 +5,8 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 #region
@@ -12,10 +14,9 @@ namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 using AutoFixture;
 using AutoFixture.Kernel;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.Interfaces;
 using Moq;
-using TheHossGame.UnitTests.Core.GameAggregate.Round;
+using GameAggregate.Round;
 
 #endregion
 
@@ -27,27 +28,27 @@ public class BidFinishedGameGenerator : ISpecimenBuilder
 
     public object Create(object request, ISpecimenContext context)
     {
-        this.specimenContext = context;
+        specimenContext = context;
         if (!typeof(AGame).Equals(request))
         {
             return new NoSpecimen();
         }
 
-        return this.GenerateBidFinishedGame();
+        return GenerateBidFinishedGame();
     }
 
     #endregion
 
     private AGame GenerateBidFinishedGame()
     {
-        var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
-        var playerIds = this.specimenContext.Create<IEnumerable<APlayerId>>().ToList();
+        var shufflingService = specimenContext!.Create<Mock<IShufflingService>>();
+        var playerIds = specimenContext.Create<IEnumerable<APlayerId>>().ToList();
 
-        var game = AGame.CreateForPlayer(playerIds.First(), shufflingService.Object);
+        var game = AGame.CreateForPlayer(new AGameId(Guid.NewGuid()), playerIds.First(), shufflingService.Object);
 
-        game.JoinPlayerToTeam(playerIds[1], Game.TeamId.Team1);
-        game.JoinPlayerToTeam(playerIds[2], Game.TeamId.Team2);
-        game.JoinPlayerToTeam(playerIds[3], Game.TeamId.Team2);
+        game.JoinPlayerToTeam(playerIds[1], TeamId.NorthSouth);
+        game.JoinPlayerToTeam(playerIds[2], TeamId.EastWest);
+        game.JoinPlayerToTeam(playerIds[3], TeamId.EastWest);
 
         playerIds.ForEach(playerId => game.TeamPlayerReady(playerId));
 
@@ -68,24 +69,24 @@ public class BidWithHossGameGenerator : ISpecimenBuilder
 
     public object Create(object request, ISpecimenContext context)
     {
-        this.specimenContext = context;
+        specimenContext = context;
         if (!typeof(AGame).Equals(request)) return new NoSpecimen();
 
-        return this.GenerateBidWithHossGame();
+        return GenerateBidWithHossGame();
     }
 
     #endregion
 
     private AGame GenerateBidWithHossGame()
     {
-        var shufflingService = this.specimenContext!.Create<Mock<IShufflingService>>();
-        var playerIds = this.specimenContext.Create<IEnumerable<APlayerId>>().ToList();
+        var shufflingService = specimenContext!.Create<Mock<IShufflingService>>();
+        var playerIds = specimenContext.Create<IEnumerable<APlayerId>>().ToList();
 
-        var game = AGame.CreateForPlayer(playerIds.First(), shufflingService.Object);
-
-        game.JoinPlayerToTeam(playerIds[1], Game.TeamId.Team1);
-        game.JoinPlayerToTeam(playerIds[2], Game.TeamId.Team2);
-        game.JoinPlayerToTeam(playerIds[3], Game.TeamId.Team2);
+        var game = AGame.CreateForPlayer(new AGameId(Guid.NewGuid()), playerIds.First(), shufflingService.Object);
+        game.JoinPlayerToTeam(playerIds[1], TeamId.NorthSouth);
+        
+        game.JoinPlayerToTeam(playerIds[2], TeamId.EastWest);
+        game.JoinPlayerToTeam(playerIds[3], TeamId.EastWest);
 
         playerIds.ForEach(id => game.TeamPlayerReady(id));
 

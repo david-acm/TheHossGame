@@ -5,9 +5,9 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-
 using Ardalis.SmartEnum;
+
+namespace Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
 
 // public enum BidValue
 // {

@@ -15,4 +15,24 @@ namespace Hoss.SharedKernel.Interfaces;
 public interface IAggregateRoot
 #pragma warning restore CA1040
 {
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="events"></param>
+  void Load(IEnumerable<DomainEventBase> events);
+  
+  /// <summary>
+  /// 
+  /// </summary>
+  IEnumerable<DomainEventBase> Events { get; }
+  
+  /// <summary>
+  /// 
+  /// </summary>
+  Guid Id { get; }
+  
+  /// <summary>
+  /// 
+  /// </summary>
+  ulong Version { get; }
 }

@@ -19,13 +19,13 @@ public record ACard(Rank Rank, Suit Suit) : Card
 
     public override string ToString()
     {
-        return $"{this.Rank.Value} \t {this.Suit.Value}";
+        return $"{Rank.Value} \t {Suit.Value}";
     }
 
-    public void Deconstruct(out Suit Suit, out Rank Rank)
+    public void Deconstruct(out Suit suit, out Rank rank)
     {
-        Suit = this.Suit;
-        Rank = this.Rank;
+        suit = this.Suit;
+        rank = this.Rank;
     }
 }
 
@@ -69,30 +69,30 @@ public abstract record Card : ValueObject
             if (x is null && y is not null)
                 return -1;
 
-            if (this.IsTrump(x) && !this.IsTrump(y))
+            if (IsTrump(x) && !IsTrump(y))
                 return 1;
 
-            if (!this.IsTrump(x) && this.IsTrump(y))
+            if (!IsTrump(x) && IsTrump(y))
                 return -1;
 
-            if (this.IsRightBar(x) && !this.IsRightBar(y))
+            if (IsRightBar(x) && !IsRightBar(y))
                 return 1;
 
-            if (!this.IsRightBar(x) && this.IsRightBar(y))
+            if (!IsRightBar(x) && IsRightBar(y))
                 return -1;
 
-            if (this.IsLeftBar(x) && !this.IsLeftBar(y))
+            if (IsLeftBar(x) && !IsLeftBar(y))
                 return 1;
 
-            if (!this.IsLeftBar(x) && this.IsLeftBar(y))
+            if (!IsLeftBar(x) && IsLeftBar(y))
                 return -1;
 
-            if (this.playedSuit is not null
-                && CardSuit(x) == this.playedSuit && CardSuit(y) != this.playedSuit)
+            if (playedSuit is not null
+                && CardSuit(x) == playedSuit && CardSuit(y) != playedSuit)
                 return 1;
 
-            if (this.playedSuit is not null
-                && CardSuit(x) != this.playedSuit && CardSuit(y) == this.playedSuit)
+            if (playedSuit is not null
+                && CardSuit(x) != playedSuit && CardSuit(y) == playedSuit)
                 return -1;
 
             return CardRank(x) > CardRank(y) ? 1 : CardRank(x) < CardRank(y) ? -1 : 0;
@@ -112,21 +112,21 @@ public abstract record Card : ValueObject
 
         private bool IsRightBar(Card? x)
         {
-            return x!.Rank == Rank.Jack && x!.Suit == this.trump;
+            return x!.Rank == Rank.Jack && x.Suit == trump;
         }
 
         private bool IsLeftBar(Card? x)
         {
             return x!.Rank == Rank.Jack &&
-                   ((x!.Suit == Suit.Spades && this.trump == Suit.Clubs) ||
-                    (x!.Suit == Suit.Clubs && this.trump == Suit.Spades) ||
-                    (x!.Suit == Suit.Hearts && this.trump == Suit.Diamonds) ||
-                    (x!.Suit == Suit.Diamonds && this.trump == Suit.Hearts));
+                   ((x.Suit == Suit.Spades && trump == Suit.Clubs) ||
+                    (x.Suit == Suit.Clubs && trump == Suit.Spades) ||
+                    (x.Suit == Suit.Hearts && trump == Suit.Diamonds) ||
+                    (x.Suit == Suit.Diamonds && trump == Suit.Hearts));
         }
 
         private bool IsTrump(Card? x)
         {
-            return x!.Suit == this.trump || this.IsLeftBar(x);
+            return x!.Suit == trump || IsLeftBar(x);
         }
     }
 

@@ -9,7 +9,7 @@ namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 #region
 
-using TheHossGame.UnitTests.Core.Services;
+using Services;
 
 #endregion
 

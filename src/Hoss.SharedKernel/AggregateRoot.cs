@@ -5,24 +5,29 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.SharedKernel.Interfaces;
+
 namespace Hoss.SharedKernel;
 
 /// <summary>
 ///    The aggregate root base class.
 /// </summary>
-/// <typeparam name="TId">The identity value.</typeparam>
-public abstract class AggregateRoot<TId> : EntityBase<TId>
-   where TId : ValueId
+public abstract class AggregateRoot : EntityBase, IAggregateRoot
 {
    /// <summary>
-   ///    Initializes a new instance of the <see cref="AggregateRoot{TId}" /> class.
+   ///    Initializes a new instance of the <see cref="AggregateRoot" /> class.
    /// </summary>
    /// <param name="id">The identity value.</param>
-   protected AggregateRoot(TId id)
+   protected AggregateRoot(Guid? id)
       : base(id)
    {
    }
 
+   /// <summary>
+   /// 
+   /// </summary>
+   public ulong Version { get; private set; }
+   
    /// <inheritdoc />
    protected abstract override void EnsureValidState();
 
@@ -35,8 +40,21 @@ public abstract class AggregateRoot<TId> : EntityBase<TId>
    /// <param name="event">The event to apply.</param>
    protected override void Apply(DomainEventBase @event)
    {
-      this.When(@event);
-      this.EnsureValidState();
-      this.RaiseDomainEvent(@event);
+      When(@event);
+      EnsureValidState();
+      RaiseDomainEvent(@event);
+   }
+
+   /// <summary>
+   /// Loads events to the aggregate.
+   /// </summary>
+   /// <param name="events"></param>
+   public void Load(IEnumerable<DomainEventBase> events)
+   {
+      foreach (var @event in events)
+      {
+         When(@event);
+         Version++;
+      }
    }
 }

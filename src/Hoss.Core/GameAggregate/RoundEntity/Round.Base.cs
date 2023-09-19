@@ -5,17 +5,18 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
-using Hoss.Core.GameAggregate.RoundEntity.RoundScoreValueObject;
+using DeckValueObjects;
+using RoundScoreValueObject;
 
 #endregion
 
-public abstract class RoundBase : EntityBase<RoundId>
+public abstract class RoundBase : EntityBase
 {
     #region RoundStage enum
 

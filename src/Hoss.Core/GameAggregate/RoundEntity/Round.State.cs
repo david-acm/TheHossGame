@@ -5,12 +5,13 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+
 namespace Hoss.Core.GameAggregate.RoundEntity;
 
 #region
 
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
-using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
+using DeckValueObjects;
 using static RoundEvents;
 
 #endregion
@@ -32,47 +33,47 @@ public sealed partial class Round : RoundBase
         int roundNumber = 0)
         : this(gameId, new RoundId(), when)
     {
-        this.OrderPlayers(teamPlayers, roundNumber);
+        OrderPlayers(teamPlayers, roundNumber);
     }
 
     private Round(GameId gameId, RoundId roundId, Action<DomainEventBase> when)
         : base(roundId, when)
     {
-        this.GameId = gameId;
+        GameId = gameId;
     }
 
-    internal override RoundStage Stage => this.stage;
+    internal override RoundStage Stage => stage;
 
-    internal override IReadOnlyList<ADeal> Deals => this.deals.AsReadOnly();
+    internal override IReadOnlyList<ADeal> Deals => deals.AsReadOnly();
 
-    internal override IReadOnlyList<RoundPlayer> RoundPlayers => this.teamPlayers.ToList().AsReadOnly();
+    internal override IReadOnlyList<RoundPlayer> RoundPlayers => teamPlayers.ToList().AsReadOnly();
 
-    internal override IReadOnlyList<Bid> Bids => this.bids.AsReadOnly();
+    internal override IReadOnlyList<Bid> Bids => bids.AsReadOnly();
 
     /// <inheritdoc />
-    internal override IReadOnlyList<CardPlay> CardsPlayed => this.tableCenter.CardPlays.ToList().AsReadOnly();
+    internal override IReadOnlyList<CardPlay> CardsPlayed => tableCenter.CardPlays.ToList().AsReadOnly();
 
-    internal override PlayerId CurrentPlayerId => this.teamPlayers.Peek().PlayerId;
+    internal override PlayerId CurrentPlayerId => teamPlayers.Peek().PlayerId;
 
-    internal override Suit SelectedTrump => this.trumpSelection.Suit;
+    internal override Suit SelectedTrump => trumpSelection.Suit;
 
     private GameId GameId { get; }
 
     internal override ADeal DealForPlayer(PlayerId playerId)
     {
-        return this.deals.First(d => d.PlayerId == playerId);
+        return deals.First(d => d.PlayerId == playerId);
     }
 
     internal override IEnumerable<Card> CardsForPlayer(PlayerId playerId)
     {
-        return this.deals.First(d => d.PlayerId == playerId).Cards;
+        return deals.First(d => d.PlayerId == playerId).Cards;
     }
 
     /// <inheritdoc />
     protected override void Apply(DomainEventBase @event)
     {
         var roundEvent = @event as RoundEventBase;
-        this.EnsurePreconditions(roundEvent!);
+        EnsurePreconditions(roundEvent!);
         base.Apply(@event);
     }
 }
@@ -84,15 +85,15 @@ internal record Trick
     private Trick(Stack<CardPlay> plays, TrumpSelection trumpSelection)
     {
         this.trumpSelection = trumpSelection;
-        this.Plays = plays;
+        Plays = plays;
     }
 
     private Stack<CardPlay> Plays { get; }
 
     public PlayerId Winner =>
-        this.Plays.OrderByDescending(
+        Plays.OrderByDescending(
             c => c.Card,
-            new Card.CardComparer(this.trumpSelection.Suit, this.Plays.Last().Card.Suit)).First().PlayerId;
+            new Card.CardComparer(trumpSelection.Suit, Plays.Last().Card.Suit)).First().PlayerId;
 
     public static Trick FromTableCenter(TableCenter tableCenter, TrumpSelection trumpSelection)
     {
@@ -104,14 +105,14 @@ internal record TableCenter
 {
     internal TableCenter(Stack<CardPlay>? cardPlays = null)
     {
-        this.CardPlays = cardPlays ?? new Stack<CardPlay>();
+        CardPlays = cardPlays ?? new Stack<CardPlay>();
     }
 
     internal Stack<CardPlay> CardPlays { get; }
 
     public TableCenter Push(CardPlay cardPlay)
     {
-        var plays = new Stack<CardPlay>(this.CardPlays.Reverse());
+        var plays = new Stack<CardPlay>(CardPlays.Reverse());
         plays.Push(cardPlay);
         return new TableCenter(plays);
     }

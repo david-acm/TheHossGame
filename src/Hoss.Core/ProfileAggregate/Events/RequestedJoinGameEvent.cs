@@ -5,7 +5,7 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hoss.Core.PlayerAggregate.Events;
+namespace Hoss.Core.ProfileAggregate.Events;
 
 #region
 

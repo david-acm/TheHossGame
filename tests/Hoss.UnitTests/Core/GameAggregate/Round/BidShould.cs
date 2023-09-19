@@ -5,6 +5,10 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.GameAggregate.RoundEntity.BidValueObject;
+using TheHossGame.UnitTests.Extensions;
+using static Hoss.Core.GameAggregate.TeamId;
+
 namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 
 #region
@@ -12,13 +16,10 @@ namespace TheHossGame.UnitTests.Core.GameAggregate.Round;
 using FluentAssertions;
 using Hoss.Core.GameAggregate;
 using Hoss.Core.GameAggregate.RoundEntity;
-using Hoss.Core.GameAggregate.RoundEntity.BidEntity;
 using Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 using Hoss.SharedKernel;
-using TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
-using TheHossGame.UnitTests.Extensions;
+using PlayerAggregate.Generators;
 using Xunit;
-using static Hoss.Core.GameAggregate.Game.TeamId;
 using static Hoss.Core.GameAggregate.RoundEntity.RoundEvents;
 
 #endregion
@@ -37,8 +38,8 @@ public class BidShould
 
         var (gameId, roundId, winningBid) = game.Events.ShouldContain().SingleEventOfType<BidCompleteEvent>();
 
-        gameId.Should().Be(game.Id);
-        roundId.Should().Be(game.CurrentRoundView.Id);
+        gameId.Id.Should().Be(game.Id);
+        roundId.Id.Should().Be(game.CurrentRoundView.Id.Id);
         winningBid.Value.Should().Be(BidValue.Four);
         winningBid.PlayerId.Should().Be(winnerPlayerId);
         game.CurrentPlayerId.Should().Be(winnerPlayerId);
@@ -52,7 +53,7 @@ public class BidShould
         game.Bid(bidPlayerId, value);
         var (gameId, roundId, bid) = game.Events.ShouldContain().SingleEventOfType<BidEvent>();
 
-        gameId.Should().Be(game.Id);
+        gameId.Id.Should().Be(game.Id);
         roundId.Should().Be(game.CurrentRoundView.Id);
         bid.PlayerId.Should().Be(bidPlayerId);
         bid.Value.Should().Be(value);
@@ -148,10 +149,10 @@ public class BidShould
     public void PlayerOrderShouldBeCorrect(AGame game)
     {
         game.CurrentRoundView.RoundPlayers.Should().ContainInOrder(
-            game.CurrentRoundView.RoundPlayers.First(p => p.TeamId == Team1),
-            game.CurrentRoundView.RoundPlayers.First(p => p.TeamId == Team2),
-            game.CurrentRoundView.RoundPlayers.Last(p => p.TeamId == Team1),
-            game.CurrentRoundView.RoundPlayers.Last(p => p.TeamId == Team2));
+            game.CurrentRoundView.RoundPlayers.First(p => p.TeamId == NorthSouth),
+            game.CurrentRoundView.RoundPlayers.First(p => p.TeamId == EastWest),
+            game.CurrentRoundView.RoundPlayers.Last(p => p.TeamId == NorthSouth),
+            game.CurrentRoundView.RoundPlayers.Last(p => p.TeamId == EastWest));
     }
 
     [Theory]

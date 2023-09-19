@@ -5,13 +5,14 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hoss.Core.ProfileAggregate;
+
 namespace TheHossGame.UnitTests.Core.PlayerAggregate.Generators;
 
 #region
 
 using AutoFixture.Kernel;
 using Hoss.Core.GameAggregate;
-using Hoss.Core.PlayerAggregate;
 
 #endregion
 
@@ -23,8 +24,8 @@ public class PlayerEnumerableGenerator : ISpecimenBuilder
 
     public object Create(object request, ISpecimenContext context)
     {
-        this.specimenContext = context;
-        return typeof(IEnumerable<Base>).Equals(request) ? this.GeneratePlayerList() : new NoSpecimen();
+        specimenContext = context;
+        return typeof(IEnumerable<Base>).Equals(request) ? GeneratePlayerList() : new NoSpecimen();
     }
 
     #endregion
@@ -33,18 +34,18 @@ public class PlayerEnumerableGenerator : ISpecimenBuilder
     {
         var playerList = new List<Base>
         {
-            this.GeneratePLayer(),
-            this.GeneratePLayer(),
-            this.GeneratePLayer(),
-            this.GeneratePLayer(),
+            GeneratePlayer(),
+            GeneratePlayer(),
+            GeneratePlayer(),
+            GeneratePlayer(),
         };
 
         return playerList;
     }
 
-    private Base GeneratePLayer()
+    private Base GeneratePlayer()
     {
-        return (Base) new PlayerGenerator().Create(typeof(Base), this.specimenContext!);
+        return (Base) new PlayerGenerator().Create(typeof(Base), specimenContext!);
     }
 }
 
@@ -56,9 +57,9 @@ public class PlayerIdEnumerableGenerator : ISpecimenBuilder
 
     public object Create(object request, ISpecimenContext context)
     {
-        this.specimenContext = context;
+        specimenContext = context;
         if (typeof(IEnumerable<APlayerId>).Equals(request))
-            return this.GeneratePlayerList();
+            return GeneratePlayerList();
         return new NoSpecimen();
     }
 
@@ -68,10 +69,10 @@ public class PlayerIdEnumerableGenerator : ISpecimenBuilder
     {
         var playerList = new List<APlayerId>
         {
-            this.GeneratePlayerId(),
-            this.GeneratePlayerId(),
-            this.GeneratePlayerId(),
-            this.GeneratePlayerId(),
+            GeneratePlayerId(),
+            GeneratePlayerId(),
+            GeneratePlayerId(),
+            GeneratePlayerId(),
         };
 
         return playerList;
@@ -79,6 +80,6 @@ public class PlayerIdEnumerableGenerator : ISpecimenBuilder
 
     private APlayerId GeneratePlayerId()
     {
-        return new APlayerId();
+        return new APlayerId(Guid.NewGuid());
     }
 }

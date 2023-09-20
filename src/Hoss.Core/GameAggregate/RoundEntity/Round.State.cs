@@ -31,7 +31,7 @@ public sealed partial class Round : RoundBase
 
     private Round(GameId gameId, IEnumerable<RoundPlayer> teamPlayers, Action<DomainEventBase> when,
         int roundNumber = 0)
-        : this(gameId, new RoundId(), when)
+        : this(gameId, new RoundId(Guid.NewGuid()), when)
     {
         OrderPlayers(teamPlayers, roundNumber);
     }
@@ -66,7 +66,7 @@ public sealed partial class Round : RoundBase
 
     internal override IEnumerable<Card> CardsForPlayer(PlayerId playerId)
     {
-        return deals.First(d => d.PlayerId == playerId).Cards;
+        return deals.First(d => d.PlayerId.Id == playerId.Id).Cards;
     }
 
     /// <inheritdoc />

@@ -57,7 +57,7 @@ public abstract class EntityBase : IInternalEventHandler
     ///    Gets a readonly collection of domain events.
     /// </summary>
     [NotMapped]
-    public IEnumerable<DomainEventBase> Events => domainEvents.AsReadOnly();
+    public IEnumerable<DomainEventBase> Events => domainEvents.AsReadOnly().OrderBy(e => e.DateOccurred);
 
     /// <summary>
     ///    Clears the collection of domain events.
@@ -113,6 +113,7 @@ public abstract class EntityBase : IInternalEventHandler
     {
         When(@event);
         EnsureValidState();
+        RaiseDomainEvent(@event);
         Applier(@event);
     }
 
@@ -136,5 +137,22 @@ public abstract class EntityBase : IInternalEventHandler
 #pragma warning restore CA1030
     {
         domainEvents.Add(domainEvent);
+    }
+    
+    
+    /// <summary>
+    /// Loads events to the aggregate.
+    /// </summary>
+    /// <param name="events"></param>
+    public virtual void Load(IEnumerable<DomainEventBase> events)
+    {
+        foreach (var @event in events)
+        {
+            if (domainEvents.Contains(@event))
+            {
+                continue;
+            }
+            When(@event);
+        }
     }
 }

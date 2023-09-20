@@ -12,7 +12,6 @@
 
 using System.Reflection;
 using EventStore.Client;
-using Hoss.Core.GameAggregate;
 using static System.Text.Json.JsonSerializer;
 using StreamPosition = EventStore.Client.StreamPosition;
 

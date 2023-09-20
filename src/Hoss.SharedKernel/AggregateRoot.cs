@@ -49,7 +49,7 @@ public abstract class AggregateRoot : EntityBase, IAggregateRoot
    /// Loads events to the aggregate.
    /// </summary>
    /// <param name="events"></param>
-   public void Load(IEnumerable<DomainEventBase> events)
+   public override void Load(IEnumerable<DomainEventBase> events)
    {
       foreach (var @event in events)
       {

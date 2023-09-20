@@ -20,6 +20,7 @@ public class PlayerRegisteredClientData : AutoDataAttribute
     public PlayerRegisteredClientData()
         : base(() => new Fixture()
             .Customize(new CompositeCustomization(
+                new PlayerClientCustomization(),
                 new CommandApiCustomization())))
     {
     }

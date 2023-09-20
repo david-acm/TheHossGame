@@ -34,7 +34,7 @@ public sealed class BidValue : SmartEnum<BidValue, int>
     public static readonly BidValue Hoss = new(nameof(Hoss), 12);
     public static readonly BidValue DoubleHoss = new(nameof(DoubleHoss), 24);
 
-    private BidValue(string name, int value)
+    public BidValue(string name, int value)
         : base(name, value)
     {
     }

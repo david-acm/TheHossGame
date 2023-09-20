@@ -64,27 +64,83 @@ public class JoinGameShould : FunctionalTest
 
   [Theory]
   [PlayerRegisteredClientData]
-  public async Task SaveJoinEventAsync(List<PlayerClient> clients, Guid gameId)
+  public async Task SaveJoinEventAsync(List<PlayerClient> players, Guid gameId)
   {
-    await clients[0].CreateGameAsync(gameId);
+    await players[0].CreateGameAsync(gameId);
 
-    foreach (var client in clients.Skip(1).Take(1))
+    foreach (var client in players.Skip(1).Take(1))
     {
       await client.JoinPlayerToTeamAsync(gameId, NorthSouth, OutputHelper);
     }
 
-    foreach (var client in clients.Skip(2).Take(2))
+    foreach (var client in players.Skip(2).Take(2))
     {
       await client.JoinPlayerToTeamAsync(gameId, EastWest, OutputHelper);
     }
-    
-    
+
+    foreach (var client in players)
+    {
+      await client.ReadyAsync(gameId);
+    }
+
+    await players[0].BidAsync(gameId, 1);
+    await players[2].BidAsync(gameId, 2);
+    await players[1].BidAsync(gameId, 3);
+    await players[3].BidAsync(gameId, 4);
+
+    await players[3].SelectTrumpAsync(gameId, '♣');
+
+    await players[3].PlayCardAsync(gameId, "J", '♠');
   }
 }
 
 public static class ApiClientExtensions
 {
-  public static async Task<HttpResponseMessage> CreateGameAsync(this PlayerClient clients, Guid gameId)
+  public static async Task PlayCardAsync(this PlayerClient player, Guid gameId, string rank, char suit)
+  {
+    var result = await player.HttpClient
+      .PostAsJsonAsync(
+        Routes.CardPlays(gameId),
+        new
+        {
+          PlayerId = player.PlayerId,
+          Rank = rank,
+          Suit = suit
+        });
+    
+    await EnsureOkStatusAsync(result);
+  }
+  
+  public static async Task SelectTrumpAsync(this PlayerClient player, Guid gameId, char suit)
+  {
+    var result = await player.HttpClient
+      .PostAsJsonAsync(
+        Routes.TrumpSelection(gameId),
+        new
+        {
+          PlayerId = player.PlayerId,
+          TrumpSuit = suit
+        });
+    
+    await EnsureOkStatusAsync(result);
+  }
+  
+  public static async Task BidAsync(this PlayerClient client, Guid gameId, int bidValue)
+  {
+    
+    var result = await client.HttpClient
+      .PostAsJsonAsync(
+        Routes.Bid(gameId),
+        new
+        {
+          PlayerId = client.PlayerId,
+          BidValue = bidValue
+        });
+    
+    await EnsureOkStatusAsync(result);
+  }
+  
+  public static async Task CreateGameAsync(this PlayerClient clients, Guid gameId)
   {
     var result = await clients.HttpClient
       .PostAsJsonAsync(
@@ -96,8 +152,6 @@ public static class ApiClientExtensions
         });
     
     result.IsSuccessStatusCode.Should().BeTrue();
-    
-    return result;
   }
 
   public static async Task JoinPlayerToTeamAsync(this PlayerClient client, Guid gameId, TeamId teamId,
@@ -105,11 +159,10 @@ public static class ApiClientExtensions
   {
     var result = await client.HttpClient
       .PutAsJsonAsync(
-        Routes.JoinRequests,
+        Routes.JoinRequests(gameId),
         new
         {
           PlayerId = client.PlayerId,
-          Id = gameId,
           TeamId = teamId
         });
 
@@ -117,5 +170,23 @@ public static class ApiClientExtensions
 
     testOutputHelper.WriteLine(
       $"👉 Player {client.PlayerId} joined the game {gameId}");
+  }
+
+  public static async Task ReadyAsync(this PlayerClient client, Guid gameId)
+  {
+    var result = await client.HttpClient
+      .PutAsJsonAsync(
+        Routes.ReadyFlags(gameId),
+        new
+        {
+          PlayerId = client.PlayerId
+        });
+
+    await EnsureOkStatusAsync(result);
+  }
+
+  private static async Task EnsureOkStatusAsync(HttpResponseMessage result)
+  {
+    result.IsSuccessStatusCode.Should().BeTrue($"Status code was {result.StatusCode} {await result.Content.ReadAsStringAsync()}");
   }
 }

@@ -5,8 +5,6 @@
 // 🃏 The HossGame 🃏
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Text.Json.Serialization;
-
 namespace Hoss.SharedKernel;
 
 #region
@@ -20,6 +18,13 @@ using MediatR;
 /// </summary>
 public record DomainEventBase : INotification
 {
+   /// <summary>
+   /// Sets the datetime of the event tot the current system time.
+   /// </summary>
+   protected DomainEventBase()
+   {
+      this.DateOccurred = DateTime.Now;
+   }
    /// <summary>
    ///    Gets the date the event occurred on in UTC.
    /// </summary>

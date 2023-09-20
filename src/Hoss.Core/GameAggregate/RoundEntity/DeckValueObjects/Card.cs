@@ -11,11 +11,8 @@ namespace Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
 #endregion
 
-public record ACard(Rank Rank, Suit Suit) : Card
+public record ACard(Rank Rank, Suit Suit) : Card(Rank, Suit)
 {
-    public override Suit Suit { get; } = Suit;
-
-    public override Rank Rank { get; } = Rank;
 
     public override string ToString()
     {
@@ -31,11 +28,8 @@ public record ACard(Rank Rank, Suit Suit) : Card
 
 public record NoCard() : ACard(Rank.None, Suit.None);
 
-public abstract record Card : ValueObject
+public record Card(Rank Rank, Suit Suit) : ValueObject
 {
-    public abstract Suit Suit { get; }
-
-    public abstract Rank Rank { get; }
 
     public static CardComparer CompareWhenTrump(Suit suit)
     {

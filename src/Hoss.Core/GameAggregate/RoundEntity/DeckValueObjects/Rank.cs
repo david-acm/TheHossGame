@@ -29,7 +29,7 @@ public sealed class Rank : SmartEnum<Rank, string>
 
     public static readonly Rank None = new(nameof(None), string.Empty);
 
-    private Rank(string name, string value)
+    public Rank(string name, string value)
         : base(name, value)
     {
     }

@@ -26,56 +26,56 @@ using Xunit.Abstractions;
 [Collection("Sequential")]
 public class RegisterShould : IClassFixture<CustomWebApplicationFactory<WebMarker>>
 {
-    private readonly ITestOutputHelper outputHelper;
+  private readonly ITestOutputHelper outputHelper;
 
-    public RegisterShould(ITestOutputHelper outputHelper)
+  public RegisterShould(ITestOutputHelper outputHelper)
+  {
+    this.outputHelper = outputHelper;
+  }
+
+  [Theory]
+  [PlayerRegisteredClientData]
+  public async Task RegisterANewPlayer(CommandApiFactory apiClientFactory)
+  {
+    var apiClient = apiClientFactory.CreateClient();
+    var tokenResponse = await apiClient.GetStringAsync("/login");
+
+    dynamic jsonObject = JObject.Parse(tokenResponse);
+
+    var authorizationHeader = $"{jsonObject.accessToken}";
+    outputHelper.WriteLine($"Using authentication header: {authorizationHeader}");
+
+    apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", authorizationHeader);
+
+    var result = await apiClient
+      .PostAsJsonAsync<object>(Registries, default!);
+
+    var body = await result.Content.ReadAsStringAsync();
+    try
     {
-        this.outputHelper = outputHelper;
+      result.IsSuccessStatusCode.Should().BeTrue();
+    }
+    catch (Exception)
+    {
+      outputHelper.WriteLine($"Response status code was: {result.StatusCode}");
+      throw;
+    }
+    finally
+    {
+      outputHelper.WriteLine($"Response body was: {body}");
     }
 
-    [Theory]
-    [PlayerRegisteredClientData]
-    public async Task RegisterANewPlayer(CommandApiFactory apiClientFactory)
+    await Task.CompletedTask;
+  }
+
+  #region Nested type: Startup
+
+  public class Startup
+  {
+    public void ConfigureServices(IServiceCollection services)
     {
-        var apiClient = apiClientFactory.CreateClient();
-        var tokenResponse = await apiClient.GetStringAsync("/login");
-
-        dynamic jsonObject = JObject.Parse(tokenResponse);
-
-        var authorizationHeader = $"{jsonObject.accessToken}";
-        outputHelper.WriteLine($"Using authentication header: {authorizationHeader}");
-
-        apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", authorizationHeader);
-
-        var result = await apiClient
-            .PostAsJsonAsync<object>(Registries, default!);
-
-        var body = await result.Content.ReadAsStringAsync();
-        try
-        {
-            result.IsSuccessStatusCode.Should().BeTrue();
-        }
-        catch (Exception)
-        {
-            outputHelper.WriteLine($"Response status code was: {result.StatusCode}");
-            throw;
-        }
-        finally
-        {
-            outputHelper.WriteLine($"Response body was: {body}");
-        }
-
-        await Task.CompletedTask;
     }
+  }
 
-    #region Nested type: Startup
-
-    public class Startup
-    {
-        public void ConfigureServices(IServiceCollection services)
-        {
-        }
-    }
-
-    #endregion
+  #endregion
 }

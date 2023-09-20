@@ -19,9 +19,9 @@ using static RoundEvents;
 public sealed class NoRound : RoundBase
 {
     public NoRound()
-        : base(new RoundId(), _ => { })
+        : base(new RoundId(Guid.Empty), _ => { })
     {
-        Apply(new RoundStartedEvent(new NoGameId(), new RoundId(), new List<RoundPlayer>()));
+        Apply(new RoundStartedEvent(new NoGameId(), new RoundId(Guid.Empty), new List<RoundPlayer>()));
     }
 
     internal override RoundStage Stage => RoundStage.None;

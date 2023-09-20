@@ -15,7 +15,7 @@ namespace TheHossGame.FunctionalTests;
 using AutoFixture;
 using Xunit.Sdk;
 
-public class CommandApiCustomization : ICustomization
+public class PlayerClientCustomization : ICustomization
 {
     #region ICustomization Members
 
@@ -35,6 +35,24 @@ public class CommandApiCustomization : ICustomization
         fixture.Customize<IEnumerable<PlayerClient>>(f => f
             .FromFactory(() => 
                 fixture.CreateMany<PlayerClient>(count: 4)));
+    }
+
+    #endregion
+}
+
+public class CommandApiCustomization : ICustomization
+{
+    #region ICustomization Members
+
+    public void Customize(IFixture fixture)
+    {
+        var helper = new TestOutputHelper();
+        fixture.Customize<CommandApiFactory>(f => f.FromFactory(() =>
+        {
+            var commandApiFactory = new CommandApiFactory(helper);
+
+            return commandApiFactory;
+        }));
     }
 
     #endregion

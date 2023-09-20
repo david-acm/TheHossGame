@@ -55,7 +55,7 @@ public sealed partial class Round
 
     private ValidationResult ValidateTrumpSelected(TrumpSelectedEvent @event)
     {
-        return new ValidationResult(BidWinner == @event.PlayerId
+        return new ValidationResult(BidWinner.Id == @event.PlayerId.Id
                                     && Stage == RoundStage.SelectingTrump,
             nameof(ValidateTrumpSelected));
     }
@@ -98,19 +98,20 @@ public sealed partial class Round
     private ValidationResult PlayerHasThatCard(CardPlayedEvent e)
     {
         return new ValidationResult(
-            CardsForPlayer(e.PlayerId).Contains(e.Card),
+            CardsForPlayer(e.PlayerId).Contains(new Card(e.Card.Rank, e.Card.Suit)),
             nameof(PlayerHasThatCard));
     }
 
     private ValidationResult IsThePlayersTurn(PlayerId playerId)
     {
-        return new ValidationResult(playerId == CurrentPlayerId, nameof(IsThePlayersTurn));
+        return new ValidationResult(playerId.Id == CurrentPlayerId.Id, nameof(IsThePlayersTurn));
     }
 
     private ValidationResult ValidateBid(BidEvent e)
     {
-        return new ValidationResult(ValidateBid(e.Bid) && IsThePlayersTurn(e.Bid.PlayerId),
-            nameof(ValidateBid));
+        return new ValidationResult(
+            ValidateBid(e.Bid) && IsThePlayersTurn(e.Bid.PlayerId),
+            !ValidateBid(e.Bid) ? nameof(ValidateBid) : !IsThePlayersTurn(e.Bid.PlayerId) ? nameof(IsThePlayersTurn) : string.Empty );
     }
 
     private bool ValidateBid(Bid bid)

@@ -15,7 +15,7 @@ namespace Hoss.Core.GameAggregate.RoundEntity.DeckValueObjects;
 
 public record Deal(PlayerId PlayerId) : Play(PlayerId)
 {
-    public virtual IReadOnlyList<Card> Cards => new List<Card>();
+    public virtual List<Card> Cards { get; set; } = new();
 
     internal virtual void ReceiveCard(Card card)
     {
@@ -32,24 +32,22 @@ public record Deal(PlayerId PlayerId) : Play(PlayerId)
 
 public record ADeal(PlayerId PlayerId) : Deal(PlayerId)
 {
-    private readonly List<Card> cards = new();
-
-    public override IReadOnlyList<Card> Cards => cards.AsReadOnly();
+    // public List<Card> Cards { get; set; } = new();
 
     internal override void ReceiveCard(Card card)
     {
-        cards.Add(card);
+        Cards.Add(card);
         base.ReceiveCard(card);
     }
 
     internal override void GiveCard(Card card)
     {
-        cards.Remove(card);
+        Cards.Remove(card);
     }
 
     internal override void PlayCard(Card card)
     {
-        cards.Remove(card);
+        Cards.Remove(card);
         base.PlayCard(card);
     }
 }
